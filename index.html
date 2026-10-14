@@ -682,7 +682,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
-const BEAM_CHARGE=.7,MELEE_DIST=10,ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
+const BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
