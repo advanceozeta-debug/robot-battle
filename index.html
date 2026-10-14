@@ -196,7 +196,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">볼트</span> 대 <span class="c2">크래셔</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 5초 안에 20 이상 맞으면 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 20 이상 맞으면 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -763,8 +763,7 @@ function hurt(d,a,dmg,point,big){
     if(d.shieldHp<=0){d.shield=false;d.shieldHp=0;d.stun=.5}
   }else{
     const real=dmg*armsOf(d).armor*DMG_MULT;d.hp-=real;d.flashT=.08;
-    {const now=simTime;d.dmgLog=(d.dmgLog||[]).filter(e=>now-e[0]<STUN_WIN);d.dmgLog.push([now,real]);
-     if(d.hp>0&&d.dmgLog.reduce((t,e)=>t+e[1],0)>=STUN_DMG){d.dmgLog=[];d.stun=Math.max(d.stun,STUN_T);d.invT=STUN_T;d.shield=false;burst(centerOf(d,new V()),30,[.6,.9,1],8,.6);sfx('heat',d===P||a===P?1:.5);if(d===P)shakeAmt=Math.max(shakeAmt,.3)}}a.energy=Math.min(100,a.energy+(big?0:3));
+    {if(d.hp>0&&real>=STUN_DMG){d.stun=Math.max(d.stun,STUN_T);d.invT=STUN_T;d.shield=false;burst(centerOf(d,new V()),30,[.6,.9,1],8,.6);sfx('heat',d===P||a===P?1:.5);if(d===P)shakeAmt=Math.max(shakeAmt,.3)}}a.energy=Math.min(100,a.energy+(big?0:3));
     if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=.45;shakeAmt=d===P?.5:.25}
     else{d.vel.x+=dir.x*.8;d.vel.z+=dir.z*.8;if(d===P)shakeAmt=Math.max(shakeAmt,.08)}
     burst(point,big?24:7,a.spark,big?10:6);sfx('hit',d===P||a===P?1:.5);
