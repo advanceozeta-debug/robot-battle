@@ -646,7 +646,7 @@ function tcUp(e){
 tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
-const GRAV=25,R=.7,HGT=2.6,MAX_ALT=8;
+const GRAV=25,R=.7,HGT=2.6;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
@@ -725,7 +725,6 @@ function step(r,o,inp,dt){
       }
     }
   }
-  if(r.pos.y>MAX_ALT){r.pos.y=MAX_ALT;if(r.vel.y>0)r.vel.y=0}
   if(r.grounded){r.jumps=0;if(!r.dashing)r.fuel=Math.min(100,r.fuel+55*dt);if(r.ko){const k=Math.pow(.03,dt);r.vel.x*=k;r.vel.z*=k}}
   r.pos.x=clamp(r.pos.x,-49.2,49.2);r.pos.z=clamp(r.pos.z,-49.2,49.2);
 }
