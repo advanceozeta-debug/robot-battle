@@ -52,6 +52,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .mini.ready{color:var(--hazard)} .mini.ready .t>div{background:var(--hazard)}
 .mini.sh.ready{color:#9fe8ff} .mini.sh.ready .t>div{background:#9fe8ff}
 .mini.bo.ready{color:#ffb43a} .mini.bo.ready .t>div{background:#ffb43a}
+.mini.ul .t>div{background:#8a5a7a}.mini.ul.ready{color:#ff6bd5;font-weight:700} .mini.ul.ready .t>div{background:#ff6bd5}
 .clock{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 12px}
 .clock b{font-family:var(--display);font-weight:400;font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
 .clock b.low{color:var(--red)}
@@ -92,6 +93,8 @@ body.touch .tc{display:block}
 .btn.fire.on{background:var(--orange);color:#fff}
 .btn.jump{width:60px;height:60px;right:calc(122px + env(safe-area-inset-right,0px));bottom:calc(70px + env(safe-area-inset-bottom,0px))}
 .btn.shd{width:56px;height:56px;right:calc(118px + env(safe-area-inset-right,0px));bottom:calc(80px + env(safe-area-inset-bottom,0px));color:#9fe8ff;border-color:#1f5470}
+.btn.ult{width:56px;height:56px;right:calc(118px + env(safe-area-inset-right,0px));bottom:calc(150px + env(safe-area-inset-bottom,0px));color:#ff6bd5;border-color:#6b2a5a;opacity:.55}
+.btn.ult.ready{opacity:1;background:rgba(90,20,70,.75);box-shadow:0 0 14px #ff6bd5}
 .btn.msl{width:56px;height:56px;right:calc(36px + env(safe-area-inset-right,0px));bottom:calc(172px + env(safe-area-inset-bottom,0px));color:var(--hazard);border-color:#6b5a18}
 .btn.dash,.btn.boost{width:70px;height:46px;border-radius:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));color:#ffb43a;border-color:#6b4418;font-size:14px}
 .btn.boost{right:calc(100px + env(safe-area-inset-right,0px))}
@@ -151,6 +154,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <div class="mini en" id="pE"><span class="t"><div></div></span><span>에너지</span></div>
         <div class="mini sh" id="pS"><span class="t"><div></div></span><span>방어막</span></div>
         <div class="mini bo" id="pB"><span class="t"><div></div></span><span>부스터</span></div>
+        <div class="mini ul" id="pU"><span class="t"><div></div></span><span>필살기</span></div>
       </div>
       <div class="clock"><b id="time">90</b><div class="pips" id="pips"></div></div>
       <div class="side c">
@@ -159,6 +163,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <div class="mini en" id="cE"><span class="t"><div></div></span><span>에너지</span></div>
         <div class="mini sh" id="cS"><span class="t"><div></div></span><span>방어막</span></div>
         <div class="mini bo" id="cB"><span class="t"><div></div></span><span>부스터</span></div>
+        <div class="mini ul" id="cU"><span class="t"><div></div></span><span>필살기</span></div>
       </div>
     </div>
     <div class="tag" id="tag">크래셔</div>
@@ -177,6 +182,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <span>우클릭 · <kbd>Enter</kbd><span id="kMsl">미사일</span></span>
       <span><kbd>Shift</kbd>방어막</span>
       <span><kbd>R</kbd>재장전</span>
+      <span><kbd>F</kbd><span id="kUlt">필살기</span></span>
     </div>
   </div>
   <div class="tc" id="tc" hidden>
@@ -190,13 +196,14 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     <button class="btn fire" data-k="fire">사격</button>
     <button class="btn shd" data-k="shield">방어막</button>
     <button class="btn msl" data-k="missile">미사일</button>
+    <button class="btn ult" data-k="ult" id="ultBtn">필살</button>
     <button class="btn boost" data-k="boost">부스트 ▲</button>
     <button class="btn dash" data-k="dash">대시</button>
   </div>
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">기계</span> <span class="c2">총격전</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -506,15 +513,15 @@ function makeBot(col,eye,key){
   scene.add(g);
   return{g,legs,gun,flame,flash,muzzle,shield,mB,vis,eye:S.eye,barrels,mslPort};
 }
-function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0}}
+function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0,ultN:0,ult:0,castT:0,overT:0}}
 const MSL_RANGE=70,MSL_GUIDE=1.3;
 const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]},raven:{name:'레이븐',col:0xb36bff,css:'var(--violet)',spark:[.75,.45,1]}};
 const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=SKIN.bolt.spark;P.skin='bolt';
 const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;C.skin='crusher';
 const ARMS={
-  bolt:{gunName:'빔 라이플',mag:60,rate:.11,burst:12,stunHits:12,stunWin:2,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:1.6,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
-  crusher:{gunName:'개틀링',stunHits:12,stunWin:1.5,mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
-  raven:{gunName:'레일건',stunHits:3,stunWin:4,mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
+  bolt:{ultName:'빔 캐논',gunName:'빔 라이플',mag:60,rate:.11,burst:12,stunHits:12,stunWin:2,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:1.6,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
+  crusher:{ultName:'융단 포격',gunName:'개틀링',stunHits:12,stunWin:1.5,mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
+  raven:{ultName:'섀도우 블링크',gunName:'레일건',stunHits:3,stunWin:4,mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKINS=['bolt','crusher','raven'];
@@ -525,7 +532,7 @@ function setSkin(r,key){
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;
   r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
 }
-function place(r,x,z,yaw){Object.assign(r,{burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4,r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -600,7 +607,7 @@ function resetBreakables(){
 
 /* ---------- input ---------- */
 const keys={};
-const press={jump:false,missile:false,qs:null,reload:false};
+const press={jump:false,missile:false,qs:null,reload:false,ult:false};
 let fireHeld=false,shieldHeld=false,jumpHeld=false,boostHeld=false;
 let camYaw=0,camPitch=-.08,locked=false;
 const joy={id:null,x0:0,y0:0,x:0,y:0};
@@ -610,7 +617,7 @@ function look(dx,dy,s){camYaw-=dx*s;camPitch=clamp(camPitch-dy*s,-.5,.62)}
 addEventListener('keydown',e=>{
   const c=e.code;const menuEnter=(c==='Enter'||c==='NumpadEnter')&&(phase==='menu'||phase==='over');if(!menuEnter&&['Enter','NumpadEnter','BracketLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(c))e.preventDefault();
   if(keys[c]&&e.repeat)return;keys[c]=true;
-  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
+  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code===dashKey)dashKey=null});
 const DIRK={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',KeyD:'r'};
@@ -665,6 +672,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
+const ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
@@ -679,6 +687,9 @@ function step(r,o,inp,dt){
     if(r.reloadT>0){r.reloadT-=dt;if(r.reloadT<=0){r.reloadT=0;r.ammo=W.mag;if(r===P)sfx('block')}}
     if(r.mReloadT>0){r.mReloadT-=dt;if(r.mReloadT<=0){r.mReloadT=0;r.mAmmo=W.mMag;if(r===P)sfx('block')}}
     r.mCd-=dt;
+    if(phase==='fight')r.ult=Math.min(100,r.ult+ULT_PASSIVE*dt);
+    if(r.overT>0)r.overT-=dt;
+    if(inp.ult&&r.ult>=100&&!r.shield&&r.stun<=0&&r.castT<=0&&phase==='fight'){r.ult=0;r.ultN++;startUlt(r,o)}
     if(inp.reload&&r.reloadT<=0&&r.ammo<W.mag){r.reloadT=W.reload;if(r===P)sfx('heat')}
     if(!inp.shield)r.shieldLock=false;
     if(!inp.fire)r.fireLock=false;
@@ -713,6 +724,7 @@ function step(r,o,inp,dt){
         if(!r.grounded&&r.vel.y<-1)r.vel.y=-1;
         for(let i=0;i<2;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-inp.dashX*4+rnd(-1,1),rnd(0,1),-inp.dashZ*4+rnd(-1,1),.3,[1,.6,.2]);
       }else r.dashing=false;
+      if(r.castT>0){r.castT-=dt;r.vel.x*=.2;r.vel.z*=.2;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)fireBeam(r,o)}
       r.m.g.rotation.y=r.yaw;r.m.gun.rotation.x=r.aimPitch;r.m.g.position.copy(r.pos);r.m.g.updateMatrixWorld(true);
       if(W.burst){
         if(inp.fire&&(!r.firePrev||r!==P)&&!r.fireLock&&!(r.burstLeft>0)&&r.reloadT<=0&&r.ammo>0&&!r.shield)r.burstLeft=Math.min(W.burst,r.ammo);
@@ -720,8 +732,9 @@ function step(r,o,inp,dt){
       }
       r.firePrev=!!inp.fire;
       const wantShot=W.burst?r.burstLeft>0:(inp.fire&&!r.fireLock);
-      if(wantShot&&!r.shield&&r.fireCd<=0&&r.reloadT<=0&&r.ammo>0&&inp.target){
-        r.fireCd=W.rate;r.muzzleT=.05;r.ammo--;r.shotN++;if(W.burst)r.burstLeft--;
+      const over=r.overT>0;
+      if(wantShot&&!r.shield&&r.castT<=0&&r.fireCd<=0&&(over||(r.reloadT<=0&&r.ammo>0))&&inp.target){
+        r.fireCd=over?.22:W.rate;r.muzzleT=.05;if(!over)r.ammo--;r.shotN++;if(W.burst)r.burstLeft--;
         if(r.ammo<=0){r.reloadT=W.reload;if(r===P)sfx('heat')}
         const from=r.m.muzzle.getWorldPosition(new V());
         const dir=_d.copy(inp.target).sub(from).normalize();
@@ -769,7 +782,7 @@ function hurt(d,a,dmg,point,big){
     burst(point,big?16:5,[.6,.9,1],big?8:5);sfx('block',d===P||a===P?1:.5);
     if(d.shieldHp<=0){d.shield=false;d.shieldHp=0;d.stun=.5}
   }else{
-    const real=dmg*armsOf(d).armor*DMG_MULT;d.hp-=real;d.flashT=.08;
+    const real=dmg*armsOf(d).armor*DMG_MULT;d.hp-=real;d.flashT=.08;a.ult=Math.min(100,a.ult+real*ULT_DEAL);d.ult=Math.min(100,d.ult+real*ULT_TAKE);
     {const AW=armsOf(a);let st=real>=STUN_DMG;
      if(!big){d.gunHits=(simTime-(d.lastGunHit||-99)<AW.stunWin)?(d.gunHits||0)+1:1;d.lastGunHit=simTime;if(d.gunHits>=AW.stunHits)st=true}
      if(d.hp>0&&st){d.gunHits=0;d.stun=Math.max(d.stun,STUN_T);d.invT=STUN_T;d.shield=false;burst(centerOf(d,new V()),30,[.6,.9,1],8,.6);sfx('heat',d===P||a===P?1:.5);if(d===P)shakeAmt=Math.max(shakeAmt,.3)}}a.energy=Math.min(100,a.energy+(big?0:3));
@@ -826,13 +839,79 @@ function updProj(dt){
   }
 }
 
+/* ---------- special skills ---------- */
+const beams=[],shells=[];
+const beamGeo=new T.CylinderGeometry(1,1,1,12,1,true);beamGeo.rotateX(Math.PI/2);beamGeo.translate(0,0,.5);
+const shellGeo=new T.CylinderGeometry(.18,.18,1.1,8);
+const ringGeo=new T.RingGeometry(3.1,3.5,32);ringGeo.rotateX(-Math.PI/2);
+function chargeFx(r){const c=r.m.muzzle.getWorldPosition(new V());for(let i=0;i<2;i++){const v=new V(rnd(-1,1),rnd(-1,1),rnd(-1,1)).normalize().multiplyScalar(1.2);emit(sparks,c.x+v.x,c.y+v.y,c.z+v.z,-v.x*3,-v.y*3,-v.z*3,.35,r.spark)}}
+function startUlt(r,o){
+  sfx('missile',r===P||o===P?1:.6);
+  if(r.skin==='bolt'){r.castT=.55;r.burstLeft=0}
+  else if(r.skin==='crusher'){const t=o.pos.clone().addScaledVector(o.vel,.5);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);r.ultP=[r2(t.x),r2(t.z)];startBarrage(r,t)}
+  else blink(r,o);
+}
+function segDist(p,a,b){const ab=_m.copy(b).sub(a),t=clamp(_t.copy(p).sub(a).dot(ab)/Math.max(1e-6,ab.lengthSq()),0,1);return p.distanceTo(_f.copy(a).addScaledVector(ab,t))}
+function fireBeam(r,o){
+  const from=r.m.muzzle.getWorldPosition(new V()),oc=centerOf(o,new V());
+  const dir=oc.clone().sub(from).normalize();
+  const len=Math.min(rayScene(from,dir),95),end=from.clone().addScaledVector(dir,len);
+  const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:r.col,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
+  m.position.copy(from);m.lookAt(end);m.scale.set(.45,.45,len);scene.add(m);
+  const core=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
+  core.position.copy(from);core.lookAt(end);core.scale.set(.16,.16,len);scene.add(core);
+  beams.push({m,core,t:.45});
+  burst(end,30,r.spark,10,.6);blast(end,1.8);sfx('boom',r===P||o===P?1:.6);shakeAmt=Math.max(shakeAmt,r===P||o===P?.35:.1);
+  if(!o.ko&&from.distanceTo(oc)<=len+1.4&&segDist(oc,from,end)<1.5)hurt(o,r,40,oc,true);
+  for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segDist(c,from,end)<Math.max(bb.w,bb.d)/2+.6)hitBox(bb,80)}
+}
+function startBarrage(r,t){
+  for(let i=0;i<7;i++){
+    const a=Math.random()*Math.PI*2,d=i===0?0:rnd(1.5,5);
+    const x=clamp(t.x+Math.cos(a)*d,-49,49),z=clamp(t.z+Math.sin(a)*d,-49,49);
+    const ring=new T.Mesh(ringGeo,new T.MeshBasicMaterial({color:0xff5a3a,transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide}));
+    ring.position.set(x,.08,z);scene.add(ring);
+    const g=new T.Mesh(shellGeo,new T.MeshStandardMaterial({color:0x3a3f48,emissive:0xff6a2a,emissiveIntensity:.6}));g.visible=false;scene.add(g);
+    shells.push({o:r,x,z,y:38,delay:.75+i*.14,ring,g});
+  }
+}
+function blink(r,o){
+  const old=centerOf(r,new V());
+  const of=fwdOf(o.yaw,new V()),rt=new V(Math.cos(o.yaw),0,-Math.sin(o.yaw));
+  const cands=[of.clone().multiplyScalar(-7),rt.clone().multiplyScalar(7),rt.clone().multiplyScalar(-7),of.clone().multiplyScalar(-4)];
+  let dest=null;for(const c of cands){const p=o.pos.clone().add(c);p.x=clamp(p.x,-48,48);p.z=clamp(p.z,-48,48);const q=p.clone();q.y=Math.max(o.pos.y,0)+1.2;if(!inBox(q)){dest=p;dest.y=Math.max(o.pos.y,0);break}}
+  if(!dest)dest=r.pos.clone();
+  burst(old,40,r.spark,9,.6);puff(old,6,[.35,.25,.5]);
+  r.pos.copy(dest);r.vel.set(0,0,0);r.overT=3;r.ammo=Math.max(r.ammo,1);r.reloadT=0;
+  burst(centerOf(r,new V()),40,r.spark,9,.6);sfx('dash',r===P||o===P?1:.6);
+}
+function updUlt(dt){
+  for(let i=beams.length-1;i>=0;i--){const b=beams[i];b.t-=dt;const k=Math.max(0,b.t/.45);b.m.material.opacity=.9*k;b.core.material.opacity=.9*k;b.m.scale.x=b.m.scale.y=.45*(.4+k*.6);
+    if(b.t<=0){scene.remove(b.m);scene.remove(b.core);b.m.material.dispose();b.core.material.dispose();beams.splice(i,1)}}
+  for(let i=shells.length-1;i>=0;i--){const s=shells[i];s.delay-=dt;s.ring.material.opacity=.35+.35*Math.abs(Math.sin(simTime*12));
+    if(s.delay>0)continue;
+    s.g.visible=true;s.y-=60*dt;s.g.position.set(s.x,s.y,s.z);
+    emit(sparks,s.x,s.y+.6,s.z,rnd(-.5,.5),2,rnd(-.5,.5),.25,[1,.55,.2]);
+    const p=new V(s.x,Math.max(s.y,.3),s.z);
+    if(s.y<=.3||inBox(p)){
+      blast(p,3.4);burst(p,40,[1,.55,.2],11,.7);puff(p,8);sfx('boom',.7);
+      const v=s.o===P?C:P,vc=centerOf(v,new V());
+      if(P.pos.distanceTo(p)<18)shakeAmt=Math.max(shakeAmt,.3);
+      if(!v.ko&&vc.distanceTo(p)<3.8)hurt(v,s.o,12,vc,true);
+      for(const bb of BREAK.slice())if(!bb.dead){const dx=Math.max(bb.x0-p.x,0,p.x-bb.x1),dz=Math.max(bb.z0-p.z,0,p.z-bb.z1);if(Math.hypot(dx,dz)<3)hitBox(bb,40)}
+      scene.remove(s.ring);scene.remove(s.g);s.ring.material.dispose();s.g.material.dispose();shells.splice(i,1);
+    }
+  }
+}
+function clearUlt(){beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0}
+
 /* ---------- CPU ---------- */
 const DIFF={easy:{react:.45,dodge:.2,aggr:.45,msl:.2,spread:.075},normal:{react:.28,dodge:.45,aggr:.65,msl:.4,spread:.045},hard:{react:.16,dodge:.7,aggr:.85,msl:.6,spread:.022}};
 let diff='normal';
-const cin={mx:0,mz:0,jump:false,jumpHeld:false,dash:false,dashX:0,dashZ:0,fire:false,missile:false,shield:false,yaw:0,target:new V(),spread:.04};
+const cin={ult:false,mx:0,mz:0,jump:false,jumpHeld:false,dash:false,dashX:0,dashZ:0,fire:false,missile:false,shield:false,yaw:0,target:new V(),spread:.04};
 let aiT=0,ideal=18,strafe=1,lastPos=new V(),wantMove=false;
 function ai(dt){
-  cin.missile=false;cin.qs=false;
+  cin.missile=false;cin.qs=false;cin.ult=false;
   const dx=P.pos.x-C.pos.x,dz=P.pos.z-C.pos.z,dist=Math.hypot(dx,dz)||1;
   cin.yaw=Math.atan2(-dx,-dz);
   centerOf(P,cin.target);
@@ -855,6 +934,7 @@ function ai(dt){
     const muzzle=centerOf(C,_f);muzzle.y+=.4;
     const los=clearLine(muzzle,centerOf(P,_c));
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
+    if(C.ult>=100&&Math.random()<.4&&(C.skin==='raven'?dist<45:C.skin==='bolt'?los&&dist<60:dist<60))cin.ult=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     if(Math.random()<.12)ideal=rnd(12,30);
     if(Math.random()<.15)strafe*=-1;
@@ -885,7 +965,7 @@ function playerInput(dt){
   if(press.qs){const q=press.qs,df=q==='f'?1:q==='b'?-1:0,ds=q==='r'?1:q==='l'?-1:0;pin.qsX=_f.x*df+_r.x*ds;pin.qsZ=_f.z*df+_r.z*ds;pin.qs=true}
   if(dashKey&&keys[dashKey]){const d=DIRK[dashKey],df=d==='f'?1:d==='b'?-1:0,ds=d==='r'?1:d==='l'?-1:0;pin.dashX=_f.x*df+_r.x*ds;pin.dashZ=_f.z*df+_r.z*ds;pin.dash=true}
   else if(dashHeld){if(l>.3&&P.fuel>0){pin.dashX=mx/l;pin.dashZ=mz/l;pin.dash=true;dashSeen=true}else if(dashSeen||P.fuel<=0||(dashWait-=dt)<=0)dashHeld=false}
-  pin.jump=press.jump;pin.reload=press.reload;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
+  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
   pin.fire=fireHeld||mouseFire||!!keys.BracketLeft;
   pin.shield=shieldHeld||!!keys.ShiftLeft||!!keys.ShiftRight||!!keys.KeyL;
 }
@@ -955,7 +1035,13 @@ function syncModel(r,dt){
 }
 
 /* ---------- HUD ---------- */
-const H={pF:$('pF'),pG:$('pG'),cF:$('cF'),cG:$('cG'),pE:$('pE'),pS:$('pS'),pB:$('pB'),cB:$('cB'),cE:$('cE'),cS:$('cS'),time:$('time'),pips:$('pips'),cross:$('cross'),heat:$('heat'),oh:$('oh'),tag:$('tag'),arrow:$('arrow'),banner:$('banner'),vig:$('vig')};
+const H={pF:$('pF'),pG:$('pG'),cF:$('cF'),cG:$('cG'),pE:$('pE'),pS:$('pS'),pB:$('pB'),pU:$('pU'),cU:$('cU'),cB:$('cB'),cE:$('cE'),cS:$('cS'),time:$('time'),pips:$('pips'),cross:$('cross'),heat:$('heat'),oh:$('oh'),tag:$('tag'),arrow:$('arrow'),banner:$('banner'),vig:$('vig')};
+function ultMini(el,r,me){
+  const ready=r.ult>=100;mini(el,r.ult,ready);
+  el.lastElementChild.textContent=`${armsOf(r).ultName}${ready?(me?' 준비 (F)':' 준비'):''}`;
+  if(me)ultBtn.classList.toggle('ready',ready);
+}
+const ultBtn=document.getElementById('ultBtn');
 function mslMini(el,r){
   const rl=r.mReloadT>0||r.mAmmo<0;
   const W=armsOf(r),v=rl?(r.mAmmo<0?0:(1-r.mReloadT/W.mReload)*100):r.mAmmo/W.mMag*100;
@@ -967,7 +1053,7 @@ let vigT=0,hitT=0,lastSec=-1;
 function hud(){
   const pc=v=>Math.max(0,v/MAX_HP*100)+'%';H.pF.style.width=pc(P.hp);H.pG.style.width=pc(P.ghost);H.cF.style.width=pc(C.hp);H.cG.style.width=pc(C.ghost);
   H.pF.classList.toggle('low',P.hp<MAX_HP*.3);H.cF.classList.toggle('low',C.hp<MAX_HP*.3);
-  mslMini(H.pE,P);mini(H.pS,P.shieldHp,P.shieldHp>15);mslMini(H.cE,C);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
+  mslMini(H.pE,P);mini(H.pS,P.shieldHp,P.shieldHp>15);mslMini(H.cE,C);ultMini(H.pU,P,true);ultMini(H.cU,C,false);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
   const s=Math.max(0,Math.ceil(timer));H.time.textContent=s;H.time.classList.toggle('low',s<=10);
   if(phase==='fight'&&s<=5&&s!==lastSec&&s>0)sfx('tick');lastSec=s;
   H.pips.innerHTML=[0,1].map(i=>`<i class="${i<P.wins?'pw':''}"></i>`).join('')+'<span class="gap"></span>'+[0,1].map(i=>`<i class="${i<C.wins?'cw':''}"></i>`).join('');
@@ -996,7 +1082,7 @@ function hud(){
 /* ---------- rounds ---------- */
 let phase='menu',phaseT=0,round=1,timer=90,hitstop=0,shakeAmt=0;
 const idle={mx:0,mz:0,jump:false,fire:false,missile:false,shield:false,yaw:0,target:null,spread:0};
-function clearProj(){bullets.forEach(b=>{b.alive=false;b.mesh.visible=false});missiles.forEach(m=>scene.remove(m.g));missiles.length=0}
+function clearProj(){clearUlt();bullets.forEach(b=>{b.alive=false;b.mesh.visible=false});missiles.forEach(m=>scene.remove(m.g));missiles.length=0}
 function startMatch(){P.wins=C.wins=0;round=1;startRound()}
 function startRound(){resetBreakables();const gst=online&&!isHost;place(P,0,gst?-38:38,gst?Math.PI:0);place(C,0,gst?38:-38,gst?0:Math.PI);camYaw=gst?Math.PI:0;camPitch=-.08;camInit=false;clearProj();timer=90;phase='intro';phaseT=0;aiT=.5}
 function setBanner(t,col){H.banner.textContent=t;H.banner.style.color=col}
@@ -1026,10 +1112,10 @@ function loop(now){
     }
   }else{camYaw+=dt*.12}
   netTick(dt);
-  press.jump=press.missile=press.reload=false;press.qs=null;
+  press.jump=press.missile=press.reload=press.ult=false;press.qs=null;
   syncModel(P,dt);syncModel(C,dt);
   updateCamera(dt);
-  updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
+  updUlt(dt);updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
   if(phase!=='menu'&&phase!=='over')hud();
   sky.position.copy(camera.position);sunDisc.position.copy(camera.position).addScaledVector(sunDir,210);sunGlow.position.copy(sunDisc.position);
   clouds.rotation.y+=dt*.004;ring.rotation.z+=dt*.6;
@@ -1072,6 +1158,7 @@ function showOver(){
   syncOverButtons();over.hidden=false;
 }
 /* ---------- online 1v1 (room capability, presence only) ---------- */
+let lastUltN=null;
 let online=false,isHost=false,rm=null,oppPeer=null,myJoin=0,curMatch=0,lastWin='',lastShotN=null,lastMslN=null,sendT=0,hostTimer=null,unsubPeers=null;
 const inClaude=!!(window.claude&&typeof window.claude.use==='function');
 /* Outside Claude (a saved file or your own site): connect the two devices directly with PeerJS (WebRTC). Same calls as a Claude named room. */
@@ -1116,7 +1203,7 @@ if(!inClaude)document.getElementById('onNote').textContent='친구에게 같은 
 const NO_ONLINE=inClaude?'지금 화면에서는 온라인 대전을 쓸 수 없어요. Claude에 로그인한 상태로 이 아티팩트 링크를 열어 주세요.':'연결 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 페이지를 새로고침해 주세요.';
 const onlineEl=$('online'),onA=$('onA'),onB=$('onB'),onErr=$('onErr'),onStatus=$('onStatus');
 function setNames(on){P.name=on?'나':SKIN[P.skin].name;C.name=on?'상대':SKIN[C.skin].name;$('pNm').textContent=P.name;$('cNm').textContent=C.name;skinUI()}
-function weaponLabels(){const W=armsOf(P);document.querySelector('.btn.msl').textContent=W.mShort;$('kMsl').textContent=W.mName}
+function weaponLabels(){const W=armsOf(P);$('kUlt').textContent=W.ultName;document.querySelector('.btn.msl').textContent=W.mShort;$('kMsl').textContent=W.mName}
 function skinUI(){weaponLabels();
   const pc=SKIN[P.skin].css,cc=SKIN[C.skin].css;
   $('pNm').style.color=pc;$('cNm').style.color=cc;H.pF.style.background=pc;H.cF.style.background=cc;
@@ -1128,7 +1215,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={raven:'레이븐 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={raven:'레이븐 · 필살기 섀도우 블링크 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 빔 캐논 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){$('skinInfo').textContent=SKIN_INFO[mySkin]}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
@@ -1237,11 +1324,20 @@ function remoteUpdate(dt){
   const f=s.f|0;C.grounded=!!(f&1);C.boosting=!!(f&2);if(f&2)C.flameT=.06;C.dashing=!!(f&4);C.shield=!!(f&8);if(f&32)C.invT=Math.max(C.invT||0,.12);
   if(s.rr===round&&(phase==='fight'||phase==='end')){
     const hp=clamp(+s.hp,0,MAX_HP);
-    if(hp<C.hp-.01){hitT=.12;P.energy=Math.min(100,P.energy+(C.hp-hp))}
+    if(hp<C.hp-.01){hitT=.12;P.energy=Math.min(100,P.energy+(C.hp-hp));P.ult=Math.min(100,P.ult+(C.hp-hp)*ULT_DEAL)}
     C.hp=hp;
     if((f&16)&&!C.ko){C.ko=true;C.koT=0;const c=centerOf(C,new V());burst(c,70,C.spark,14,.9);burst(c,40,[1,.9,.6],10,.7);puff(c,20);blast(c,3.2);sfx('ko');shakeAmt=.4}
     if(Array.isArray(s.br))s.br.slice(0,BREAK.length).forEach(i=>{const b=BREAK[i|0];if(b&&!b.dead)breakBox(b)});
   }
+  if(typeof s.u==='number')C.ult=clamp(s.u,0,100);
+  const xn=s.xn|0;
+  if(lastUltN===null||xn<lastUltN)lastUltN=xn;
+  else if(xn>lastUltN){lastUltN=xn;if(phase==='fight'){
+    if(C.skin==='bolt'){C.castT=.55}
+    else if(C.skin==='crusher'&&Array.isArray(s.xp)){startBarrage(C,new V(+s.xp[0]||0,0,+s.xp[1]||0));sfx('missile',.7)}
+    else if(C.skin==='raven'){burst(centerOf(C,new V()),40,C.spark,9,.6);sfx('dash',.7)}
+  }}
+  if(C.castT>0){C.castT-=dt;C.muzzleT=.05;chargeFx(C);if(C.castT<=0)fireBeam(C,P)}
   const sn=s.sn|0,mn=s.mn|0;
   if(lastShotN===null||sn<lastShotN||mn<lastMslN){lastShotN=sn;lastMslN=mn}
   else{
@@ -1257,7 +1353,7 @@ function netTick(dt){
   if(online)remoteUpdate(dt);
   sendT-=dt;if(sendT>0)return;sendT=.05;
   const f=(P.grounded?1:0)|(P.boosting?2:0)|(P.dashing?4:0)|(P.shield?8:0)|(P.ko?16:0)|(P.invT>0?32:0);
-  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
+  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,xn:P.ultN,xp:P.ultP||null,u:Math.round(P.ult),k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
   if(online&&isHost)st.m={match:curMatch,round,phase,timer:Math.ceil(timer),wh:P.wins,wg:C.wins,ban:H.banner.textContent.slice(0,12),win:lastWin};
   rm.presence(st).catch(()=>{});
 }
