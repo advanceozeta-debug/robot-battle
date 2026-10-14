@@ -514,7 +514,7 @@ const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;
 const ARMS={
   bolt:{gunName:'빔 라이플',mag:60,rate:.11,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:MSL_GUIDE,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{gunName:'개틀링',mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
-  raven:{gunName:'레일건',mag:8,rate:.7,dmg:12,spread:0,bspeed:140,reload:2.6,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:.9,mDmg:8,mRad:2.8,mSpeed:30,lob:true,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
+  raven:{gunName:'레일건',mag:8,rate:.7,dmg:12,spread:0,bspeed:140,reload:2.6,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:8,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2.5,turn:4.5,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKINS=['bolt','crusher','raven'];
@@ -552,8 +552,8 @@ function launchMissile(r,target){
     g.scale.setScalar(!W.lob?1.8:n>1?.65:1);
     scene.add(g);g.position.copy(from);
     const side=n>1?(i-(n-1)/2)*3.4:0;
-    const vel=W.lob?fwdOf(r.yaw,new V()).multiplyScalar(7).add(new V(rx*side,9+rnd(-1,1)*(n>1?1.5:0),rz*side)):target.clone().sub(from).normalize().multiplyScalar(W.mSpeed);
-    missiles.push({g,o:r,pos:from.clone(),vel,age:0,trail:0,travel:0,guide:W.guide,maxSp:W.mSpeed,dmg:W.mDmg,rad:W.mRad,lob:W.lob,big:!W.lob});
+    const vel=W.lob?fwdOf(r.yaw,new V()).multiplyScalar(W.lfwd||7).add(new V(rx*side,(W.lup??9)+rnd(-1,1)*(n>1?.6:0),rz*side)):target.clone().sub(from).normalize().multiplyScalar(W.mSpeed);
+    missiles.push({g,o:r,turn:W.turn||2.6,pos:from.clone(),vel,age:0,trail:0,travel:0,guide:W.guide,maxSp:W.mSpeed,dmg:W.mDmg,rad:W.mRad,lob:W.lob,big:!W.lob});
   }
 }
 function spawnMissile(o,from,fwd){
@@ -793,7 +793,7 @@ function updProj(dt){
     let sp=m.vel.length();
     if(m.age>.2&&m.age<m.guide&&!t.ko){
       const want=centerOf(t,_c).sub(m.pos).normalize(),cur=_m.copy(m.vel).normalize();
-      cur.lerp(want,Math.min(1,dt*2.6)).normalize();sp=Math.min(m.maxSp,sp+28*dt);m.vel.copy(cur).multiplyScalar(sp);
+      cur.lerp(want,Math.min(1,dt*m.turn)).normalize();sp=Math.min(m.maxSp,sp+28*dt);m.vel.copy(cur).multiplyScalar(sp);
     }else if(m.lob&&m.age<=.2)m.vel.y-=12*dt;
     m.pos.addScaledVector(m.vel,dt);m.travel+=m.vel.length()*dt;
     m.g.position.copy(m.pos);m.g.lookAt(_t.copy(m.pos).sub(m.vel));
