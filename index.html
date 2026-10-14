@@ -682,7 +682,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
-const MELEE_DIST=10,ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
+const BEAM_CHARGE=.7,MELEE_DIST=10,ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
@@ -708,6 +708,7 @@ function step(r,o,inp,dt){
       if(r.shield||inp.shield){r.shield=false;r.shieldLock=!!inp.shield}
       if(inp.fire)r.fireLock=true;
       r.burstLeft=0;r.melee=null;
+      if(r.castT>0){r.castT=0;r.beamDir=null;clearAimLine(r)}
     }
     r.mobPrev=mob;
     const want=inp.shield&&!r.shieldLock&&r.stun<=0&&(r.shield?r.shieldHp>0:r.shieldHp>15);
@@ -881,18 +882,27 @@ const beams=[],shells=[];
 const beamGeo=new T.CylinderGeometry(1,1,1,12,1,true);beamGeo.rotateX(Math.PI/2);beamGeo.translate(0,0,.5);
 const shellGeo=new T.CylinderGeometry(.18,.18,1.1,8);
 const ringGeo=new T.RingGeometry(3.1,3.5,32);ringGeo.rotateX(-Math.PI/2);
-function chargeFx(r){const c=r.m.muzzle.getWorldPosition(new V());for(let i=0;i<2;i++){const v=new V(rnd(-1,1),rnd(-1,1),rnd(-1,1)).normalize().multiplyScalar(1.2);emit(sparks,c.x+v.x,c.y+v.y,c.z+v.z,-v.x*3,-v.y*3,-v.z*3,.35,r.spark)}}
+function aimLineFx(r){
+  if(!r.beamDir)return;
+  const from=r.m.muzzle.getWorldPosition(new V()),len=Math.min(rayScene(from,r.beamDir),95);
+  if(!r.aimLine){r.aimLine=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:r.col,transparent:true,opacity:.35,blending:T.AdditiveBlending,depthWrite:false}));scene.add(r.aimLine)}
+  r.aimLine.position.copy(from);r.aimLine.lookAt(from.clone().add(r.beamDir));r.aimLine.scale.set(.06,.06,len);
+  r.aimLine.material.opacity=.25+.25*Math.abs(Math.sin(simTime*20));
+}
+function clearAimLine(r){if(r.aimLine){scene.remove(r.aimLine);r.aimLine.material.dispose();r.aimLine=null}}
+function chargeFx(r){aimLineFx(r);const c=r.m.muzzle.getWorldPosition(new V());for(let i=0;i<2;i++){const v=new V(rnd(-1,1),rnd(-1,1),rnd(-1,1)).normalize().multiplyScalar(1.2);emit(sparks,c.x+v.x,c.y+v.y,c.z+v.z,-v.x*3,-v.y*3,-v.z*3,.35,r.spark)}}
 function startUlt(r,o){
   sfx('missile',r===P||o===P?1:.6);
   const U=armsOf(r).ult;
-  if(U==='beam'){r.castT=.55;r.burstLeft=0}
+  if(U==='beam'){r.castT=BEAM_CHARGE;r.burstLeft=0;lockBeam(r,o)}
   else if(U==='barrage'){const t=o.pos.clone().addScaledVector(o.vel,.5);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);r.ultP=[r2(t.x),r2(t.z)];startBarrage(r,t)}
   else blink(r,o);
 }
 function segDist(p,a,b){const ab=_m.copy(b).sub(a),t=clamp(_t.copy(p).sub(a).dot(ab)/Math.max(1e-6,ab.lengthSq()),0,1);return p.distanceTo(_f.copy(a).addScaledVector(ab,t))}
+function lockBeam(r,o){const from=r.m.muzzle.getWorldPosition(new V());r.beamDir=centerOf(o,new V()).sub(from).normalize()}
 function fireBeam(r,o){
   const from=r.m.muzzle.getWorldPosition(new V()),oc=centerOf(o,new V());
-  const dir=oc.clone().sub(from).normalize();
+  const dir=(r.beamDir||oc.clone().sub(from)).clone().normalize();r.beamDir=null;clearAimLine(r);
   const len=Math.min(rayScene(from,dir),95),end=from.clone().addScaledVector(dir,len);
   const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:r.col,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
   m.position.copy(from);m.lookAt(end);m.scale.set(.45,.45,len);scene.add(m);
@@ -941,7 +951,7 @@ function updUlt(dt){
     }
   }
 }
-function clearUlt(){beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0}
+function clearUlt(){clearAimLine(P);clearAimLine(C);P.castT=C.castT=0;beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0}
 
 /* ---------- CPU ---------- */
 const DIFF={easy:{react:.45,dodge:.2,aggr:.45,msl:.2,spread:.075},normal:{react:.28,dodge:.45,aggr:.65,msl:.4,spread:.045},hard:{react:.16,dodge:.7,aggr:.85,msl:.6,spread:.022}};
@@ -1380,7 +1390,7 @@ function remoteUpdate(dt){
   if(lastUltN===null||xn<lastUltN)lastUltN=xn;
   else if(xn>lastUltN){lastUltN=xn;if(phase==='fight'){
     const CU=armsOf(C).ult;
-    if(CU==='beam'){C.castT=.55}
+    if(CU==='beam'){C.castT=BEAM_CHARGE;lockBeam(C,P)}
     else if(CU==='barrage'&&Array.isArray(s.xp)){startBarrage(C,new V(+s.xp[0]||0,0,+s.xp[1]||0));sfx('missile',.7)}
     else if(CU==='blink'){burst(centerOf(C,new V()),40,C.spark,9,.6);sfx('dash',.7)}
   }}
