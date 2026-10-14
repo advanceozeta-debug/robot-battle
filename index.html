@@ -155,7 +155,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <span class="nm" id="pNm">볼트</span>
         <div class="track"><div class="ghost" id="pG"></div><div class="fill" id="pF"></div></div>
         <div class="mini en" id="pE"><span class="t"><div></div></span><span>에너지</span></div>
-        <div class="mini sh" id="pS"><span class="t"><div></div></span><span>방어막</span></div>
+        <div class="mini sh" id="pS"><span class="t"><div></div></span><span>방패</span></div>
         <div class="mini bo" id="pB"><span class="t"><div></div></span><span>부스터</span></div>
         <div class="mini ul" id="pU"><span class="t"><div></div></span><span>필살기</span></div>
       </div>
@@ -164,7 +164,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <span class="nm" id="cNm">크래셔</span>
         <div class="track"><div class="ghost" id="cG"></div><div class="fill" id="cF"></div></div>
         <div class="mini en" id="cE"><span class="t"><div></div></span><span>에너지</span></div>
-        <div class="mini sh" id="cS"><span class="t"><div></div></span><span>방어막</span></div>
+        <div class="mini sh" id="cS"><span class="t"><div></div></span><span>방패</span></div>
         <div class="mini bo" id="cB"><span class="t"><div></div></span><span>부스터</span></div>
         <div class="mini ul" id="cU"><span class="t"><div></div></span><span>필살기</span></div>
       </div>
@@ -183,7 +183,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <span>이동 키 두 번 누르고 꾹 · 대시</span>
       <span>좌클릭 · <kbd>[</kbd>사격</span>
       <span>우클릭 · <kbd>Enter</kbd><span id="kMsl">미사일</span></span>
-      <span><kbd>Shift</kbd>방어막</span>
+      <span><kbd>Shift</kbd>방패</span>
       <span><kbd>R</kbd>재장전</span>
       <span><kbd>F</kbd><span id="kUlt">필살기</span></span>
       <span><kbd>C</kbd>근접 공격</span>
@@ -198,7 +198,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <button class="btn qs qr" data-k="qr" aria-label="오른쪽으로 짧은 대시">▶</button>
     </div>
     <button class="btn fire" data-k="fire">사격</button>
-    <button class="btn shd" data-k="shield">방어막</button>
+    <button class="btn shd" data-k="shield">방패</button>
     <button class="btn msl" data-k="missile">미사일</button>
     <button class="btn ult" data-k="ult" id="ultBtn">필살</button>
     <button class="btn mel" data-k="melee">근접</button>
@@ -208,14 +208,14 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">기계</span> <span class="c2">총격전</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
         <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
         <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter (R: 재장전)</dd>
         <dt>근접 · 필살기</dt><dd>C · F</dd>
-        <dt>부스트 · 방어막</dt><dd>Space (누르는 동안 위로) · Shift</dd>
+        <dt>부스트 · 방패</dt><dd>Space (누르는 동안 위로) · Shift (1초 동안 모든 공격 막기, 4초 쿨타임)</dd>
       </dl>
       <dl class="ctl" id="ctlTouch" hidden>
         <dt>이동</dt><dd>왼쪽 조이스틱 (왼쪽 화면 어디를 눌러도 돼요)</dd>
@@ -223,7 +223,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>시점</dt><dd>자동으로 상대를 따라가요</dd>
         <dt>근접 공격</dt><dd>근접 버튼: 상대 쪽으로 10m 대시해서 베기 (대시하면 끊겨요)</dd>
         <dt>대시 · 부스트</dt><dd>공격 버튼 아래. 대시는 한 번 누르면 조이스틱을 미는 동안 계속 가고, 조이스틱을 놓으면 멈춰요. 부스트는 누르는 동안 위로</dd>
-        <dt>버튼</dt><dd>사격 · 방어막 · 미사일</dd>
+        <dt>버튼</dt><dd>사격 · 방패 · 미사일</dd>
       </dl>
       <p class="rot">폰을 가로로 돌리면 더 넓게 보여요.</p>
       <div class="seg" role="group" aria-label="내 로봇">
@@ -558,7 +558,7 @@ function setSkin(r,key){
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;
   r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
 }
-function place(r,x,z,yaw){Object.assign(r,{frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4,r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -698,7 +698,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
-const BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.3;
+const GUARD_T=1,GUARD_CD=4,BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.3;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
@@ -721,15 +721,16 @@ function step(r,o,inp,dt){
     if(!inp.fire)r.fireLock=false;
     const mob=(inp.jumpHeld||inp.dash||inp.qs)&&r.fuel>0&&r.stun<=0;
     if(mob&&!r.mobPrev){
-      if(r.shield||inp.shield){r.shield=false;r.shieldLock=!!inp.shield}
+      if(r.shield){r.shield=false;r.shieldT=0}
       if(inp.fire)r.fireLock=true;
       r.burstLeft=0;r.melee=null;r.frenzy=0;
       if(r.castT>0){r.castT=0;r.beamDir=null;clearAimLine(r)}
     }
     r.mobPrev=mob;
-    const want=inp.shield&&!r.shieldLock&&r.stun<=0&&(r.shield?r.shieldHp>0:r.shieldHp>15);
-    r.shield=want;
-    if(r.shield)r.shieldHp=Math.max(0,r.shieldHp-40*dt);else r.shieldHp=Math.min(100,r.shieldHp+15*dt);
+    r.shieldCd-=dt;
+    if(r.shieldT>0){r.shieldT-=dt;if(r.shieldT<=0)r.shield=false}
+    if(inp.shield&&(!r.shieldPrev||r!==P)&&!r.shield&&r.shieldCd<=0&&r.stun<=0&&!r.shieldLock){r.shield=true;r.shieldT=GUARD_T;r.shieldCd=GUARD_CD;r.burstLeft=0;r.melee=null;r.frenzy=0;sfx('block',r===P?1:.5)}
+    r.shieldPrev=!!inp.shield;
     if(r.stun>0){r.stun-=dt;if(r.grounded){const k=Math.pow(.02,dt);r.vel.x*=k;r.vel.z*=k}}
     else{
       const sp=r.shield?3.4:W.speed;
@@ -810,9 +811,7 @@ function hurt(d,a,dmg,point,big){
   if(online&&d===C){burst(point,big?16:5,C.shield?[.6,.9,1]:a.spark,big?8:5);C.flashT=.06;return}
   const dir=_d.set(d.pos.x-a.pos.x,0,d.pos.z-a.pos.z).normalize();
   if(d.shield){
-    d.shieldHp-=dmg*(big?2.4:1.6);if(big)d.hp-=dmg*.2*DMG_MULT;
     burst(point,big?16:5,[.6,.9,1],big?8:5);sfx('block',d===P||a===P?1:.5);
-    if(d.shieldHp<=0){d.shield=false;d.shieldHp=0;d.stun=.5}
   }else{
     const real=dmg*armsOf(d).armor*DMG_MULT;d.hp-=real;d.flashT=.08;a.ult=Math.min(100,a.ult+real*ULT_DEAL);d.ult=Math.min(100,d.ult+real*ULT_TAKE);
     {const AW=armsOf(a);let st=real>=STUN_DMG;
@@ -994,7 +993,7 @@ function ai(dt){
   const danger=bullets.some(b=>b.alive&&b.o===P&&b.pos.distanceTo(C.pos)<14&&_t.copy(C.pos).sub(b.pos).dot(b.vel)>0)||missiles.some(m=>m.o===P&&m.pos.distanceTo(C.pos)<12);
   let mx=0,mz=0;
   if(danger&&Math.random()<d.dodge){
-    if(C.shieldHp>35&&Math.random()<.5){cin.shield=true;cin.mx=cin.mz=0;wantMove=false;return}
+    if(C.shieldCd<=0&&Math.random()<.5){cin.shield=true;cin.mx=cin.mz=0;wantMove=false;return}
     cin.jumpHeld=Math.random()<.5;mx=-uz*strafe;mz=ux*strafe;
     if(C.fuel>20&&Math.random()<.4){cin.qs=true;cin.qsX=mx;cin.qsZ=mz}
     else if(C.fuel>30&&Math.random()<.45){cin.dash=true;cin.dashX=mx;cin.dashZ=mz}
@@ -1100,7 +1099,7 @@ function syncModel(r,dt){
   r.m.flash.visible=r.muzzleT>0;if(r.muzzleT>0)r.m.flash.scale.setScalar(rnd(.7,1.3));
   const fl=!r.ko&&(r.dashing||!r.grounded&&(r.vel.y>-3||r.flameT>0));
   r.m.flame.forEach(f=>{f.visible=fl;if(fl)f.scale.set(1,r.flameT>0?rnd(1.5,2):rnd(.8,1.2),1)});
-  r.m.shield.visible=r.shield;if(r.shield){r.m.shield.rotation.y+=.02;r.m.shield.material.opacity=.2+.4*r.shieldHp/100}
+  r.m.shield.visible=r.shield;if(r.shield){r.m.shield.rotation.y+=.02;r.m.shield.material.opacity=.55}
   if(r.invT>0&&!r.ko){r.m.mB.emissive.setHex(Math.floor(r.invT*18)%2?0x5fd0ff:0x1a3550);if(Math.random()<.5){const c=centerOf(r,new V());emit(sparks,c.x+rnd(-.6,.6),c.y+rnd(-1,1),c.z+rnd(-.6,.6),rnd(-2,2),rnd(-1,2),rnd(-2,2),.25,[.6,.9,1])}}
   else r.m.mB.emissive.setHex(r.flashT>0?0xffffff:0x000000);
   r.m.vis.material.color.setHex(r.ko?0x222222:r.m.eye);
@@ -1114,6 +1113,11 @@ function ultMini(el,r,me){
   if(me)ultBtn.classList.toggle('ready',ready);
 }
 const ultBtn=document.getElementById('ultBtn');
+function guardMini(el,r){
+  const cd=Math.max(0,r.shieldCd||0),v=r.shield?100:(1-cd/GUARD_CD)*100;
+  mini(el,v,r.shield||cd<=0);
+  el.lastElementChild.textContent=r.shield?'방패 사용 중':cd>0?`방패 ${cd.toFixed(1)}초`:'방패 준비';
+}
 function mslMini(el,r){
   const rl=r.mReloadT>0||r.mAmmo<0;
   const W=armsOf(r),v=rl?(r.mAmmo<0?0:(1-r.mReloadT/W.mReload)*100):r.mAmmo/W.mMag*100;
@@ -1125,7 +1129,7 @@ let vigT=0,hitT=0,lastSec=-1;
 function hud(){
   const pc=v=>Math.max(0,v/MAX_HP*100)+'%';H.pF.style.width=pc(P.hp);H.pG.style.width=pc(P.ghost);H.cF.style.width=pc(C.hp);H.cG.style.width=pc(C.ghost);
   H.pF.classList.toggle('low',P.hp<MAX_HP*.3);H.cF.classList.toggle('low',C.hp<MAX_HP*.3);
-  mslMini(H.pE,P);mini(H.pS,P.shieldHp,P.shieldHp>15);mslMini(H.cE,C);ultMini(H.pU,P,true);ultMini(H.cU,C,false);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
+  mslMini(H.pE,P);guardMini(H.pS,P);mslMini(H.cE,C);ultMini(H.pU,P,true);ultMini(H.cU,C,false);guardMini(H.cS,C);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
   const s=Math.max(0,Math.ceil(timer));H.time.textContent=s;H.time.classList.toggle('low',s<=10);
   if(phase==='fight'&&s<=5&&s!==lastSec&&s>0)sfx('tick');lastSec=s;
   H.pips.innerHTML=[0,1].map(i=>`<i class="${i<P.wins?'pw':''}"></i>`).join('')+'<span class="gap"></span>'+[0,1].map(i=>`<i class="${i<C.wins?'cw':''}"></i>`).join('');
@@ -1402,6 +1406,7 @@ function remoteUpdate(dt){
     if(Array.isArray(s.br))s.br.slice(0,BREAK.length).forEach(i=>{const b=BREAK[i|0];if(b&&!b.dead)breakBox(b)});
   }
   if(typeof s.u==='number')C.ult=clamp(s.u,0,100);
+  if(typeof s.sc==='number')C.shieldCd=clamp(s.sc,0,GUARD_CD);
   const mlc=s.ml|0;
   if(lastMelN===null||mlc<lastMelN)lastMelN=mlc;
   else if(mlc>lastMelN){lastMelN=mlc;if(phase==='fight'){C.melee={ph:'swing',t:0,hit:false,frz:(C.frzT||0)>0};sfx('slash',.7)}}
@@ -1431,7 +1436,7 @@ function netTick(dt){
   if(online)remoteUpdate(dt);
   sendT-=dt;if(sendT>0)return;sendT=.05;
   const f=(P.grounded?1:0)|(P.boosting?2:0)|(P.dashing?4:0)|(P.shield?8:0)|(P.ko?16:0)|(P.invT>0?32:0);
-  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,xn:P.ultN,ml:P.meleeN,xp:P.ultP||null,u:Math.round(P.ult),k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
+  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,xn:P.ultN,sc:Math.round(Math.max(0,P.shieldCd)*10)/10,ml:P.meleeN,xp:P.ultP||null,u:Math.round(P.ult),k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
   if(online&&isHost)st.m={match:curMatch,round,phase,timer:Math.ceil(timer),wh:P.wins,wg:C.wins,ban:H.banner.textContent.slice(0,12),win:lastWin};
   rm.presence(st).catch(()=>{});
 }
