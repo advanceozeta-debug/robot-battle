@@ -100,12 +100,13 @@ body.touch .tc{display:block}
 .btn.dash,.btn.boost{width:70px;height:46px;border-radius:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));color:#ffb43a;border-color:#6b4418;font-size:14px}
 .btn.boost{right:calc(100px + env(safe-area-inset-right,0px))}
 .btn.dash{right:calc(22px + env(safe-area-inset-right,0px))}
-.lpad{position:absolute;left:calc(20px + env(safe-area-inset-left,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));width:236px;height:236px;pointer-events:none}
+.lpad{position:absolute;left:calc(16px + env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));width:260px;height:260px;pointer-events:none}
 .lpad .btn{pointer-events:auto}
-.btn.qs{width:46px;height:46px;font-size:15px;color:#ffb43a;border-color:#6b4418;background:rgba(40,26,12,.6)}
-.qs.qf{left:50%;top:0;margin-left:-23px}.qs.qb{left:50%;bottom:0;margin-left:-23px}
-.qs.ql{left:0;top:50%;margin-top:-23px}.qs.qr{right:0;top:50%;margin-top:-23px}
-@media (orientation:portrait){.lpad{width:196px;height:196px}.btn.qs{width:40px;height:40px;font-size:13px}.qs.qf,.qs.qb{margin-left:-20px}.qs.ql,.qs.qr{margin-top:-20px}}
+.btn.qs{font-size:16px;color:#ffb43a;border-color:#6b4418;background:rgba(40,26,12,.6);border-radius:14px}
+.qs.qf,.qs.qb{width:124px;height:50px;left:50%;margin-left:-62px}.qs.qf{top:0}.qs.qb{bottom:0}
+.qs.ql,.qs.qr{width:50px;height:124px;top:50%;margin-top:-62px}.qs.ql{left:0}.qs.qr{right:0}
+@media (orientation:landscape) and (max-height:440px){.lpad{width:236px;height:216px}.qs.qf,.qs.qb{width:112px;height:44px;margin-left:-56px}.qs.ql,.qs.qr{width:46px;height:104px;margin-top:-52px}.btn.mel{right:calc(196px + env(safe-area-inset-right,0px))!important;bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}}
+@media (orientation:portrait){.lpad{width:214px;height:214px}.btn.qs{font-size:14px}.qs.qf,.qs.qb{width:100px;height:44px;margin-left:-50px}.qs.ql,.qs.qr{width:44px;height:100px;margin-top:-50px}}
 .joy{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:1px solid rgba(212,226,240,.35);background:rgba(20,33,48,.35);pointer-events:none}
 .joy i{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(212,226,240,.55)}
 .joy.idle{opacity:.45}
