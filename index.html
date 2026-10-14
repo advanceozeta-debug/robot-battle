@@ -514,7 +514,7 @@ const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;
 const ARMS={
   bolt:{gunName:'빔 라이플',mag:60,rate:.11,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:2.1,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{gunName:'개틀링',mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
-  raven:{gunName:'레일건',mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.6,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:4.5,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
+  raven:{gunName:'레일건',mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKINS=['bolt','crusher','raven'];
@@ -794,7 +794,7 @@ function updProj(dt){
     if(m.salvo&&!m.split&&m.age>.2){m.split=true;m.vel.x+=m.rx*m.side*5;m.vel.z+=m.rz*m.side*5;m.vel.y+=m.vo*3}
     if(m.age>.2&&m.age<m.guide&&!t.ko){
       const aim=centerOf(t,_c);
-      if(m.salvo){const f=clamp(m.pos.distanceTo(aim)/18,0,1);aim.x+=m.rx*m.side*f*1.7;aim.z+=m.rz*m.side*f*1.7;aim.y+=m.vo*f*1.4}
+      if(m.salvo){const f=Math.max(.45,clamp(m.pos.distanceTo(aim)/18,0,1));aim.x+=m.rx*m.side*f*1.7;aim.z+=m.rz*m.side*f*1.7;aim.y+=m.vo*f*1.4}
       const want=aim.sub(m.pos).normalize(),cur=_m.copy(m.vel).normalize();
       cur.lerp(want,Math.min(1,dt*m.turn)).normalize();sp=Math.min(m.maxSp,sp+28*dt);m.vel.copy(cur).multiplyScalar(sp);
     }else if(m.lob&&m.age<=.2)m.vel.y-=12*dt;
