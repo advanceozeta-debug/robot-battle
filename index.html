@@ -20,6 +20,7 @@
   --orange:#ff7a2f;
   --violet:#b36bff;
   --green:#4ddc6a;
+  --gold:#ffd166;
   --hazard:#ffd23f;
   --red:#ff3b2f;
   --display:"Black Han Sans","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
@@ -118,7 +119,7 @@ body.touch .tc{display:block}
 .sub{margin:0;color:var(--dim);font-size:clamp(12px,2.6vw,15px);line-height:1.55;max-width:60ch}
 .ctl{display:grid;grid-template-columns:auto auto;gap:4px 14px;font-size:13px;color:var(--steel);text-align:left}
 .ctl dt{color:var(--dim)} .ctl dd{margin:0}
-.seg{display:flex;gap:6px;background:rgba(20,33,48,.9);padding:4px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
+.seg{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;background:rgba(20,33,48,.9);padding:4px;border-radius:6px;box-shadow:inset 0 0 0 1px var(--line)}
 .seg button{font:inherit;font-size:15px;color:var(--dim);background:none;border:0;border-radius:4px;padding:6px 14px;cursor:pointer}
 .seg button[aria-pressed="true"]{background:var(--steel);color:var(--night)}
 .go{font-family:var(--display);font-size:22px;color:#1a1400;background:repeating-linear-gradient(-45deg,var(--hazard) 0 14px,#f2c21c 14px 28px);border:0;border-radius:4px;padding:10px 36px;cursor:pointer;box-shadow:0 4px 0 #8f7410}
@@ -137,6 +138,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
 .status{color:var(--steel)}
 .note{font-size:12px}
 .seg .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.seg .epic{margin-left:6px;font-family:var(--display);font-weight:400;font-size:10px;letter-spacing:.06em;padding:1px 5px;border-radius:3px;background:linear-gradient(90deg,#ffd166,#ff8a3d);color:#2a1600;vertical-align:1px}
 .result{font-family:var(--display);font-size:clamp(44px,11vw,84px);margin:0;line-height:1}
 .rot{display:none;color:var(--hazard);font-size:13px;margin:0}
 @media (orientation:portrait){body.touch .rot{display:block}}
@@ -231,6 +233,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <button id="s-crusher" data-skin="crusher" aria-pressed="false"><i class="dot" style="background:var(--orange)"></i>크래셔</button>
         <button id="s-raven" data-skin="raven" aria-pressed="false"><i class="dot" style="background:var(--violet)"></i>레이븐</button>
         <button id="s-viper" data-skin="viper" aria-pressed="false"><i class="dot" style="background:var(--green)"></i>바이퍼</button>
+        <button id="s-seraph" data-skin="seraph" aria-pressed="false"><i class="dot" style="background:var(--gold)"></i>세라프<b class="epic">EPIC</b></button>
       </div>
       <p class="sub" id="skinInfo"></p>
       <div class="seg" role="group" aria-label="난이도" id="diffSeg">
@@ -387,7 +390,7 @@ let ac=null,muted=false;
 function sfx(t,vol=1){
   if(!ac||muted)return;
   const now=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();
-  const S={shotgun:['square',420,70,.16,.08],slash:['sawtooth',1100,180,.14,.06],shot:['square',900,380,.05,.03],hit:['square',220,90,.08,.07],block:['triangle',1300,1000,.05,.05],jump:['sine',260,520,.1,.05],missile:['sawtooth',140,600,.3,.06],boom:['sawtooth',140,30,.5,.14],ko:['sawtooth',300,25,.9,.16],heat:['triangle',600,300,.25,.06],tick:['sine',1500,1500,.04,.04],rail:['sawtooth',1900,160,.2,.06],dash:['sawtooth',260,80,.2,.06]}[t];
+  const S={bit:['sine',1700,900,.06,.025],shotgun:['square',420,70,.16,.08],slash:['sawtooth',1100,180,.14,.06],shot:['square',900,380,.05,.03],hit:['square',220,90,.08,.07],block:['triangle',1300,1000,.05,.05],jump:['sine',260,520,.1,.05],missile:['sawtooth',140,600,.3,.06],boom:['sawtooth',140,30,.5,.14],ko:['sawtooth',300,25,.9,.16],heat:['triangle',600,300,.25,.06],tick:['sine',1500,1500,.04,.04],rail:['sawtooth',1900,160,.2,.06],dash:['sawtooth',260,80,.2,.06]}[t];
   o.type=S[0];o.frequency.setValueAtTime(S[1],now);o.frequency.exponentialRampToValueAtTime(S[2],now+S[3]);
   g.gain.setValueAtTime(S[4]*vol,now);g.gain.exponentialRampToValueAtTime(.0001,now+S[3]);
   o.connect(g).connect(ac.destination);o.start(now);o.stop(now+S[3]+.02);
@@ -426,7 +429,8 @@ const SPEC={
   bolt:{main:0xe9eef4,sec:0x2b3a55,acc:0x39c6ff,eye:0x9ff0ff,flame:0x8fe2ff,crest:'fin'},
   crusher:{main:0x2c3038,sec:0x8a1d24,acc:0xff7a2f,eye:0xff4a3a,flame:0xffa83a,crest:'horn'},
   raven:{main:0x463a62,sec:0x1f1a2e,acc:0xb36bff,eye:0xff5ad8,flame:0xd59bff,crest:'blade'},
-  viper:{main:0x34503a,sec:0x182419,acc:0x4ddc6a,eye:0xd8ff5a,flame:0x9dffb0,crest:'horns'}
+  viper:{main:0x34503a,sec:0x182419,acc:0x4ddc6a,eye:0xd8ff5a,flame:0x9dffb0,crest:'horns'},
+  seraph:{main:0xf1ede2,sec:0x8a6a2a,acc:0xffd166,eye:0x7fe8ff,flame:0xffe7a8,crest:'halo'}
 };
 function frustum(rTop,rBot,h,m){const geo=new T.CylinderGeometry(rTop,rBot,h,4,1);geo.rotateY(Math.PI/4);return new T.Mesh(geo,m)}
 function makeBot(col,eye,key){
@@ -463,7 +467,8 @@ function makeBot(col,eye,key){
   box(.34,.08,.3,mS,0,.12,0,head);
   const vis=glow(.24,.05,.04,mE,0,-.01,-.165,head);
   box(.12,.08,.06,mD,0,-.11,-.15,head);
-  if(S.crest==='horns'){glow(.04,.04,.34,mA,-.12,.08,-.2,head,-.5,.25,0);glow(.04,.04,.34,mA,.12,.08,-.2,head,-.5,-.25,0);box(.36,.06,.1,mS,0,-.05,-.16,head)}
+  if(S.crest==='halo'){const h=new T.Mesh(new T.TorusGeometry(.24,.025,6,28),mA);h.rotation.x=Math.PI/2;h.position.set(0,.34,.04);head.add(h);glow(.05,.12,.05,mA,0,.13,-.15,head)}
+  else if(S.crest==='horns'){glow(.04,.04,.34,mA,-.12,.08,-.2,head,-.5,.25,0);glow(.04,.04,.34,mA,.12,.08,-.2,head,-.5,-.25,0);box(.36,.06,.1,mS,0,-.05,-.16,head)}
   else if(S.crest==='blade'){glow(.03,.04,.42,mA,-.13,.1,.12,head,.25,.45,0);glow(.03,.04,.42,mA,.13,.1,.12,head,.25,-.45,0);box(.2,.05,.06,mS,0,-.06,-.17,head)}
   else if(S.crest==='fin'){glow(.03,.22,.2,mA,0,.22,-.06,head,-.6);box(.03,.07,.3,mS,-.14,.13,.04,head,.4,0,.5);box(.03,.07,.3,mS,.14,.13,.04,head,.4,0,-.5)}
   else{put(new T.Mesh(new T.ConeGeometry(.05,.36,6),mA),0,.27,-.05,head,-.45).castShadow=false;box(.06,.17,.06,mS,-.15,.13,.05,head,0,0,.6);box(.06,.17,.06,mS,.15,.13,.05,head,0,0,-.6)}
@@ -488,7 +493,7 @@ function makeBot(col,eye,key){
   blade.visible=false;
   const gun=new T.Group();gun.position.set(.66,1.82,0);g.add(gun);
   box(.2,.2,.42,mB,0,-.05,-.12,gun);
-  let barrels=null;const mslPort=new T.Object3D();
+  let barrels=null,bitRack=null;const mslPort=new T.Object3D();
   if(key==='crusher'){
     box(.3,.32,.55,mS,0,-.04,-.45,gun);
     glow(.32,.05,.1,mA,0,.13,-.5,gun);
@@ -501,6 +506,15 @@ function makeBot(col,eye,key){
     const ring2=ring1.clone();ring2.position.z=.5;zk.add(ring2);
     glow(.05,.05,.9,mA,0,.15,0,zk);
     mslPort.position.set(0,0,-.85);zk.add(mslPort);
+  }else if(key==='seraph'){
+    box(.15,.18,.5,mS,0,-.04,-.3,gun);
+    box(.12,.14,1.3,mB,0,-.03,-.75,gun);
+    glow(.04,.04,.9,mA,0,.09,-.7,gun);
+    box(.08,.08,.25,mD,0,-.03,-1.45,gun);
+    bitRack=new T.Group();bitRack.position.set(0,1.95,.5);g.add(bitRack);
+    for(let i=0;i<6;i++){const sd=i<3?-1:1,k=i%3;const f=new T.Group();f.position.set(sd*(.22+k*.12),.1+k*.2,0);f.rotation.set(-.2,0,sd*(.5+k*.35));bitRack.add(f);
+      const bl=new T.Mesh(new T.ConeGeometry(.09,.85,3),mB);bl.position.y=.42;bl.castShadow=true;f.add(bl);const gl=new T.Mesh(new T.BoxGeometry(.03,.5,.03),mA);gl.position.set(0,.4,-.06);f.add(gl)}
+    mslPort.position.set(0,.4,0);bitRack.add(mslPort);
   }else if(key==='viper'){
     box(.22,.24,.5,mS,0,-.04,-.35,gun);
     box(.2,.2,.9,mD,0,-.02,-.85,gun);
@@ -531,26 +545,28 @@ function makeBot(col,eye,key){
   flash.position.set(0,-.04,-1.58);flash.visible=false;gun.add(flash);
   const muzzle=new T.Object3D();muzzle.position.set(0,-.04,-1.58);gun.add(muzzle);
   if(key==='raven'){muzzle.position.z=-2.05;flash.position.z=-2.05}
+  if(key==='seraph'){muzzle.position.z=-1.6;flash.position.z=-1.6}
   if(key==='viper'){muzzle.position.z=-1.35;flash.position.z=-1.35;flash.scale.setScalar(1.6)}
   const shield=new T.Mesh(new T.IcosahedronGeometry(1.7,1),new T.MeshBasicMaterial({color:0x6fd6ff,wireframe:true,transparent:true,opacity:.5,blending:T.AdditiveBlending,depthWrite:false}));
   const shell=new T.Mesh(new T.SphereGeometry(1.62,20,14),new T.MeshBasicMaterial({color:0x39c6ff,transparent:true,opacity:.12,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));
   shield.add(shell);shield.position.y=1.35;shield.visible=false;g.add(shield);
   scene.add(g);
-  return{g,legs,gun,flame,flash,muzzle,shield,mB,vis,eye:S.eye,barrels,mslPort,la,blade};
+  return{g,legs,gun,flame,flash,muzzle,shield,mB,vis,eye:S.eye,barrels,mslPort,la,blade,bitRack};
 }
 function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0,ultN:0,meleeN:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0}}
 const MSL_RANGE=70,MSL_GUIDE=1.3;
-const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]},raven:{name:'레이븐',col:0xb36bff,css:'var(--violet)',spark:[.75,.45,1]},viper:{name:'바이퍼',col:0x4ddc6a,css:'var(--green)',spark:[.35,1,.45]}};
+const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]},raven:{name:'레이븐',col:0xb36bff,css:'var(--violet)',spark:[.75,.45,1]},viper:{name:'바이퍼',col:0x4ddc6a,css:'var(--green)',spark:[.35,1,.45]},seraph:{name:'세라프',col:0xffd166,css:'var(--gold)',spark:[1,.85,.4]}};
 const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=SKIN.bolt.spark;P.skin='bolt';
 const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;C.skin='crusher';
 const ARMS={
   bolt:{meleeDmg:14,meleeRange:35,lungeSp:30,ultName:'섀도우 블링크',ult:'blink',gunName:'빔 라이플',mag:60,rate:.11,burst:12,stunHits:12,stunWin:2,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:1.6,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{meleeDmg:20,meleeRange:30,lungeSp:26,ultName:'융단 포격',ult:'barrage',gunName:'개틀링',stunHits:12,stunWin:1.5,mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
+  seraph:{epic:true,meleeDmg:14,meleeRange:32,lungeSp:30,ultName:'헤일로 스톰',ult:'halo',gunName:'빔 소총',stunHits:10,stunWin:2,mag:30,rate:.16,dmg:3.2,spread:0,bspeed:70,reload:2.4,mName:'윙 비트',mShort:'비트',mMag:1,mReload:8,mCd:.5,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:6,bitDmg:2.4,speed:8.8,armor:1},
   viper:{meleeDmg:22,frenzyDmg:18,meleeRange:30,lungeSp:34,meleeCd:1.5,ultName:'광폭 연격',ult:'frenzy',gunName:'샷건',stunHits:12,stunWin:1.2,mag:6,rate:.8,pellets:7,dmg:2.2,spread:.085,bspeed:70,reload:3,mName:'산탄 로켓',mShort:'로켓',mMag:2,mReload:6.5,mCd:.6,guide:0,mDmg:10,mRad:3.2,mSpeed:38,lob:false,salvo:3,speed:9,armor:.95,snd:'shotgun'},
   raven:{meleeDmg:12,meleeRange:38,lungeSp:32,ultName:'빔 캐논',ult:'beam',gunName:'레일건',stunHits:3,stunWin:4,mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
-const SKINS=['bolt','crusher','raven','viper'];
+const SKINS=['bolt','crusher','raven','viper','seraph'];
 const otherSkin=k=>{const o=SKINS.filter(x=>x!==k);return o[Math.floor(Math.random()*o.length)]};
 let mySkin='bolt';try{const v=localStorage.getItem('kc3d-skin');if(SKINS.includes(v))mySkin=v}catch(_){}
 function setSkin(r,key){
@@ -563,20 +579,59 @@ const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4,r.pos.z);
 
 /* ---------- projectiles ---------- */
 const bulletGeo=new T.BoxGeometry(.09,.09,1);
-const bMat={bolt:new T.MeshBasicMaterial({color:0x9fe8ff}),crusher:new T.MeshBasicMaterial({color:0xffb27a}),raven:new T.MeshBasicMaterial({color:0xe2b8ff}),viper:new T.MeshBasicMaterial({color:0xc8ffb0})};
+const bMat={bolt:new T.MeshBasicMaterial({color:0x9fe8ff}),crusher:new T.MeshBasicMaterial({color:0xffb27a}),raven:new T.MeshBasicMaterial({color:0xe2b8ff}),viper:new T.MeshBasicMaterial({color:0xc8ffb0}),seraph:new T.MeshBasicMaterial({color:0xfff0b0})};
 const bullets=[];
-function spawnBullet(o,from,dir){
+function spawnBullet(o,from,dir,dmgO,spdO){
   let b=bullets.find(x=>!x.alive);
   if(!b){b={mesh:new T.Mesh(bulletGeo,bMat.bolt),pos:new V(),vel:new V(),alive:false};scene.add(b.mesh);bullets.push(b)}
-  const W=armsOf(o);b.alive=true;b.o=o;b.dmg=W.dmg;b.life=1.7;b.pos.copy(from);b.vel.copy(dir).multiplyScalar(W.bspeed);
+  const W=armsOf(o);b.alive=true;b.o=o;b.dmg=dmgO??W.dmg;b.life=1.7;b.pos.copy(from);b.vel.copy(dir).multiplyScalar(spdO??W.bspeed);
   b.mesh.material=bMat[o.skin]||bMat.bolt;{const rv=o.skin==='raven',vp=o.skin==='viper';b.mesh.scale.set(rv?2.4:vp?.8:1,rv?2.4:vp?.8:1,rv?3.2:vp?.6:1)}b.mesh.visible=true;b.mesh.position.copy(from);b.mesh.lookAt(_p.copy(from).add(dir));
 }
 const missiles=[];
 
 const mslGeo=new T.CylinderGeometry(.14,.14,.8,8);mslGeo.rotateX(Math.PI/2);
 const tipGeo=new T.ConeGeometry(.14,.3,8);tipGeo.rotateX(-Math.PI/2);tipGeo.translate(0,0,-.55);
+const drones=[];
+const droneGeo=new T.ConeGeometry(.17,1.05,3);droneGeo.rotateX(-Math.PI/2);
+function launchDrones(r,o,n,mode){
+  const halo=mode==='halo',from=r.m.mslPort.getWorldPosition(new V());
+  const mat=new T.MeshStandardMaterial({color:0xf1ede2,emissive:r.col,emissiveIntensity:.5,metalness:.4,roughness:.35});
+  for(let i=0;i<n;i++){
+    const mesh=new T.Mesh(droneGeo,mat);const tip=new T.Mesh(new T.SphereGeometry(.07,6,4),new T.MeshBasicMaterial({color:r.col}));tip.position.z=-.52;tip.scale.setScalar(1.4);mesh.add(tip);
+    const p=from.clone().add(new V(rnd(-.6,.6),rnd(0,.6),rnd(-.6,.6)));mesh.position.copy(p);scene.add(mesh);
+    drones.push({r,o,mesh,pos:p,ang:i/n*Math.PI*2+rnd(-.2,.2),halo,t:0,fireT:halo?.75:.6+i*.15,shots:0,max:halo?3:2,rad:halo?5:7.5,h:halo?1.2:2.6,back:false,dmg:armsOf(r).bitDmg||2.4});
+  }
+  sfx('missile',r===P||o===P?1:.6);
+}
+function updDrones(dt){
+  for(let i=drones.length-1;i>=0;i--){
+    const d=drones[i];d.t+=dt;
+    if(!d.back){
+      const tc=centerOf(d.o,new V()),a=d.ang+d.t*(d.halo?.5:1.1);
+      const slot=tc.clone().add(new V(Math.cos(a)*d.rad,d.h+Math.sin(d.t*3+d.ang)*.4,Math.sin(a)*d.rad));
+      d.pos.lerp(slot,1-Math.exp(-dt*(d.halo?7:4)));
+      d.fireT-=dt;
+      if(d.fireT<=0&&d.pos.distanceTo(slot)<3&&!d.o.ko&&phase==='fight'){
+        const dir=tc.clone().sub(d.pos).normalize();dir.x+=rnd(-.03,.03);dir.y+=rnd(-.02,.02);dir.z+=rnd(-.03,.03);dir.normalize();
+        spawnBullet(d.r,d.pos.clone(),dir,d.dmg,60);emit(sparks,d.pos.x,d.pos.y,d.pos.z,0,0,0,.2,d.r.spark);
+        if(d.r===P||d.o===P)sfx('bit',.6);
+        d.shots++;d.fireT=d.halo?.35:.7;if(d.shots>=d.max)d.back=true;
+      }
+      if(d.t>(d.halo?4:6)||d.r.ko||d.o.ko)d.back=true;
+      d.mesh.position.copy(d.pos);d.mesh.lookAt(tc);if(Math.random()<.5)emit(sparks,d.pos.x,d.pos.y,d.pos.z,rnd(-.3,.3),rnd(-.3,.3),rnd(-.3,.3),.3,d.r.spark);
+    }else{
+      const home=d.r.m.mslPort.getWorldPosition(new V());
+      d.pos.lerp(home,1-Math.exp(-dt*6));d.mesh.position.copy(d.pos);d.mesh.lookAt(home);
+      if(d.pos.distanceTo(home)<1||d.t>10){scene.remove(d.mesh);drones.splice(i,1)}
+    }
+  }
+  for(const r of [P,C])if(r.m.bitRack)r.m.bitRack.visible=!drones.some(d=>d.r===r);
+}
+function clearDrones(){drones.forEach(d=>scene.remove(d.mesh));drones.length=0}
 function launchMissile(r,target){
-  const W=armsOf(r),from=r.m.mslPort.getWorldPosition(new V());
+  const W=armsOf(r);
+  if(W.drones){launchDrones(r,r===P?C:P,W.drones,'bits');return}
+  const from=r.m.mslPort.getWorldPosition(new V());
   const n=W.salvo||1,rx=Math.cos(r.yaw),rz=-Math.sin(r.yaw);
   for(let i=0;i<n;i++){
     const g=new T.Group();
@@ -776,7 +831,7 @@ function step(r,o,inp,dt){
       }
       if(inp.missile&&!r.shield&&r.mAmmo>0&&r.mReloadT<=0&&r.mCd<=0){
         r.mAmmo--;r.mCd=W.mCd;if(r.mAmmo<=0)r.mReloadT=W.mReload;r.mslN++;
-        launchMissile(r,inp.target||centerOf(o,new V()));sfx(W.lob?'missile':'boom',r===P?1:.6);
+        launchMissile(r,inp.target||centerOf(o,new V()));if(!W.drones)sfx(W.lob?'missile':'boom',r===P?1:.6);
       }
     }
   }
@@ -914,6 +969,7 @@ function startUlt(r,o){
   const U=armsOf(r).ult;
   if(U==='beam'){r.castT=BEAM_CHARGE;r.burstLeft=0;lockBeam(r,o)}
   else if(U==='barrage'){const t=o.pos.clone().addScaledVector(o.vel,.5);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);r.ultP=[r2(t.x),r2(t.z)];startBarrage(r,t)}
+  else if(U==='halo'){launchDrones(r,o,8,'halo')}
   else if(U==='frenzy'){r.frenzy=3;r.melee=null;r.burstLeft=0}
   else blink(r,o);
 }
@@ -970,7 +1026,7 @@ function updUlt(dt){
     }
   }
 }
-function clearUlt(){clearAimLine(P);clearAimLine(C);P.castT=C.castT=0;beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0}
+function clearUlt(){clearDrones();clearAimLine(P);clearAimLine(C);P.castT=C.castT=0;beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0}
 
 /* ---------- CPU ---------- */
 const DIFF={easy:{react:.45,dodge:.2,aggr:.45,msl:.2,spread:.075},normal:{react:.28,dodge:.45,aggr:.65,msl:.4,spread:.045},hard:{react:.16,dodge:.7,aggr:.85,msl:.6,spread:.022}};
@@ -1002,7 +1058,7 @@ function ai(dt){
     const los=clearLine(muzzle,centerOf(P,_c));
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
     if(dist<12&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
-    if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
+    if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     if(Math.random()<.12)ideal=C.skin==='viper'?rnd(5,12):rnd(12,30);
     if(Math.random()<.15)strafe*=-1;
@@ -1191,7 +1247,7 @@ function loop(now){
   press.jump=press.missile=press.reload=press.ult=press.melee=false;press.qs=null;
   syncModel(P,dt);syncModel(C,dt);
   updateCamera(dt);
-  updUlt(dt);updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
+  updUlt(dt);updDrones(dt);updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
   if(phase!=='menu'&&phase!=='over')hud();
   sky.position.copy(camera.position);sunDisc.position.copy(camera.position).addScaledVector(sunDir,210);sunGlow.position.copy(sunDisc.position);
   clouds.rotation.y+=dt*.004;ring.rotation.z+=dt*.6;
@@ -1291,7 +1347,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={viper:'바이퍼 · 필살기 광폭 연격(돌진 베기 3연속, 1타 18) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 섀도우 블링크 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 윙 비트 6기(날아가서 상대 주위를 돌며 사격) · 균형형',viper:'바이퍼 · 필살기 광폭 연격(돌진 베기 3연속, 1타 18) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 섀도우 블링크 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){$('skinInfo').textContent=SKIN_INFO[mySkin]}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
@@ -1383,7 +1439,7 @@ function remoteFire(){
   const CW=armsOf(C),sw=.02+CW.spread,base=centerOf(P,new V()).sub(from).normalize();
   for(let k=0;k<(CW.pellets||1);k++){const dir=base.clone();dir.x+=rnd(-sw,sw);dir.y+=rnd(-sw,sw)*.6;dir.z+=rnd(-sw,sw);dir.normalize();spawnBullet(C,from,dir)}C.muzzleT=.05;sfx(armsOf(C).snd||'shot',.45);
 }
-function remoteMissile(){launchMissile(C,centerOf(P,new V()));sfx(armsOf(C).lob?'missile':'boom',.6)}
+function remoteMissile(){launchMissile(C,centerOf(P,new V()));if(!armsOf(C).drones)sfx(armsOf(C).lob?'missile':'boom',.6)}
 function remoteUpdate(dt){
   const s=oppPresence();
   if(!isHost&&s)guestSync(s.m);
@@ -1417,6 +1473,7 @@ function remoteUpdate(dt){
     const CU=armsOf(C).ult;
     if(CU==='beam'){C.castT=BEAM_CHARGE;lockBeam(C,P)}
     else if(CU==='barrage'&&Array.isArray(s.xp)){startBarrage(C,new V(+s.xp[0]||0,0,+s.xp[1]||0));sfx('missile',.7)}
+    else if(CU==='halo'){launchDrones(C,P,8,'halo')}
     else if(CU==='frenzy'){C.frzT=3;burst(centerOf(C,new V()),30,C.spark,8,.5);sfx('dash',.7)}
     else if(CU==='blink'){burst(centerOf(C,new V()),40,C.spark,9,.6);sfx('dash',.7)}
   }}
