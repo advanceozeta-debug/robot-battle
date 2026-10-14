@@ -129,6 +129,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
 .code{font-family:var(--display);font-size:clamp(44px,12vw,72px);letter-spacing:.18em;margin:0;line-height:1;color:var(--hazard)}
 .status{color:var(--steel)}
 .note{font-size:12px}
+.seg .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
 .result{font-family:var(--display);font-size:clamp(44px,11vw,84px);margin:0;line-height:1}
 .rot{display:none;color:var(--hazard);font-size:13px;margin:0}
 @media (orientation:portrait){body.touch .rot{display:block}}
@@ -163,7 +164,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     <div class="arrow" id="arrow" hidden></div>
     <div class="cross" id="cross"><i></i><i></i><i></i><i></i><b></b><span class="hm"></span></div>
     <div class="heat" id="heat"><div></div></div>
-    <div class="oh" id="oh" hidden>과열</div>
+    <div class="oh" id="oh" hidden>재장전</div>
     <div class="banner" id="banner"></div>
     <div class="vig" id="vig"></div>
     <div class="keys">
@@ -174,6 +175,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <span>좌클릭 · <kbd>[</kbd>사격</span>
       <span>우클릭 · <kbd>Enter</kbd>미사일</span>
       <span><kbd>Shift</kbd>방어막</span>
+      <span><kbd>R</kbd>재장전</span>
     </div>
   </div>
   <div class="tc" id="tc" hidden>
@@ -193,12 +195,12 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">볼트</span> 대 <span class="c2">크래셔</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 유도 미사일은 사거리(24m)가 있어서 멀리서 쏘면 날아가다 사거리 끝에서 터져요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 유도 미사일은 3발을 쏘면 재장전해요. 미사일은 사거리(24m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
         <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
-        <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter</dd>
+        <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter (R: 재장전)</dd>
         <dt>부스트 · 방어막</dt><dd>Space (누르는 동안 위로) · Shift</dd>
       </dl>
       <dl class="ctl" id="ctlTouch" hidden>
@@ -209,7 +211,11 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>버튼</dt><dd>사격 · 방어막 · 미사일</dd>
       </dl>
       <p class="rot">폰을 가로로 돌리면 더 넓게 보여요.</p>
-      <div class="seg" role="group" aria-label="난이도">
+      <div class="seg" role="group" aria-label="내 로봇">
+        <button id="s-bolt" data-skin="bolt" aria-pressed="true"><i class="dot" style="background:var(--cyan)"></i>볼트</button>
+        <button id="s-crusher" data-skin="crusher" aria-pressed="false"><i class="dot" style="background:var(--orange)"></i>크래셔</button>
+      </div>
+      <div class="seg" role="group" aria-label="난이도" id="diffSeg">
         <button id="d-easy" data-d="easy" aria-pressed="false">쉬움</button>
         <button id="d-normal" data-d="normal" aria-pressed="true">보통</button>
         <button id="d-hard" data-d="hard" aria-pressed="false">어려움</button>
@@ -465,20 +471,28 @@ function makeBot(col,eye,key){
   return{g,legs,gun,flame,flash,muzzle,shield,mB,vis,eye:S.eye};
 }
 function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0}}
-const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=[.25,.8,1];
-const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=[1,.5,.18];
-function place(r,x,z,yaw){Object.assign(r,{yaw,aimPitch:0,hp:100,ghost:100,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]}};
+const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=SKIN.bolt.spark;P.skin='bolt';
+const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;C.skin='crusher';
+const otherSkin=k=>k==='bolt'?'crusher':'bolt';
+let mySkin='bolt';try{const v=localStorage.getItem('kc3d-skin');if(v==='bolt'||v==='crusher')mySkin=v}catch(_){}
+function setSkin(r,key){
+  if(!SKIN[key]||r.skin===key)return;
+  scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;
+  r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);
+}
+function place(r,x,z,yaw){Object.assign(r,{ammo:60,reloadT:0,mAmmo:3,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,hp:100,ghost:100,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4,r.pos.z);
 
 /* ---------- projectiles ---------- */
 const bulletGeo=new T.BoxGeometry(.09,.09,1);
-const bMat={p:new T.MeshBasicMaterial({color:0x9fe8ff}),c:new T.MeshBasicMaterial({color:0xffb27a})};
+const bMat={bolt:new T.MeshBasicMaterial({color:0x9fe8ff}),crusher:new T.MeshBasicMaterial({color:0xffb27a})};
 const bullets=[];
 function spawnBullet(o,from,dir){
   let b=bullets.find(x=>!x.alive);
-  if(!b){b={mesh:new T.Mesh(bulletGeo,bMat.p),pos:new V(),vel:new V(),alive:false};scene.add(b.mesh);bullets.push(b)}
+  if(!b){b={mesh:new T.Mesh(bulletGeo,bMat.bolt),pos:new V(),vel:new V(),alive:false};scene.add(b.mesh);bullets.push(b)}
   b.alive=true;b.o=o;b.life=1.6;b.pos.copy(from);b.vel.copy(dir).multiplyScalar(62);
-  b.mesh.material=o===P?bMat.p:bMat.c;b.mesh.visible=true;b.mesh.position.copy(from);b.mesh.lookAt(_p.copy(from).add(dir));
+  b.mesh.material=bMat[o.skin]||bMat.bolt;b.mesh.visible=true;b.mesh.position.copy(from);b.mesh.lookAt(_p.copy(from).add(dir));
 }
 const missiles=[];
 const MSL_RANGE=24;
@@ -528,7 +542,7 @@ function resetBreakables(){
 
 /* ---------- input ---------- */
 const keys={};
-const press={jump:false,missile:false,qs:null};
+const press={jump:false,missile:false,qs:null,reload:false};
 let fireHeld=false,shieldHeld=false,jumpHeld=false,boostHeld=false;
 let camYaw=0,camPitch=-.08,locked=false;
 const joy={id:null,x0:0,y0:0,x:0,y:0};
@@ -538,7 +552,7 @@ function look(dx,dy,s){camYaw-=dx*s;camPitch=clamp(camPitch-dy*s,-.5,.62)}
 addEventListener('keydown',e=>{
   const c=e.code;const menuEnter=(c==='Enter'||c==='NumpadEnter')&&(phase==='menu'||phase==='over');if(!menuEnter&&['Enter','NumpadEnter','BracketLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(c))e.preventDefault();
   if(keys[c]&&e.repeat)return;keys[c]=true;
-  if(c==='Space')press.jump=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
+  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code===dashKey)dashKey=null});
 const DIRK={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',KeyD:'r'};
@@ -592,7 +606,7 @@ function tcUp(e){
 tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
-const GRAV=25,R=.7,HGT=2.6,MAX_ALT=8;
+const GRAV=25,R=.7,HGT=2.6,MAX_ALT=8,GUN_MAG=60,GUN_RELOAD=2.2,MSL_MAG=3,MSL_RELOAD=6;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
@@ -603,7 +617,19 @@ function step(r,o,inp,dt){
   else{
     r.energy=Math.min(100,r.energy+3.2*dt);
     r.yaw=inp.yaw;
-    const want=inp.shield&&r.stun<=0&&(r.shield?r.shieldHp>0:r.shieldHp>15);
+    if(r.reloadT>0){r.reloadT-=dt;if(r.reloadT<=0){r.reloadT=0;r.ammo=GUN_MAG;if(r===P)sfx('block')}}
+    if(r.mReloadT>0){r.mReloadT-=dt;if(r.mReloadT<=0){r.mReloadT=0;r.mAmmo=MSL_MAG;if(r===P)sfx('block')}}
+    r.mCd-=dt;
+    if(inp.reload&&r.reloadT<=0&&r.ammo<GUN_MAG){r.reloadT=GUN_RELOAD;if(r===P)sfx('heat')}
+    if(!inp.shield)r.shieldLock=false;
+    if(!inp.fire)r.fireLock=false;
+    const mob=(inp.jumpHeld||inp.dash||inp.qs)&&r.fuel>0&&r.stun<=0;
+    if(mob&&!r.mobPrev){
+      if(r.shield||inp.shield){r.shield=false;r.shieldLock=!!inp.shield}
+      if(inp.fire)r.fireLock=true;
+    }
+    r.mobPrev=mob;
+    const want=inp.shield&&!r.shieldLock&&r.stun<=0&&(r.shield?r.shieldHp>0:r.shieldHp>15);
     r.shield=want;
     if(r.shield)r.shieldHp=Math.max(0,r.shieldHp-40*dt);else r.shieldHp=Math.min(100,r.shieldHp+15*dt);
     if(r.stun>0){r.stun-=dt;if(r.grounded){const k=Math.pow(.02,dt);r.vel.x*=k;r.vel.z*=k}}
@@ -628,16 +654,16 @@ function step(r,o,inp,dt){
         for(let i=0;i<2;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-inp.dashX*4+rnd(-1,1),rnd(0,1),-inp.dashZ*4+rnd(-1,1),.3,[1,.6,.2]);
       }else r.dashing=false;
       r.m.g.rotation.y=r.yaw;r.m.gun.rotation.x=r.aimPitch;r.m.g.position.copy(r.pos);r.m.g.updateMatrixWorld(true);
-      if(inp.fire&&!r.shield&&r.fireCd<=0&&r.overheat<=0&&inp.target){
-        r.fireCd=.11;r.muzzleT=.05;r.heat+=8;r.shotN++;
+      if(inp.fire&&!r.fireLock&&!r.shield&&r.fireCd<=0&&r.reloadT<=0&&r.ammo>0&&inp.target){
+        r.fireCd=.11;r.muzzleT=.05;r.ammo--;r.shotN++;
+        if(r.ammo<=0){r.reloadT=GUN_RELOAD;if(r===P)sfx('heat')}
         const from=r.m.muzzle.getWorldPosition(new V());
         const dir=_d.copy(inp.target).sub(from).normalize();
         const s=inp.spread;dir.x+=rnd(-s,s);dir.y+=rnd(-s,s)*.6;dir.z+=rnd(-s,s);dir.normalize();
         spawnBullet(r,from,dir);sfx('shot',r===P?1:.45);
-        if(r.heat>=100){r.heat=100;r.overheat=1.3;if(r===P)sfx('heat')}
       }
-      if(inp.missile&&!r.shield&&r.energy>=50){
-        r.energy-=50;r.mslN++;const from=r.m.muzzle.getWorldPosition(new V());from.y+=.3;
+      if(inp.missile&&!r.shield&&r.mAmmo>0&&r.mReloadT<=0&&r.mCd<=0){
+        r.mAmmo--;r.mCd=.5;if(r.mAmmo<=0)r.mReloadT=MSL_RELOAD;r.mslN++;const from=r.m.muzzle.getWorldPosition(new V());from.y+=.3;
         spawnMissile(r,from,fwdOf(r.yaw,_f));sfx('missile',r===P?1:.6);
       }
     }
@@ -756,8 +782,8 @@ function ai(dt){
   }else{
     const muzzle=centerOf(C,_f);muzzle.y+=.4;
     const los=clearLine(muzzle,centerOf(P,_c));
-    if(los&&C.overheat<=0&&C.heat<85&&Math.random()<d.aggr)cin.fire=true;
-    if(C.energy>=50&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
+    if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
+    if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     if(Math.random()<.12)ideal=rnd(9,18);
     if(Math.random()<.15)strafe*=-1;
     if(!los){mx=ux*.7-uz*strafe*.7;mz=uz*.7+ux*strafe*.7;if(Math.random()<.35)cin.jumpHeld=true}
@@ -787,7 +813,7 @@ function playerInput(dt){
   if(press.qs){const q=press.qs,df=q==='f'?1:q==='b'?-1:0,ds=q==='r'?1:q==='l'?-1:0;pin.qsX=_f.x*df+_r.x*ds;pin.qsZ=_f.z*df+_r.z*ds;pin.qs=true}
   if(dashKey&&keys[dashKey]){const d=DIRK[dashKey],df=d==='f'?1:d==='b'?-1:0,ds=d==='r'?1:d==='l'?-1:0;pin.dashX=_f.x*df+_r.x*ds;pin.dashZ=_f.z*df+_r.z*ds;pin.dash=true}
   else if(dashHeld){if(l>.3&&P.fuel>0){pin.dashX=mx/l;pin.dashZ=mz/l;pin.dash=true;dashSeen=true}else if(dashSeen||P.fuel<=0||(dashWait-=dt)<=0)dashHeld=false}
-  pin.jump=press.jump;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
+  pin.jump=press.jump;pin.reload=press.reload;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
   pin.fire=fireHeld||mouseFire||!!keys.BracketLeft;
   pin.shield=shieldHeld||!!keys.ShiftLeft||!!keys.ShiftRight||!!keys.KeyL;
 }
@@ -835,19 +861,24 @@ function syncModel(r){
 
 /* ---------- HUD ---------- */
 const H={pF:$('pF'),pG:$('pG'),cF:$('cF'),cG:$('cG'),pE:$('pE'),pS:$('pS'),pB:$('pB'),cB:$('cB'),cE:$('cE'),cS:$('cS'),time:$('time'),pips:$('pips'),cross:$('cross'),heat:$('heat'),oh:$('oh'),tag:$('tag'),arrow:$('arrow'),banner:$('banner'),vig:$('vig')};
+function mslMini(el,r){
+  const rl=r.mReloadT>0||r.mAmmo<0;
+  const v=rl?(r.mAmmo<0?0:(1-r.mReloadT/MSL_RELOAD)*100):r.mAmmo/MSL_MAG*100;
+  mini(el,v,!rl&&r.mAmmo>0);
+  el.lastElementChild.textContent=rl?'미사일 재장전':`미사일 ${r.mAmmo}/${MSL_MAG}`;
+}
 function mini(el,v,ready){el.firstElementChild.firstElementChild.style.width=v+'%';el.classList.toggle('ready',ready)}
 let vigT=0,hitT=0,lastSec=-1;
 function hud(){
   H.pF.style.width=P.hp+'%';H.pG.style.width=P.ghost+'%';H.cF.style.width=C.hp+'%';H.cG.style.width=C.ghost+'%';
   H.pF.classList.toggle('low',P.hp<30);H.cF.classList.toggle('low',C.hp<30);
-  mini(H.pE,P.energy,P.energy>=50);mini(H.pS,P.shieldHp,P.shieldHp>15);mini(H.cE,C.energy,C.energy>=50);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
-  H.pE.lastElementChild.textContent=P.energy>=50?'미사일 준비':'에너지';H.cE.lastElementChild.textContent=C.energy>=50?'미사일 준비':'에너지';
+  mslMini(H.pE,P);mini(H.pS,P.shieldHp,P.shieldHp>15);mslMini(H.cE,C);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
   const s=Math.max(0,Math.ceil(timer));H.time.textContent=s;H.time.classList.toggle('low',s<=10);
   if(phase==='fight'&&s<=5&&s!==lastSec&&s>0)sfx('tick');lastSec=s;
   H.pips.innerHTML=[0,1].map(i=>`<i class="${i<P.wins?'pw':''}"></i>`).join('')+'<span class="gap"></span>'+[0,1].map(i=>`<i class="${i<C.wins?'cw':''}"></i>`).join('');
   dashBtnEl.classList.toggle('on',dashHeld);
   H.cross.classList.toggle('lock',aimLock&&aimRange<=MSL_RANGE);H.cross.classList.toggle('far',aimLock&&aimRange>MSL_RANGE);H.cross.classList.toggle('hit',hitT>0);
-  H.heat.firstElementChild.style.width=P.heat+'%';H.heat.classList.toggle('hot',P.heat>70);H.heat.classList.toggle('over',P.overheat>0);H.oh.hidden=!(P.overheat>0);
+  const rl=P.reloadT>0;H.heat.firstElementChild.style.width=(rl?(1-P.reloadT/GUN_RELOAD):P.ammo/GUN_MAG)*100+'%';H.heat.classList.toggle('hot',!rl&&P.ammo<=15);H.heat.classList.toggle('over',rl);H.oh.hidden=false;H.oh.textContent=rl?'재장전':`${P.ammo} / ${GUN_MAG}`;H.oh.style.color=rl?'var(--red)':'var(--steel)';
   H.vig.style.opacity=Math.max(0,vigT/.35);
   // enemy tag / arrow
   const ec=centerOf(C,new V());ec.y+=1.8;
@@ -900,7 +931,7 @@ function loop(now){
     }
   }else{camYaw+=dt*.12}
   netTick(dt);
-  press.jump=press.missile=false;press.qs=null;
+  press.jump=press.missile=press.reload=false;press.qs=null;
   syncModel(P);syncModel(C);
   updateCamera(dt);
   updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
@@ -913,11 +944,11 @@ function loop(now){
 
 /* ---------- menus ---------- */
 const menu=$('menu'),over=$('over'),hudEl=$('hud');
-document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{diff=b.dataset.d;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+document.querySelectorAll('#diffSeg button').forEach(b=>b.addEventListener('click',()=>{diff=b.dataset.d;document.querySelectorAll('#diffSeg button').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
 function initAudio(){try{if(!ac)ac=new (window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(_){}}
 function begin(){
   if(online){if(isHost){over.hidden=true;hudEl.hidden=false;tc.hidden=false;startOnlineMatch()}return}
-  initAudio();setNames(false);
+  initAudio();setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));setNames(false);
   menu.hidden=true;over.hidden=true;hudEl.hidden=false;tc.hidden=false;joyRest();startMatch();
   if(!isTouch()&&cv.requestPointerLock){try{const r=cv.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(_){}}
 }
@@ -989,7 +1020,19 @@ const roomP=inClaude?window.claude.use('room').catch(()=>null):Promise.resolve(p
 if(!inClaude)document.getElementById('onNote').textContent='친구에게 같은 파일이나 사이트 주소를 보내고, 방 코드를 알려주세요. 인터넷에 연결돼 있어야 해요.';
 const NO_ONLINE=inClaude?'지금 화면에서는 온라인 대전을 쓸 수 없어요. Claude에 로그인한 상태로 이 아티팩트 링크를 열어 주세요.':'연결 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 페이지를 새로고침해 주세요.';
 const onlineEl=$('online'),onA=$('onA'),onB=$('onB'),onErr=$('onErr'),onStatus=$('onStatus');
-function setNames(on){P.name=on?'나':'볼트';C.name=on?'상대':'크래셔';$('pNm').textContent=P.name;$('cNm').textContent=C.name}
+function setNames(on){P.name=on?'나':SKIN[P.skin].name;C.name=on?'상대':SKIN[C.skin].name;$('pNm').textContent=P.name;$('cNm').textContent=C.name;skinUI()}
+function skinUI(){
+  const pc=SKIN[P.skin].css,cc=SKIN[C.skin].css;
+  $('pNm').style.color=pc;$('cNm').style.color=cc;H.pF.style.background=pc;H.cF.style.background=cc;
+  H.tag.style.color=cc;H.arrow.style.borderLeftColor=cc;
+}
+document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',()=>{
+  mySkin=b.dataset.skin;try{localStorage.setItem('kc3d-skin',mySkin)}catch(_){}
+  document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));
+}));
+document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
+setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));
 function onError(t){onErr.textContent=t;onErr.hidden=!t}
 function syncOverButtons(){
   const again=$('again'),tm=$('toMenu');
@@ -1021,7 +1064,7 @@ function leaveRoom(){
   if(unsubPeers){try{unsubPeers()}catch(_){}unsubPeers=null}
   if(rm){rm.leave().catch(()=>{});rm=null}
   const wasOnline=online;online=false;oppPeer=null;isHost=false;
-  if(wasOnline){setNames(false);phase='menu';hudEl.hidden=true;tc.hidden=true;place(P,0,24,0);place(C,0,-24,Math.PI)}
+  if(wasOnline){setSkin(C,otherSkin(mySkin));setNames(false);phase='menu';hudEl.hidden=true;tc.hidden=true;place(P,0,24,0);place(C,0,-24,Math.PI)}
   onA.hidden=false;onB.hidden=true;syncOverButtons();
 }
 function players(){
@@ -1046,7 +1089,7 @@ function onRoomPeers(){
   }
 }
 function goOnline(){
-  online=true;setNames(true);syncOverButtons();
+  online=true;setSkin(P,mySkin);setNames(true);syncOverButtons();
   menu.hidden=true;onlineEl.hidden=true;over.hidden=true;hudEl.hidden=false;tc.hidden=false;joyRest();
   if(!isTouch()&&cv.requestPointerLock){try{const r=cv.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(_){}}
 }
@@ -1089,6 +1132,8 @@ function remoteUpdate(dt){
   if(C.pos.distanceTo(_tgt)>8)C.pos.copy(_tgt);else C.pos.lerp(_tgt,Math.min(1,dt*14));
   const k=1/Math.max(dt,1e-3);C.vel.set((C.pos.x-ox)*k,(C.pos.y-oy)*k,(C.pos.z-oz)*k);
   C.yaw=+s.y||0;C.aimPitch=clamp(+s.a||0,-1.2,1.2);
+  if(typeof s.k==='string'&&SKIN[s.k]&&s.k!==C.skin){setSkin(C,s.k);skinUI()}
+  if(typeof s.ma==='number'){C.mAmmo=s.ma|0;C.mReloadT=0}
   const f=s.f|0;C.grounded=!!(f&1);C.boosting=!!(f&2);if(f&2)C.flameT=.06;C.dashing=!!(f&4);C.shield=!!(f&8);
   if(s.rr===round&&(phase==='fight'||phase==='end')){
     const hp=clamp(+s.hp,0,100);
@@ -1112,7 +1157,7 @@ function netTick(dt){
   if(online)remoteUpdate(dt);
   sendT-=dt;if(sendT>0)return;sendT=.05;
   const f=(P.grounded?1:0)|(P.boosting?2:0)|(P.dashing?4:0)|(P.shield?8:0)|(P.ko?16:0);
-  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
+  const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
   if(online&&isHost)st.m={match:curMatch,round,phase,timer:Math.ceil(timer),wh:P.wins,wg:C.wins,ban:H.banner.textContent.slice(0,12),win:lastWin};
   rm.presence(st).catch(()=>{});
 }
