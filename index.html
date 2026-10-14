@@ -196,7 +196,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">볼트</span> 대 <span class="c2">크래셔</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 유도 미사일은 3발을 쏘면 재장전해요. 미사일은 처음 잠깐만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 처음 잠깐만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -512,7 +512,7 @@ const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]}
 const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=SKIN.bolt.spark;P.skin='bolt';
 const C=mkR('크래셔',0xff7a2f,0xffe1a8,'crusher');C.spark=SKIN.crusher.spark;C.skin='crusher';
 const ARMS={
-  bolt:{gunName:'빔 라이플',mag:60,rate:.11,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'유도 미사일',mMag:3,mReload:6,mCd:.5,guide:MSL_GUIDE,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
+  bolt:{gunName:'빔 라이플',mag:60,rate:.11,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:MSL_GUIDE,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{gunName:'개틀링',mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:34,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
   raven:{gunName:'레일건',mag:8,rate:.7,dmg:12,spread:0,bspeed:140,reload:2.6,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:.9,mDmg:8,mRad:2.8,mSpeed:30,lob:true,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
@@ -1112,7 +1112,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={raven:'레이븐 · 레일건 8발(한 발 12, 초고속 탄) · 확산 미사일 4연발×2 · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 빔 라이플 60발 · 유도 미사일 3발 · 빠른 기동',crusher:'크래셔 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={raven:'레이븐 · 레일건 8발(한 발 12, 초고속 탄) · 확산 미사일 4연발×2 · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 빔 라이플 60발 · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){$('skinInfo').textContent=SKIN_INFO[mySkin]}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
