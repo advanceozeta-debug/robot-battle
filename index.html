@@ -664,7 +664,7 @@ function tcUp(e){
 tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
-const GRAV=25,R=.7,HGT=2.6;
+const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
@@ -756,11 +756,11 @@ function hurt(d,a,dmg,point,big){
   if(online&&d===C){burst(point,big?16:5,C.shield?[.6,.9,1]:a.spark,big?8:5);C.flashT=.06;return}
   const dir=_d.set(d.pos.x-a.pos.x,0,d.pos.z-a.pos.z).normalize();
   if(d.shield){
-    d.shieldHp-=dmg*(big?2.4:1.6);if(big)d.hp-=dmg*.2;
+    d.shieldHp-=dmg*(big?2.4:1.6);if(big)d.hp-=dmg*.2*DMG_MULT;
     burst(point,big?16:5,[.6,.9,1],big?8:5);sfx('block',d===P||a===P?1:.5);
     if(d.shieldHp<=0){d.shield=false;d.shieldHp=0;d.stun=.5}
   }else{
-    d.hp-=dmg*armsOf(d).armor;d.flashT=.08;a.energy=Math.min(100,a.energy+(big?0:3));
+    d.hp-=dmg*armsOf(d).armor*DMG_MULT;d.flashT=.08;a.energy=Math.min(100,a.energy+(big?0:3));
     if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=.45;shakeAmt=d===P?.5:.25}
     else{d.vel.x+=dir.x*.8;d.vel.z+=dir.z*.8;if(d===P)shakeAmt=Math.max(shakeAmt,.08)}
     burst(point,big?24:7,a.spark,big?10:6);sfx('hit',d===P||a===P?1:.5);
