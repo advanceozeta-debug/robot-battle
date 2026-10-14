@@ -196,7 +196,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">볼트</span> 대 <span class="c2">크래셔</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 20 이상 맞으면 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞으면 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -525,7 +525,7 @@ function setSkin(r,key){
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;
   r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
 }
-function place(r,x,z,yaw){Object.assign(r,{invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,hp:100,ghost:100,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4,r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -665,12 +665,12 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
-const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=20,STUN_T=1;
+const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
   r.anim+=dt;r.fireCd-=dt;r.muzzleT-=dt;r.flashT-=dt;r.flameT-=dt;if(r.invT>0)r.invT-=dt;
-  if(r.ghost>r.hp)r.ghost=Math.max(r.hp,r.ghost-40*dt);
+  if(r.ghost>r.hp)r.ghost=Math.max(r.hp,r.ghost-80*dt);
   if(r.overheat>0){r.overheat-=dt;r.heat=Math.max(0,r.heat-85*dt)}else r.heat=Math.max(0,r.heat-32*dt);
   if(r.ko){r.koT+=dt;if(Math.random()<dt*14)puff(centerOf(r,_c),1)}
   else{
@@ -956,8 +956,8 @@ function mslMini(el,r){
 function mini(el,v,ready){el.firstElementChild.firstElementChild.style.width=v+'%';el.classList.toggle('ready',ready)}
 let vigT=0,hitT=0,lastSec=-1;
 function hud(){
-  H.pF.style.width=P.hp+'%';H.pG.style.width=P.ghost+'%';H.cF.style.width=C.hp+'%';H.cG.style.width=C.ghost+'%';
-  H.pF.classList.toggle('low',P.hp<30);H.cF.classList.toggle('low',C.hp<30);
+  const pc=v=>Math.max(0,v/MAX_HP*100)+'%';H.pF.style.width=pc(P.hp);H.pG.style.width=pc(P.ghost);H.cF.style.width=pc(C.hp);H.cG.style.width=pc(C.ghost);
+  H.pF.classList.toggle('low',P.hp<MAX_HP*.3);H.cF.classList.toggle('low',C.hp<MAX_HP*.3);
   mslMini(H.pE,P);mini(H.pS,P.shieldHp,P.shieldHp>15);mslMini(H.cE,C);mini(H.cS,C.shieldHp,C.shieldHp>15);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
   const s=Math.max(0,Math.ceil(timer));H.time.textContent=s;H.time.classList.toggle('low',s<=10);
   if(phase==='fight'&&s<=5&&s!==lastSec&&s>0)sfx('tick');lastSec=s;
@@ -1216,7 +1216,7 @@ function remoteUpdate(dt){
   const s=oppPresence();
   if(!isHost&&s)guestSync(s.m);
   C.anim+=dt;C.muzzleT-=dt;C.flashT-=dt;C.flameT-=dt;if(C.invT>0)C.invT-=dt;if(C.ko)C.koT+=dt;
-  if(C.ghost>C.hp)C.ghost=Math.max(C.hp,C.ghost-40*dt);
+  if(C.ghost>C.hp)C.ghost=Math.max(C.hp,C.ghost-80*dt);
   if(!s||!Array.isArray(s.p)||phase==='menu')return;
   _tgt.set(+s.p[0]||0,+s.p[1]||0,+s.p[2]||0);
   const ox=C.pos.x,oy=C.pos.y,oz=C.pos.z;
@@ -1227,7 +1227,7 @@ function remoteUpdate(dt){
   if(typeof s.ma==='number'){C.mAmmo=s.ma|0;C.mReloadT=0}
   const f=s.f|0;C.grounded=!!(f&1);C.boosting=!!(f&2);if(f&2)C.flameT=.06;C.dashing=!!(f&4);C.shield=!!(f&8);if(f&32)C.invT=Math.max(C.invT||0,.12);
   if(s.rr===round&&(phase==='fight'||phase==='end')){
-    const hp=clamp(+s.hp,0,100);
+    const hp=clamp(+s.hp,0,MAX_HP);
     if(hp<C.hp-.01){hitT=.12;P.energy=Math.min(100,P.energy+(C.hp-hp))}
     C.hp=hp;
     if((f&16)&&!C.ko){C.ko=true;C.koT=0;const c=centerOf(C,new V());burst(c,70,C.spark,14,.9);burst(c,40,[1,.9,.6],10,.7);puff(c,20);blast(c,3.2);sfx('ko');shakeAmt=.4}
