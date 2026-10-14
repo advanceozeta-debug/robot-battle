@@ -219,7 +219,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>이동</dt><dd>왼쪽 조이스틱 (왼쪽 화면 어디를 눌러도 돼요)</dd>
         <dt>짧은 대시</dt><dd>조이스틱 둘레 ▲▼◀▶ 버튼을 톡</dd>
         <dt>시점</dt><dd>자동으로 상대를 따라가요</dd>
-        <dt>근접 공격</dt><dd>근접 버튼: 대시로 상대에게 돌진해서 베기 (대시하면 끊겨요)</dd>
+        <dt>근접 공격</dt><dd>근접 버튼: 상대 쪽으로 10m 대시해서 베기 (대시하면 끊겨요)</dd>
         <dt>대시 · 부스트</dt><dd>공격 버튼 아래. 대시는 한 번 누르면 조이스틱을 미는 동안 계속 가고, 조이스틱을 놓으면 멈춰요. 부스트는 누르는 동안 위로</dd>
         <dt>버튼</dt><dd>사격 · 방어막 · 미사일</dd>
       </dl>
@@ -682,7 +682,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
-const ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
+const MELEE_DIST=10,ULT_PASSIVE=2,ULT_DEAL=1,ULT_TAKE=.6;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
@@ -857,8 +857,10 @@ function meleeStep(r,o,dt){
   const m=r.melee,W=armsOf(r);m.t+=dt;
   const dx=o.pos.x-r.pos.x,dz=o.pos.z-r.pos.z,dy=o.pos.y-r.pos.y,d=Math.hypot(dx,dz)||1;
   if(m.ph==='lunge'){
-    if(d>2.5&&d<W.meleeRange&&m.t<1.4&&!o.ko){const sp=W.lungeSp;r.vel.x=dx/d*sp;r.vel.z=dz/d*sp;r.vel.y=clamp(dy*3,-12,12);r.flameT=.06;r.dashing=true;
-      for(let i=0;i<4;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-dx/d*5,rnd(0,1),-dz/d*5,.25,r.spark)}
+    if(m.dx===undefined){m.dx=dx/d;m.dz=dz/d;m.go=0}
+    const sp=W.lungeSp,step=sp*dt;
+    if(m.go<MELEE_DIST&&d>2.5&&m.t<1){r.vel.x=m.dx*sp;r.vel.z=m.dz*sp;if(r.vel.y<0)r.vel.y=0;m.go+=step;r.flameT=.06;r.dashing=true;
+      for(let i=0;i<4;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-m.dx*5,rnd(0,1),-m.dz*5,.25,r.spark)}
     else{m.ph='swing';m.t=0;r.meleeN++;sfx('slash',r===P||o===P?1:.5)}
   }else if(m.ph==='swing'){
     r.vel.x*=.25;r.vel.z*=.25;if(r.vel.y<0)r.vel.y*=.5;
@@ -970,7 +972,7 @@ function ai(dt){
     const muzzle=centerOf(C,_f);muzzle.y+=.4;
     const los=clearLine(muzzle,centerOf(P,_c));
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
-    if(dist<Math.min(18,armsOf(C).meleeRange-2)&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
+    if(dist<12&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
     if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     if(Math.random()<.12)ideal=rnd(12,30);
