@@ -195,7 +195,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">볼트</span> 대 <span class="c2">크래셔</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 유도 미사일은 3발을 쏘면 재장전해요. 미사일은 사거리(24m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 유도 미사일은 3발을 쏘면 재장전해요. 미사일은 처음 잠깐만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방어막이나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -276,40 +276,40 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;
 renderer.outputEncoding=T.sRGBEncoding;
 const scene=new T.Scene();
-scene.background=new T.Color(0x1a1030);scene.fog=new T.Fog(0x5a3a6a,50,175);
-const camera=new T.PerspectiveCamera(68,1,.1,220);
+scene.background=new T.Color(0x1a1030);scene.fog=new T.Fog(0x5a3a6a,70,200);
+const camera=new T.PerspectiveCamera(68,1,.1,260);
 let VW=1,VH=1;
 function resize(){VW=stage.clientWidth||1;VH=stage.clientHeight||1;renderer.setSize(VW,VH,false);camera.aspect=VW/VH;camera.fov=VW<VH?84:66;camera.updateProjectionMatrix()}
 new ResizeObserver(resize).observe(stage);resize();
 
 scene.add(new T.HemisphereLight(0xb9a6ff,0x3a2a20,.6));
 const sun=new T.DirectionalLight(0xffc9a0,1.0);sun.position.set(-30,26,-48);sun.castShadow=true;
-sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-38,right:38,top:38,bottom:-38,near:1,far:120});sun.shadow.bias=-.0006;sun.shadow.camera.updateProjectionMatrix();
+sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-56,right:56,top:56,bottom:-56,near:1,far:160});sun.shadow.bias=-.0006;sun.shadow.camera.updateProjectionMatrix();
 scene.add(sun);
 const rim=new T.DirectionalLight(0x6fd0ff,.35);rim.position.set(30,12,40);scene.add(rim);
 
 /* ---------- arena: sky platform at dusk ---------- */
 function canvasTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.encoding=T.sRGBEncoding;t.anisotropy=4;return t}
 const skyTex=canvasTex(16,512,(g,w,h)=>{const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,'#0d0a2a');gr.addColorStop(.3,'#35275f');gr.addColorStop(.44,'#b8557a');gr.addColorStop(.5,'#ffbf86');gr.addColorStop(.55,'#7a4a7c');gr.addColorStop(1,'#1a1030');g.fillStyle=gr;g.fillRect(0,0,w,h)});
-const sky=new T.Mesh(new T.SphereGeometry(190,32,16),new T.MeshBasicMaterial({map:skyTex,side:T.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-1;scene.add(sky);
+const sky=new T.Mesh(new T.SphereGeometry(230,32,16),new T.MeshBasicMaterial({map:skyTex,side:T.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-1;scene.add(sky);
 const sunDir=new V(sun.position.x,0,sun.position.z).normalize();sunDir.y=.1;sunDir.normalize();
 const sunDisc=new T.Mesh(new T.SphereGeometry(9,24,16),new T.MeshBasicMaterial({color:0xffe2b8,fog:false}));scene.add(sunDisc);
 const glowTex=canvasTex(128,128,(g)=>{const r=g.createRadialGradient(64,64,0,64,64,64);r.addColorStop(0,'rgba(255,220,170,.9)');r.addColorStop(.3,'rgba(255,170,120,.35)');r.addColorStop(1,'rgba(255,150,120,0)');g.fillStyle=r;g.fillRect(0,0,128,128)});
 const sunGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,blending:T.AdditiveBlending,depthWrite:false,fog:false,transparent:true}));sunGlow.scale.set(80,80,1);scene.add(sunGlow);
 const clouds=new T.Group();
 const cloudMat=new T.MeshLambertMaterial({color:0xf2c4d6,flatShading:true});
-for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,r=rnd(42,170),c=new T.Group();
+for(let i=0;i<70;i++){const a=Math.random()*Math.PI*2,r=rnd(66,200),c=new T.Group();
   for(let k=0;k<4;k++){const p=new T.Mesh(new T.IcosahedronGeometry(rnd(3,7),1),cloudMat);p.position.set(rnd(-6,6),rnd(-1,1),rnd(-6,6));p.scale.y=.45;c.add(p)}
   c.position.set(Math.cos(a)*r,rnd(-30,-12),Math.sin(a)*r);clouds.add(c)}
 scene.add(clouds);
 
 const panelTex=canvasTex(256,256,(g,w,h)=>{g.fillStyle='#6c7587';g.fillRect(0,0,w,h);g.fillStyle='#636c7e';g.fillRect(0,0,w/2,h/2);g.fillRect(w/2,h/2,w/2,h/2);g.strokeStyle='#5d6679';g.lineWidth=4;g.strokeRect(2,2,w-4,h-4);g.lineWidth=2;g.beginPath();g.moveTo(w/2,0);g.lineTo(w/2,h);g.moveTo(0,h/2);g.lineTo(w,h/2);g.stroke();g.fillStyle='#ffb43a';g.fillRect(10,10,22,4);g.fillStyle='#5d6679';[[w-18,18],[18,h-18]].forEach(([x,y])=>{g.beginPath();g.arc(x,y,4,0,7);g.fill()})});
-panelTex.wrapS=panelTex.wrapT=T.RepeatWrapping;panelTex.repeat.set(16,16);
-const floor=new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshStandardMaterial({map:panelTex,roughness:.75,metalness:.15}));
+panelTex.wrapS=panelTex.wrapT=T.RepeatWrapping;panelTex.repeat.set(25,25);
+const floor=new T.Mesh(new T.PlaneGeometry(100,100),new T.MeshStandardMaterial({map:panelTex,roughness:.75,metalness:.15}));
 floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
 const baseMat=new T.MeshStandardMaterial({color:0x2a2f3c,roughness:.6,metalness:.6});
-const slab=new T.Mesh(new T.BoxGeometry(66,1.6,66),baseMat);slab.position.y=-.82;scene.add(slab);
-const keel=new T.Mesh(new T.ConeGeometry(47,26,4),baseMat);keel.rotation.set(Math.PI,Math.PI/4,0);keel.position.y=-14.6;scene.add(keel);
+const slab=new T.Mesh(new T.BoxGeometry(102,1.6,102),baseMat);slab.position.y=-.82;scene.add(slab);
+const keel=new T.Mesh(new T.ConeGeometry(72,34,4),baseMat);keel.rotation.set(Math.PI,Math.PI/4,0);keel.position.y=-18.6;scene.add(keel);
 
 const BOXES=[];
 function addBox(x,z,w,h,d,mat,collide=true){
@@ -319,7 +319,7 @@ function addBox(x,z,w,h,d,mat,collide=true){
 function strip(x,y,z,w,h,d,mat){const m=new T.Mesh(new T.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);scene.add(m);return m}
 const hullTex=(base,line)=>canvasTex(128,128,(g,w,h)=>{g.fillStyle=base;g.fillRect(0,0,w,h);g.strokeStyle=line;g.lineWidth=3;g.strokeRect(2,2,w-4,h-4);g.lineWidth=1.5;g.beginPath();g.moveTo(0,h*.35);g.lineTo(w*.6,h*.35);g.lineTo(w*.75,h*.5);g.lineTo(w,h*.5);g.moveTo(w*.2,h*.78);g.lineTo(w*.8,h*.78);g.stroke();g.fillStyle=line;g.fillRect(w*.08,h*.1,12,3)});
 const gridTex=canvasTex(64,64,(g,w,h)=>{g.strokeStyle='rgba(255,255,255,.9)';g.lineWidth=2;g.strokeRect(1,1,w-2,h-2)});
-gridTex.wrapS=gridTex.wrapT=T.RepeatWrapping;gridTex.repeat.set(24,1.5);
+gridTex.wrapS=gridTex.wrapT=T.RepeatWrapping;gridTex.repeat.set(36,1.5);
 const mats={
   hull:new T.MeshStandardMaterial({map:hullTex('#d7dce4','#9aa3b2'),roughness:.42,metalness:.3}),
   hullD:new T.MeshStandardMaterial({map:hullTex('#4a5263','#2e3442'),roughness:.5,metalness:.55}),
@@ -343,14 +343,19 @@ function breakable(x,z,w,h,d,hp){
 addBox(0,0,4,5,4,mats.hullD);
 strip(0,5.03,0,4.02,.06,4.02,mats.stripO);
 const ring=new T.Mesh(new T.TorusGeometry(3.1,.08,8,56),mats.strip);ring.rotation.x=Math.PI/2;ring.position.y=5.6;scene.add(ring);
-cover(-10,-6,7,2.6,3,mats.hull,mats.stripO);cover(10,6,7,2.6,3,mats.hull,mats.strip);
-breakable(-6,12,3,2.6,7,110);breakable(6,-12,3,2.6,7,110);
-breakable(-14,7,5,1.3,1,45);breakable(14,-7,5,1.3,1,45);
-breakable(0,-18,6,1.3,1,45);breakable(0,18,6,1.3,1,45);
-[[-18,-18],[18,18],[18,-18],[-18,18]].forEach(([x,z])=>{addBox(x,z,2,6,2,mats.hull);strip(x,6.06,z,2.04,.1,2.04,x*z>0?mats.strip:mats.stripO);strip(x,3,z-1.02,.12,5.6,.04,x*z>0?mats.strip:mats.stripO)});
-[[0,-32.5,66,1],[0,32.5,66,1],[-32.5,0,1,66],[32.5,0,1,66]].forEach(([x,z,w,d])=>{const m=addBox(x,z,w,4,d,mats.barrier);m.castShadow=false;m.receiveShadow=false;m.renderOrder=2});
-[[0,-32,64,.3,.3],[0,32,64,.3,.3],[-32,0,.3,.3,64],[32,0,.3,.3,64]].forEach(([x,z,w,h,d])=>{const b=strip(x,.15,z,w,h,d,baseMat);b.receiveShadow=true;strip(x,4,z,w,.08,d,z<0||x>0?mats.stripO:mats.strip);strip(x,-.4,z*1.03,x?.05:66,.15,x?66:.05,mats.strip)});
-[[-32,-32],[32,-32],[-32,32],[32,32]].forEach(([x,z])=>{const p=strip(x,2.1,z,.6,4.2,.6,baseMat);p.castShadow=true;strip(x,4.3,z,.7,.15,.7,mats.strip)});
+cover(-14,-8,7,2.6,3,mats.hull,mats.stripO);cover(14,8,7,2.6,3,mats.hull,mats.strip);
+breakable(-9,17,3,2.6,7,110);breakable(9,-17,3,2.6,7,110);
+breakable(-20,10,5,1.3,1,45);breakable(20,-10,5,1.3,1,45);
+breakable(0,-27,6,1.3,1,45);breakable(0,27,6,1.3,1,45);
+cover(-34,0,3,2.6,9,mats.hullD,mats.strip);cover(34,0,3,2.6,9,mats.hullD,mats.stripO);
+cover(-22,-34,8,2.6,3,mats.hull,mats.stripO);cover(22,34,8,2.6,3,mats.hull,mats.strip);
+breakable(24,-36,3,2.6,6,110);breakable(-24,36,3,2.6,6,110);
+breakable(-38,-22,5,1.3,1,45);breakable(38,22,5,1.3,1,45);
+breakable(14,40,5,1.3,1,45);breakable(-14,-40,5,1.3,1,45);
+[[-26,-24],[26,24],[26,-24],[-26,24],[-40,40],[40,-40]].forEach(([x,z])=>{addBox(x,z,2,6,2,mats.hull);strip(x,6.06,z,2.04,.1,2.04,x*z>0?mats.strip:mats.stripO);strip(x,3,z-1.02,.12,5.6,.04,x*z>0?mats.strip:mats.stripO)});
+[[0,-50.5,102,1],[0,50.5,102,1],[-50.5,0,1,102],[50.5,0,1,102]].forEach(([x,z,w,d])=>{const m=addBox(x,z,w,4,d,mats.barrier);m.castShadow=false;m.receiveShadow=false;m.renderOrder=2});
+[[0,-50,100,.3,.3],[0,50,100,.3,.3],[-50,0,.3,.3,100],[50,0,.3,.3,100]].forEach(([x,z,w,h,d])=>{const b=strip(x,.15,z,w,h,d,baseMat);b.receiveShadow=true;strip(x,4,z,w,.08,d,z<0||x>0?mats.stripO:mats.strip);strip(x?x*1.03:0,-.4,z*1.03,x?.05:102,.15,x?102:.05,mats.strip)});
+[[-50,-50],[50,-50],[-50,50],[50,50]].forEach(([x,z])=>{const p=strip(x,2.1,z,.6,4.2,.6,baseMat);p.castShadow=true;strip(x,4.3,z,.7,.15,.7,mats.strip)});
 
 /* ---------- geometry queries ---------- */
 function rayBox(o,d,b){let tmin=0,tmax=1e9;const ax=[[o.x,d.x,b.x0,b.x1],[o.y,d.y,0,b.h],[o.z,d.z,b.z0,b.z1]];for(const [oa,da,lo,hi] of ax){if(Math.abs(da)<1e-9){if(oa<lo||oa>hi)return Infinity}else{let t1=(lo-oa)/da,t2=(hi-oa)/da;if(t1>t2){const s=t1;t1=t2;t2=s}tmin=Math.max(tmin,t1);tmax=Math.min(tmax,t2);if(tmin>tmax)return Infinity}}return tmin}
@@ -495,7 +500,7 @@ function spawnBullet(o,from,dir){
   b.mesh.material=bMat[o.skin]||bMat.bolt;b.mesh.visible=true;b.mesh.position.copy(from);b.mesh.lookAt(_p.copy(from).add(dir));
 }
 const missiles=[];
-const MSL_RANGE=24;
+const MSL_RANGE=70,MSL_GUIDE=1.3;
 const mslGeo=new T.CylinderGeometry(.14,.14,.8,8);mslGeo.rotateX(Math.PI/2);
 const tipGeo=new T.ConeGeometry(.14,.3,8);tipGeo.rotateX(-Math.PI/2);tipGeo.translate(0,0,-.55);
 function spawnMissile(o,from,fwd){
@@ -687,7 +692,7 @@ function step(r,o,inp,dt){
   }
   if(r.pos.y>MAX_ALT){r.pos.y=MAX_ALT;if(r.vel.y>0)r.vel.y=0}
   if(r.grounded){r.jumps=0;if(!r.dashing)r.fuel=Math.min(100,r.fuel+55*dt);if(r.ko){const k=Math.pow(.03,dt);r.vel.x*=k;r.vel.z*=k}}
-  r.pos.x=clamp(r.pos.x,-31.2,31.2);r.pos.z=clamp(r.pos.z,-31.2,31.2);
+  r.pos.x=clamp(r.pos.x,-49.2,49.2);r.pos.z=clamp(r.pos.z,-49.2,49.2);
 }
 function separate(){
   if(P.ko||C.ko)return;
@@ -728,13 +733,13 @@ function updProj(dt){
         if(dx*dx+dz*dz<rad*rad&&b.pos.y>t.pos.y-(t.shield?.2:0)&&b.pos.y<t.pos.y+(t.shield?3:HGT)){hurt(t,b.o,3,b.pos,false);done=true}}
     }
     b.life-=dt;
-    if(done||b.life<=0||Math.abs(b.pos.x)>34||Math.abs(b.pos.z)>34){b.alive=false;b.mesh.visible=false}
+    if(done||b.life<=0||Math.abs(b.pos.x)>52||Math.abs(b.pos.z)>52){b.alive=false;b.mesh.visible=false}
     else b.mesh.position.copy(b.pos);
   }
   for(let i=missiles.length-1;i>=0;i--){
     const m=missiles[i],t=m.o===P?C:P;m.age+=dt;
     let sp=m.vel.length();
-    if(m.age>.2&&!t.ko){
+    if(m.age>.2&&m.age<MSL_GUIDE&&!t.ko){
       const want=centerOf(t,_c).sub(m.pos).normalize(),cur=_m.copy(m.vel).normalize();
       cur.lerp(want,Math.min(1,dt*2.6)).normalize();sp=Math.min(26,sp+28*dt);m.vel.copy(cur).multiplyScalar(sp);
     }else m.vel.y-=12*dt;
@@ -742,7 +747,7 @@ function updProj(dt){
     m.g.position.copy(m.pos);m.g.lookAt(_t.copy(m.pos).sub(m.vel));
     m.trail-=dt;if(m.trail<=0){m.trail=.025;emit(smoke,m.pos.x,m.pos.y,m.pos.z,rnd(-.3,.3),rnd(-.3,.3),rnd(-.3,.3),.7,[.4,.42,.46]);emit(sparks,m.pos.x,m.pos.y,m.pos.z,0,0,0,.15,[1,.6,.2])}
     const tc=centerOf(t,_c);
-    let hit=inBox(m.pos)||m.travel>=MSL_RANGE||m.age>4.5||Math.abs(m.pos.x)>33||Math.abs(m.pos.z)>33;
+    let hit=inBox(m.pos)||m.travel>=MSL_RANGE||m.age>6||Math.abs(m.pos.x)>51||Math.abs(m.pos.z)>51;
     if(!t.ko&&m.pos.distanceTo(tc)<(t.shield?1.7:1.1))hit=true;
     if(hit){
       blast(m.pos,2.6);burst(m.pos,40,m.o.spark,11,.7);puff(m.pos,8);sfx('boom',m.o===P||t===P?1:.6);
@@ -758,7 +763,7 @@ function updProj(dt){
 const DIFF={easy:{react:.45,dodge:.2,aggr:.45,msl:.2,spread:.075},normal:{react:.28,dodge:.45,aggr:.65,msl:.4,spread:.045},hard:{react:.16,dodge:.7,aggr:.85,msl:.6,spread:.022}};
 let diff='normal';
 const cin={mx:0,mz:0,jump:false,jumpHeld:false,dash:false,dashX:0,dashZ:0,fire:false,missile:false,shield:false,yaw:0,target:new V(),spread:.04};
-let aiT=0,ideal=13,strafe=1,lastPos=new V(),wantMove=false;
+let aiT=0,ideal=18,strafe=1,lastPos=new V(),wantMove=false;
 function ai(dt){
   cin.missile=false;cin.qs=false;
   const dx=P.pos.x-C.pos.x,dz=P.pos.z-C.pos.z,dist=Math.hypot(dx,dz)||1;
@@ -784,7 +789,7 @@ function ai(dt){
     const los=clearLine(muzzle,centerOf(P,_c));
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
-    if(Math.random()<.12)ideal=rnd(9,18);
+    if(Math.random()<.12)ideal=rnd(12,30);
     if(Math.random()<.15)strafe*=-1;
     if(!los){mx=ux*.7-uz*strafe*.7;mz=uz*.7+ux*strafe*.7;if(Math.random()<.35)cin.jumpHeld=true}
     else if(dist>ideal+3){mx=ux;mz=uz;if(dist>ideal+10&&C.fuel>50&&Math.random()<.3){cin.dash=true;cin.dashX=ux;cin.dashZ=uz}}
@@ -903,7 +908,7 @@ let phase='menu',phaseT=0,round=1,timer=90,hitstop=0,shakeAmt=0;
 const idle={mx:0,mz:0,jump:false,fire:false,missile:false,shield:false,yaw:0,target:null,spread:0};
 function clearProj(){bullets.forEach(b=>{b.alive=false;b.mesh.visible=false});missiles.forEach(m=>scene.remove(m.g));missiles.length=0}
 function startMatch(){P.wins=C.wins=0;round=1;startRound()}
-function startRound(){resetBreakables();const gst=online&&!isHost;place(P,0,gst?-24:24,gst?Math.PI:0);place(C,0,gst?24:-24,gst?0:Math.PI);camYaw=gst?Math.PI:0;camPitch=-.08;clearProj();timer=90;phase='intro';phaseT=0;aiT=.5}
+function startRound(){resetBreakables();const gst=online&&!isHost;place(P,0,gst?-38:38,gst?Math.PI:0);place(C,0,gst?38:-38,gst?0:Math.PI);camYaw=gst?Math.PI:0;camPitch=-.08;clearProj();timer=90;phase='intro';phaseT=0;aiT=.5}
 function setBanner(t,col){H.banner.textContent=t;H.banner.style.color=col}
 function endRound(w,text){if(phase!=='fight')return;phase='end';phaseT=0;lastWin=w===P?'h':w===C?'g':'';if(w){w.wins++;setBanner(text,w===P?'var(--cyan)':'var(--orange)')}else setBanner(text,'var(--steel)')}
 function timeUp(){const w=P.hp>C.hp?P:C.hp>P.hp?C:null;endRound(w,w?'시간 종료':'무승부')}
@@ -936,7 +941,7 @@ function loop(now){
   updateCamera(dt);
   updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
   if(phase!=='menu'&&phase!=='over')hud();
-  sky.position.copy(camera.position);sunDisc.position.copy(camera.position).addScaledVector(sunDir,170);sunGlow.position.copy(sunDisc.position);
+  sky.position.copy(camera.position);sunDisc.position.copy(camera.position).addScaledVector(sunDir,210);sunGlow.position.copy(sunDisc.position);
   clouds.rotation.y+=dt*.004;ring.rotation.z+=dt*.6;
   renderer.render(scene,camera);
   requestAnimationFrame(loop);
@@ -1064,7 +1069,7 @@ function leaveRoom(){
   if(unsubPeers){try{unsubPeers()}catch(_){}unsubPeers=null}
   if(rm){rm.leave().catch(()=>{});rm=null}
   const wasOnline=online;online=false;oppPeer=null;isHost=false;
-  if(wasOnline){setSkin(C,otherSkin(mySkin));setNames(false);phase='menu';hudEl.hidden=true;tc.hidden=true;place(P,0,24,0);place(C,0,-24,Math.PI)}
+  if(wasOnline){setSkin(C,otherSkin(mySkin));setNames(false);phase='menu';hudEl.hidden=true;tc.hidden=true;place(P,0,38,0);place(C,0,-38,Math.PI)}
   onA.hidden=false;onB.hidden=true;syncOverButtons();
 }
 function players(){
@@ -1162,7 +1167,7 @@ function netTick(dt){
   rm.presence(st).catch(()=>{});
 }
 
-place(P,0,24,0);place(C,0,-24,Math.PI);camYaw=.6;
+place(P,0,38,0);place(C,0,-38,Math.PI);camYaw=.6;
 requestAnimationFrame(loop);
 })();
 </script>
