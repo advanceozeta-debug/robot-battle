@@ -103,9 +103,9 @@ body.touch .tc{display:block}
 .btn.msl{width:56px;height:56px;right:calc(36px + env(safe-area-inset-right,0px));bottom:calc(172px + env(safe-area-inset-bottom,0px));color:var(--hazard);border-color:#6b5a18}
 .btn.sk{width:52px;height:52px;font-size:12px;line-height:1.05;color:#b9f0a0;border-color:#3d6b28;background:rgba(18,40,16,.62);opacity:.55;white-space:pre}
 .btn.sk.ready{opacity:1;box-shadow:0 0 10px #8fe36a}
-.btn.sk1{right:calc(38px + env(safe-area-inset-right,0px));bottom:calc(240px + env(safe-area-inset-bottom,0px))}
-.btn.sk2{right:calc(120px + env(safe-area-inset-right,0px));bottom:calc(282px + env(safe-area-inset-bottom,0px))}
-.btn.sk3{right:calc(202px + env(safe-area-inset-right,0px));bottom:calc(282px + env(safe-area-inset-bottom,0px));color:#ffd38a;border-color:#6b5428;background:rgba(48,34,12,.62)}
+.btn.sk1{width:56px;height:56px;right:calc(36px + env(safe-area-inset-right,0px));bottom:calc(172px + env(safe-area-inset-bottom,0px))}
+.btn.sk2{width:56px;height:56px;right:calc(36px + env(safe-area-inset-right,0px));bottom:calc(238px + env(safe-area-inset-bottom,0px))}
+.btn.sk3{width:56px;height:56px;right:calc(118px + env(safe-area-inset-right,0px));bottom:calc(282px + env(safe-area-inset-bottom,0px));color:#ffd38a;border-color:#6b5428;background:rgba(48,34,12,.62)}
 .btn.sk3.ready{box-shadow:0 0 10px #ffc04a}
 .skl{position:absolute;left:50%;top:calc(50% + 70px);transform:translateX(-50%);white-space:nowrap;font-family:var(--display);font-size:13px;color:var(--dim);text-shadow:0 1px 2px #000}
 .skl b{font-weight:400;color:#b9f0a0}
@@ -117,7 +117,7 @@ body.touch .tc{display:block}
 .btn.qs{font-size:16px;color:#ffb43a;border-color:#6b4418;background:rgba(40,26,12,.6);border-radius:14px}
 .qs.qf,.qs.qb{width:124px;height:50px;left:50%;margin-left:-62px}.qs.qf{top:0}.qs.qb{bottom:0}
 .qs.ql,.qs.qr{width:50px;height:124px;top:50%;margin-top:-62px}.qs.ql{left:0}.qs.qr{right:0}
-@media (orientation:landscape) and (max-height:440px){.lpad{width:236px;height:216px}.qs.qf,.qs.qb{width:112px;height:44px;margin-left:-56px}.qs.ql,.qs.qr{width:46px;height:104px;margin-top:-52px}.btn.mel{right:calc(196px + env(safe-area-inset-right,0px))!important;bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}.btn.sk1{right:calc(196px + env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px))}.btn.sk2{right:calc(196px + env(safe-area-inset-right,0px));bottom:calc(216px + env(safe-area-inset-bottom,0px))}}
+@media (orientation:landscape) and (max-height:440px){.lpad{width:236px;height:216px}.qs.qf,.qs.qb{width:112px;height:44px;margin-left:-56px}.qs.ql,.qs.qr{width:46px;height:104px;margin-top:-52px}.btn.mel{right:calc(196px + env(safe-area-inset-right,0px))!important;bottom:calc(150px + env(safe-area-inset-bottom,0px))!important}.btn.sk3{right:calc(196px + env(safe-area-inset-right,0px));bottom:calc(216px + env(safe-area-inset-bottom,0px))}}
 @media (orientation:portrait){.lpad{width:214px;height:214px}.btn.qs{font-size:14px}.qs.qf,.qs.qb{width:100px;height:44px;margin-left:-50px}.qs.ql,.qs.qr{width:44px;height:100px;margin-top:-50px}}
 .joy{position:absolute;left:50%;top:50%;width:110px;height:110px;margin:-55px 0 0 -55px;border-radius:50%;border:1px solid rgba(212,226,240,.35);background:rgba(20,33,48,.35);pointer-events:none}
 .joy i{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(212,226,240,.55)}
@@ -169,7 +169,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <div class="side p">
         <span class="nm" id="pNm">볼트</span>
         <div class="track"><div class="ghost" id="pG"></div><div class="fill" id="pF"></div></div>
-        <div class="mini en" id="pE"><span class="t"><div></div></span><span>에너지</span></div>
+        <div class="mini en" id="pE" hidden><span class="t"><div></div></span><span>에너지</span></div>
         <div class="mini sh" id="pS"><span class="t"><div></div></span><span>방패</span></div>
         <div class="mini bo" id="pB"><span class="t"><div></div></span><span>부스터</span></div>
         <div class="mini ul" id="pU"><span class="t"><div></div></span><span>필살기</span></div>
@@ -178,7 +178,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <div class="side c">
         <span class="nm" id="cNm">크래셔</span>
         <div class="track"><div class="ghost" id="cG"></div><div class="fill" id="cF"></div></div>
-        <div class="mini en" id="cE"><span class="t"><div></div></span><span>에너지</span></div>
+        <div class="mini en" id="cE" hidden><span class="t"><div></div></span><span>에너지</span></div>
         <div class="mini sh" id="cS"><span class="t"><div></div></span><span>방패</span></div>
         <div class="mini bo" id="cB"><span class="t"><div></div></span><span>부스터</span></div>
         <div class="mini ul" id="cU"><span class="t"><div></div></span><span>필살기</span></div>
@@ -198,12 +198,11 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <span><kbd>Space</kbd>부스트 (누르는 동안 위로)</span>
       <span>이동 키 두 번 누르고 꾹 · 대시</span>
       <span>좌클릭 · <kbd>[</kbd>사격</span>
-      <span>우클릭 · <kbd>Enter</kbd><span id="kMsl">미사일</span></span>
-      <span><kbd>Shift</kbd>방패</span>
+            <span><kbd>Shift</kbd>방패</span>
       <span><kbd>R</kbd>재장전</span>
       <span><kbd>F</kbd><span id="kUlt">필살기</span></span>
       <span><kbd>C</kbd>근접 공격</span>
-      <span><kbd>Z</kbd><span id="kS1">스킬 1</span></span>
+      <span>우클릭 · <kbd>Z</kbd><span id="kS1">스킬 1</span></span>
       <span><kbd>X</kbd><span id="kS2">스킬 2</span></span>
       <span id="kS3w" hidden><kbd>V</kbd><span id="kS3">스킬 3</span></span>
     </div>
@@ -218,7 +217,6 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     </div>
     <button class="btn fire" data-k="fire">사격</button>
     <button class="btn shd" data-k="shield">방패</button>
-    <button class="btn msl" data-k="missile">미사일</button>
     <button class="btn ult" data-k="ult" id="ultBtn">필살</button>
     <button class="btn mel" data-k="melee">근접</button>
     <button class="btn sk sk1" data-k="s1" id="sk1Btn">스킬1</button>
@@ -230,14 +228,14 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">기계</span> <span class="c2">총격전</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 60발, 미사일은 3발을 쏘면 재장전해요. 미사일은 일정 시간만 유도되고 그 뒤엔 직진하며, 사거리(70m) 끝에서 터져요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 미사일로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 탄창을 다 쓰면 재장전해요. 로봇마다 스킬 3개가 있고, 쿨타임이 끝날 때마다 쓸 수 있어요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 스킬로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
         <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
-        <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter (R: 재장전)</dd>
+        <dt>사격</dt><dd>좌클릭 또는 [ (R: 재장전)</dd>
         <dt>근접 · 필살기</dt><dd>C · F</dd>
-        <dt>스킬 1 · 2 · 3</dt><dd>Z · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 스킬3은 원래 쓰던 필살기를 작게 만든 것)</dd>
+        <dt>스킬 1 · 2 · 3</dt><dd>Z(또는 우클릭) · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 스킬3은 원래 쓰던 필살기를 작게 만든 것)</dd>
         <dt>부스트 · 방패</dt><dd>Space (누르는 동안 위로) · Shift (1초 동안 모든 공격 막기, 4초 쿨타임)</dd>
       </dl>
       <dl class="ctl" id="ctlTouch" hidden>
@@ -246,7 +244,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>시점</dt><dd>자동으로 상대를 따라가요</dd>
         <dt>근접 공격</dt><dd>근접 버튼: 상대 쪽으로 10m 대시해서 베기 (대시하면 끊겨요)</dd>
         <dt>대시 · 부스트</dt><dd>공격 버튼 아래. 대시는 한 번 누르면 조이스틱을 미는 동안 계속 가고, 조이스틱을 놓으면 멈춰요. 부스트는 누르는 동안 위로</dd>
-        <dt>버튼</dt><dd>사격 · 방패 · 미사일 · 스킬 2개(초록 버튼, 쿨타임마다 사용)</dd>
+        <dt>버튼</dt><dd>사격 · 방패 · 스킬 3개(초록 2개 + 주황 1개, 쿨타임마다 사용)</dd>
       </dl>
       <p class="rot">폰을 가로로 돌리면 더 넓게 보여요.</p>
       <div class="seg" role="group" aria-label="내 로봇">
@@ -871,7 +869,7 @@ function look(dx,dy,s){camYaw-=dx*s;camPitch=clamp(camPitch-dy*s,-.5,.62)}
 addEventListener('keydown',e=>{
   const c=e.code;const menuEnter=(c==='Enter'||c==='NumpadEnter')&&(phase==='menu'||phase==='over');if(!menuEnter&&['Enter','NumpadEnter','BracketLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(c))e.preventDefault();
   if(keys[c]&&e.repeat)return;keys[c]=true;
-  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='KeyC')press.melee=true;if(c==='KeyZ')press.s1=true;if(c==='KeyX')press.s2=true;if(c==='KeyV')press.s3=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
+  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='KeyC')press.melee=true;if(c==='KeyZ')press.s1=true;if(c==='KeyX')press.s2=true;if(c==='KeyV')press.s3=true;if(c==='Enter'||c==='NumpadEnter')press.s1=true;
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code===dashKey)dashKey=null});
 const DIRK={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',KeyD:'r'};
@@ -884,7 +882,7 @@ cv.addEventListener('pointerdown',e=>{
   if(e.pointerType==='touch')return;
   if(!locked&&cv.requestPointerLock){try{const r=cv.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(_){}}
   if(e.button===0)mouseFire=true;
-  if(e.button===2)press.missile=true;
+  if(e.button===2)press.s1=true;
   mouseDrag=true;
 });
 addEventListener('pointerup',e=>{if(e.pointerType==='touch')return;if(e.button===0)mouseFire=false;mouseDrag=false});
@@ -1295,8 +1293,7 @@ function ai(dt){
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
     if(dist<12&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
     if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
-    if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
-    sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.5)return;const t=S.t;
+    sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.8)return;const t=S.t;
       const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='barrage'?dist<60:t==='mbeam'?los&&dist<70:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
       if(ok)cin['s'+(k+1)]=true});
     if(Math.random()<.12)ideal=C.skin==='viper'?rnd(5,12):rnd(12,30);
@@ -1328,7 +1325,7 @@ function playerInput(dt){
   if(press.qs){const q=press.qs,df=q==='f'?1:q==='b'?-1:0,ds=q==='r'?1:q==='l'?-1:0;pin.qsX=_f.x*df+_r.x*ds;pin.qsZ=_f.z*df+_r.z*ds;pin.qs=true}
   if(dashKey&&keys[dashKey]){const d=DIRK[dashKey],df=d==='f'?1:d==='b'?-1:0,ds=d==='r'?1:d==='l'?-1:0;pin.dashX=_f.x*df+_r.x*ds;pin.dashZ=_f.z*df+_r.z*ds;pin.dash=true}
   else if(dashHeld){if(l>.3&&P.fuel>0){pin.dashX=mx/l;pin.dashZ=mz/l;pin.dash=true;dashSeen=true}else if(dashSeen||P.fuel<=0||(dashWait-=dt)<=0)dashHeld=false}
-  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.s3=press.s3;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
+  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.s3=press.s3;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=false;
   pin.fire=fireHeld||mouseFire||!!keys.BracketLeft;
   pin.shield=shieldHeld||!!keys.ShiftLeft||!!keys.ShiftRight||!!keys.KeyL;
 }
@@ -1431,7 +1428,7 @@ let vigT=0,hitT=0,lastSec=-1;
 function hud(){
   const pc=v=>Math.max(0,v/MAX_HP*100)+'%';H.pF.style.width=pc(P.hp);H.pG.style.width=pc(P.ghost);H.cF.style.width=pc(C.hp);H.cG.style.width=pc(C.ghost);
   H.pF.classList.toggle('low',P.hp<MAX_HP*.3);H.cF.classList.toggle('low',C.hp<MAX_HP*.3);
-  skillHud();mslMini(H.pE,P);guardMini(H.pS,P);mslMini(H.cE,C);ultMini(H.pU,P,true);ultMini(H.cU,C,false);guardMini(H.cS,C);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
+  skillHud();guardMini(H.pS,P);ultMini(H.pU,P,true);ultMini(H.cU,C,false);guardMini(H.cS,C);mini(H.pB,P.fuel,P.fuel>5);mini(H.cB,C.fuel,C.fuel>5);
   const s=Math.max(0,Math.ceil(timer));H.time.textContent=s;H.time.classList.toggle('low',s<=10);
   if(phase==='fight'&&s<=5&&s!==lastSec&&s>0)sfx('tick');lastSec=s;
   H.pips.innerHTML=[0,1].map(i=>`<i class="${i<P.wins?'pw':''}"></i>`).join('')+'<span class="gap"></span>'+[0,1].map(i=>`<i class="${i<C.wins?'cw':''}"></i>`).join('');
@@ -1446,7 +1443,7 @@ function hud(){
   if(cs.z<0&&Math.abs(ndc.x)<.95&&Math.abs(ndc.y)<.92){
     H.tag.hidden=false;H.arrow.hidden=true;H.cross.hidden=C.ko;
     H.tag.style.transform=`translate(${(ndc.x+1)/2*VW}px,${(1-ndc.y)/2*VH}px) translate(-50%,-100%)`;
-    H.tag.textContent=C.ko?'격파됨':`${C.name} ${Math.ceil(C.hp)} · ${Math.round(aimRange)}m${aimRange>MSL_RANGE?' · '+armsOf(P).mName+' 사거리 밖':''}${C.invT>0?' · 스턴':''}`;
+    H.tag.textContent=C.ko?'격파됨':`${C.name} ${Math.ceil(C.hp)} · ${Math.round(aimRange)}m${C.invT>0?' · 스턴':''}`;
     const cc=centerOf(C,new V()).project(camera);
     H.cross.style.transform=`translate(${(cc.x+1)/2*VW-20}px,${(1-cc.y)/2*VH-20}px)`;
   }else{
@@ -1581,7 +1578,7 @@ if(!inClaude)document.getElementById('onNote').textContent='친구에게 같은 
 const NO_ONLINE=inClaude?'지금 화면에서는 온라인 대전을 쓸 수 없어요. Claude에 로그인한 상태로 이 아티팩트 링크를 열어 주세요.':'연결 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 페이지를 새로고침해 주세요.';
 const onlineEl=$('online'),onA=$('onA'),onB=$('onB'),onErr=$('onErr'),onStatus=$('onStatus');
 function setNames(on){P.name=on?'나':SKIN[P.skin].name;C.name=on?'상대':SKIN[C.skin].name;$('pNm').textContent=P.name;$('cNm').textContent=C.name;skinUI()}
-function weaponLabels(){const W=armsOf(P),L=sklOf(P);$('kS1').textContent=L[0].n;$('kS2').textContent=L[1].n;$('kS3w').hidden=!L[2];if(L[2])$('kS3').textContent=L[2].n;$('kUlt').textContent=W.ultName;document.querySelector('.btn.msl').textContent=W.mShort;$('kMsl').textContent=W.mName}
+function weaponLabels(){const W=armsOf(P),L=sklOf(P);$('kS1').textContent=L[0].n;$('kS2').textContent=L[1].n;$('kS3w').hidden=!L[2];if(L[2])$('kS3').textContent=L[2].n;$('kUlt').textContent=W.ultName;0}
 function skinUI(){weaponLabels();
   const pc=SKIN[P.skin].css,cc=SKIN[C.skin].css;
   $('pNm').style.color=pc;$('cNm').style.color=cc;H.pF.style.background=pc;H.cF.style.background=cc;
@@ -1593,7 +1590,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 판넬 버스트(핀 판넬 6기 일제 사격 + 판넬 미사일 6기) · 롱 빔 라이플 20발 · 핀 판넬 4기+필중 판넬 미사일 3기 동시 사출 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 미사일 4발+필중 판넬 미사일 2기 동시 발사 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 윙 비트 6기(날아가서 상대 주위를 돌며 사격) · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 판넬 버스트(핀 판넬 6기 일제 사격 + 판넬 미사일 6기) · 롱 빔 라이플 20발 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초)`+(L[2]?` · 스킬3 ${L[2].n}(${L[2].d}, ${L[2].cd}초)`:'');$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
@@ -1743,7 +1740,7 @@ function remoteUpdate(dt){
   else{
     let n=Math.min(4,sn-lastShotN);lastShotN=sn;
     let m=Math.min(2,mn-lastMslN);lastMslN=mn;
-    if(phase==='fight'){for(;n>0;n--)remoteFire();for(;m>0;m--)remoteMissile()}
+    if(phase==='fight'){for(;n>0;n--)remoteFire();m=0}
   }
 }
 const r2=v=>Math.round(v*100)/100;
