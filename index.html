@@ -105,6 +105,8 @@ body.touch .tc{display:block}
 .btn.sk.ready{opacity:1;box-shadow:0 0 10px #8fe36a}
 .btn.sk1{right:calc(38px + env(safe-area-inset-right,0px));bottom:calc(240px + env(safe-area-inset-bottom,0px))}
 .btn.sk2{right:calc(120px + env(safe-area-inset-right,0px));bottom:calc(282px + env(safe-area-inset-bottom,0px))}
+.btn.sk3{right:calc(202px + env(safe-area-inset-right,0px));bottom:calc(282px + env(safe-area-inset-bottom,0px));color:#ffd38a;border-color:#6b5428;background:rgba(48,34,12,.62)}
+.btn.sk3.ready{box-shadow:0 0 10px #ffc04a}
 .skl{position:absolute;left:50%;top:calc(50% + 70px);transform:translateX(-50%);white-space:nowrap;font-family:var(--display);font-size:13px;color:var(--dim);text-shadow:0 1px 2px #000}
 .skl b{font-weight:400;color:#b9f0a0}
 .btn.dash,.btn.boost{width:70px;height:46px;border-radius:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));color:#ffb43a;border-color:#6b4418;font-size:14px}
@@ -203,6 +205,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
       <span><kbd>C</kbd>근접 공격</span>
       <span><kbd>Z</kbd><span id="kS1">스킬 1</span></span>
       <span><kbd>X</kbd><span id="kS2">스킬 2</span></span>
+      <span id="kS3w" hidden><kbd>V</kbd><span id="kS3">스킬 3</span></span>
     </div>
   </div>
   <div class="tc" id="tc" hidden>
@@ -220,6 +223,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     <button class="btn mel" data-k="melee">근접</button>
     <button class="btn sk sk1" data-k="s1" id="sk1Btn">스킬1</button>
     <button class="btn sk sk2" data-k="s2" id="sk2Btn">스킬2</button>
+    <button class="btn sk sk3" data-k="s3" id="sk3Btn" hidden>스킬3</button>
     <button class="btn boost" data-k="boost">부스트 ▲</button>
     <button class="btn dash" data-k="dash">대시</button>
   </div>
@@ -233,7 +237,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
         <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter (R: 재장전)</dd>
         <dt>근접 · 필살기</dt><dd>C · F</dd>
-        <dt>스킬 1 · 2</dt><dd>Z · X (로봇마다 다른 스킬 2개, 쿨타임마다 사용)</dd>
+        <dt>스킬 1 · 2 · 3</dt><dd>Z · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 볼트·바이퍼는 예전 필살기가 스킬3)</dd>
         <dt>부스트 · 방패</dt><dd>Space (누르는 동안 위로) · Shift (1초 동안 모든 공격 막기, 4초 쿨타임)</dd>
       </dl>
       <dl class="ctl" id="ctlTouch" hidden>
@@ -637,7 +641,7 @@ function makeBot(col,eye,key){
   scene.add(g);
   return{g,legs,gun,flame,flash,muzzle,shield,mB,vis,eye:S.eye,barrels,mslPort,la,blade,bitRack};
 }
-function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0,ultN:0,meleeN:0,sN:[0,0],sCd:[0,0],melee:null,meleeCd:0,ult:0,castT:0,overT:0}}
+function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(),vel:new V(),yaw:0,aimPitch:0,hp:100,ghost:100,energy:0,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:0,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,anim:0,wins:0,spark:[0,0,0],shotN:0,mslN:0,ultN:0,meleeN:0,sN:[0,0,0],sCd:[0,0,0],melee:null,meleeCd:0,ult:0,castT:0,overT:0}}
 const MSL_RANGE=70,MSL_GUIDE=1.3;
 const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]},raven:{name:'레이븐',col:0xb36bff,css:'var(--violet)',spark:[.75,.45,1]},viper:{name:'바이퍼',col:0x4ddc6a,css:'var(--green)',spark:[.35,1,.45]},leuca:{name:'레우카디우스',col:0x6f8bff,css:'var(--indigo)',spark:[.5,.6,1],sz:1.4},atlas:{name:'아틀라스',col:0xff5c9a,css:'var(--pink)',spark:[1,.4,.65]},seraph:{name:'세라프',col:0xffd166,css:'var(--gold)',spark:[1,.85,.4]}};
 const P=mkR('볼트',0x39c6ff,0xbff0ff,'bolt');P.spark=SKIN.bolt.spark;P.skin='bolt';
@@ -653,10 +657,10 @@ const ARMS={
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKL={
-  bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'}],
+  bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'},{n:'섀도우 블링크',t:'blink',cd:18,old:1,d:'예전 필살기: 상대 뒤로 순간이동 + 3초 무한 연사'}],
   crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'}],
   raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'}],
-  viper:[{n:'섀도우 스텝',t:'step',cd:9,d:'상대 등 뒤로 순간이동'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'}],
+  viper:[{n:'섀도우 스텝',t:'step',cd:9,d:'상대 등 뒤로 순간이동'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'},{n:'광폭 연격',t:'frenzy',cd:16,cnt:2,old:1,d:'예전 필살기: 돌진 베기 2연속'}],
   atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'}],
   seraph:[{n:'리페어 비트',t:'heal',cd:16,hp:25,d:'체력 25 회복'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'}],
   leuca:[{n:'트윈 백캐논',t:'twin',cd:11,dmg:12,w:.32,d:'등 뒤 쌍포 빔 12×2'},{n:'판넬 배리어',t:'armor',cd:14,dur:3,d:'3초간 받는 피해 절반'}]
@@ -678,6 +682,8 @@ function useSkill(r,o,S,remote){
     case 'armor':r.armT=S.dur;burst(c,40,[.6,.9,1],8,.6);sfx('block',me);break;
     case 'heal':if(!remote){r.hp=Math.min(MAX_HP,r.hp+S.hp);r.ghost=Math.max(r.ghost,r.hp)}burst(c,40,[.4,1,.6],8,.7);sfx('block',me);break;
     case 'evade':if(!remote){const dx=r.pos.x-o.pos.x,dz=r.pos.z-o.pos.z,l=Math.hypot(dx,dz)||1;r.qsT=.45;r.qsX=dx/l;r.qsZ=dz/l;r.vel.y=Math.max(r.vel.y,4)}burst(c,20,r.spark,6,.4);sfx('dash',me);break;
+    case 'blink':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o);break;
+    case 'frenzy':if(remote){r.frzT=2.5;burst(c,30,r.spark,8,.5);sfx('dash',me)}else{r.frenzy=S.cnt;r.melee=null;r.burstLeft=0}break;
     case 'step':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o,true);break;
   }
 }
@@ -689,7 +695,7 @@ function setSkin(r,key){
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;r.sz=SKIN[key].sz||1;
   r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
 }
-function place(r,x,z,yaw){Object.assign(r,{sCd:[0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{sCd:[0,0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4*(r.sz||1),r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -862,7 +868,7 @@ function look(dx,dy,s){camYaw-=dx*s;camPitch=clamp(camPitch-dy*s,-.5,.62)}
 addEventListener('keydown',e=>{
   const c=e.code;const menuEnter=(c==='Enter'||c==='NumpadEnter')&&(phase==='menu'||phase==='over');if(!menuEnter&&['Enter','NumpadEnter','BracketLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(c))e.preventDefault();
   if(keys[c]&&e.repeat)return;keys[c]=true;
-  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='KeyC')press.melee=true;if(c==='KeyZ')press.s1=true;if(c==='KeyX')press.s2=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
+  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='KeyC')press.melee=true;if(c==='KeyZ')press.s1=true;if(c==='KeyX')press.s2=true;if(c==='KeyV')press.s3=true;if(c==='Enter'||c==='NumpadEnter')press.missile=true;
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code===dashKey)dashKey=null});
 const DIRK={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',KeyD:'r'};
@@ -936,8 +942,8 @@ function step(r,o,inp,dt){
     if(phase==='fight')r.ult=Math.min(100,r.ult+ULT_PASSIVE*dt);
     if(r.overT>0)r.overT-=dt;
     if(inp.ult&&r.ult>=100&&!r.shield&&r.stun<=0&&r.castT<=0&&phase==='fight'){r.ult=0;r.ultN++;startUlt(r,o)}
-    r.sCd[0]-=dt;r.sCd[1]-=dt;if(r.spdT>0)r.spdT-=dt;if(r.armT>0)r.armT-=dt;if(r.rapidT>0)r.rapidT-=dt;
-    for(let k=0;k<2;k++)if(inp['s'+(k+1)]&&r.sCd[k]<=0&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];r.sCd[k]=S.cd;r.sN[k]++;useSkill(r,o,S,false)}
+    r.sCd[0]-=dt;r.sCd[1]-=dt;r.sCd[2]-=dt;if(r.spdT>0)r.spdT-=dt;if(r.armT>0)r.armT-=dt;if(r.rapidT>0)r.rapidT-=dt;
+    for(let k=0;k<sklOf(r).length;k++)if(inp['s'+(k+1)]&&r.sCd[k]<=0&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];r.sCd[k]=S.cd;r.sN[k]++;useSkill(r,o,S,false)}
     if(inp.reload&&r.reloadT<=0&&r.ammo<W.mag){r.reloadT=W.reload;if(r===P)sfx('heat')}
     if(!inp.shield)r.shieldLock=false;
     if(!inp.fire)r.fireLock=false;
@@ -1260,7 +1266,7 @@ let diff='normal';
 const cin={ult:false,mx:0,mz:0,jump:false,jumpHeld:false,dash:false,dashX:0,dashZ:0,fire:false,missile:false,shield:false,yaw:0,target:new V(),spread:.04};
 let aiT=0,ideal=18,strafe=1,lastPos=new V(),wantMove=false;
 function ai(dt){
-  cin.missile=false;cin.qs=false;cin.ult=false;cin.melee=false;cin.s1=false;cin.s2=false;
+  cin.missile=false;cin.qs=false;cin.ult=false;cin.melee=false;cin.s1=false;cin.s2=false;cin.s3=false;
   const dx=P.pos.x-C.pos.x,dz=P.pos.z-C.pos.z,dist=Math.hypot(dx,dz)||1;
   cin.yaw=Math.atan2(-dx,-dz);
   centerOf(P,cin.target);
@@ -1287,7 +1293,7 @@ function ai(dt){
     if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.5)return;const t=S.t;
-      const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='step'?dist<40&&dist>6:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
+      const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
       if(ok)cin['s'+(k+1)]=true});
     if(Math.random()<.12)ideal=C.skin==='viper'?rnd(5,12):rnd(12,30);
     if(Math.random()<.15)strafe*=-1;
@@ -1318,7 +1324,7 @@ function playerInput(dt){
   if(press.qs){const q=press.qs,df=q==='f'?1:q==='b'?-1:0,ds=q==='r'?1:q==='l'?-1:0;pin.qsX=_f.x*df+_r.x*ds;pin.qsZ=_f.z*df+_r.z*ds;pin.qs=true}
   if(dashKey&&keys[dashKey]){const d=DIRK[dashKey],df=d==='f'?1:d==='b'?-1:0,ds=d==='r'?1:d==='l'?-1:0;pin.dashX=_f.x*df+_r.x*ds;pin.dashZ=_f.z*df+_r.z*ds;pin.dash=true}
   else if(dashHeld){if(l>.3&&P.fuel>0){pin.dashX=mx/l;pin.dashZ=mz/l;pin.dash=true;dashSeen=true}else if(dashSeen||P.fuel<=0||(dashWait-=dt)<=0)dashHeld=false}
-  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
+  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.s3=press.s3;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=press.missile;
   pin.fire=fireHeld||mouseFire||!!keys.BracketLeft;
   pin.shield=shieldHeld||!!keys.ShiftLeft||!!keys.ShiftRight||!!keys.KeyL;
 }
@@ -1398,11 +1404,12 @@ function ultMini(el,r,me){
   el.lastElementChild.textContent=`${armsOf(r).ultName}${ready?(me?' 준비 (F)':' 준비'):''}`;
   if(me)ultBtn.classList.toggle('ready',ready);
 }
-const ultBtn=document.getElementById('ultBtn'),skBtn=[$('sk1Btn'),$('sk2Btn')],sklEl=$('skl');let sklTxt='';
+const ultBtn=document.getElementById('ultBtn'),skBtn=[$('sk1Btn'),$('sk2Btn'),$('sk3Btn')],sklEl=$('skl');let sklTxt='';
 function skillHud(){const L=sklOf(P);let t='';
-  for(let k=0;k<2;k++){const cd=Math.max(0,P.sCd[k]),rd=cd<=0,lab=L[k].n.replace(' ','\n');const bt=rd?lab:lab.split('\n')[0]+'\n'+cd.toFixed(1);
+  skBtn[2].hidden=L.length<3;
+  for(let k=0;k<L.length;k++){const cd=Math.max(0,P.sCd[k]),rd=cd<=0,lab=L[k].n.replace(' ','\n');const bt=rd?lab:lab.split('\n')[0]+'\n'+cd.toFixed(1);
     if(skBtn[k].textContent!==bt)skBtn[k].textContent=bt;skBtn[k].classList.toggle('ready',rd);
-    t+=(k?' · ':'')+(isTouch()?'':(k?'X ':'Z '))+(rd?`<b>${L[k].n}</b>`:`${L[k].n} ${cd.toFixed(1)}`)}
+    t+=(k?' · ':'')+(isTouch()?'':['Z ','X ','V '][k])+(rd?`<b>${L[k].n}</b>`:`${L[k].n} ${cd.toFixed(1)}`)}
   if(t!==sklTxt){sklTxt=t;sklEl.innerHTML=t}}
 function guardMini(el,r){
   const cd=Math.max(0,r.shieldCd||0),v=r.shield?100:(1-cd/GUARD_CD)*100;
@@ -1479,7 +1486,7 @@ function loop(now){
     }
   }else{camYaw+=dt*.12}
   netTick(dt);
-  press.jump=press.missile=press.reload=press.ult=press.melee=press.s1=press.s2=false;press.qs=null;
+  press.jump=press.missile=press.reload=press.ult=press.melee=press.s1=press.s2=press.s3=false;press.qs=null;
   syncModel(P,dt);syncModel(C,dt);
   updateCamera(dt);
   updMega(P,C,dt);updMega(C,P,dt);updUlt(dt);updDrones(dt);updChunks(dt);updPS(sparks,dt,9,.25);updPS(smoke,dt,-.4,.4);
@@ -1525,7 +1532,7 @@ function showOver(){
   syncOverButtons();over.hidden=false;
 }
 /* ---------- online 1v1 (room capability, presence only) ---------- */
-let lastUltN=null,lastMelN=null,lastSkN=[null,null];
+let lastUltN=null,lastMelN=null,lastSkN=[null,null,null];
 let online=false,isHost=false,rm=null,oppPeer=null,myJoin=0,curMatch=0,lastWin='',lastShotN=null,lastMslN=null,sendT=0,hostTimer=null,unsubPeers=null;
 const inClaude=!!(window.claude&&typeof window.claude.use==='function');
 /* Outside Claude (a saved file or your own site): connect the two devices directly with PeerJS (WebRTC). Same calls as a Claude named room. */
@@ -1570,7 +1577,7 @@ if(!inClaude)document.getElementById('onNote').textContent='친구에게 같은 
 const NO_ONLINE=inClaude?'지금 화면에서는 온라인 대전을 쓸 수 없어요. Claude에 로그인한 상태로 이 아티팩트 링크를 열어 주세요.':'연결 기능을 불러오지 못했어요. 인터넷 연결을 확인하고 페이지를 새로고침해 주세요.';
 const onlineEl=$('online'),onA=$('onA'),onB=$('onB'),onErr=$('onErr'),onStatus=$('onStatus');
 function setNames(on){P.name=on?'나':SKIN[P.skin].name;C.name=on?'상대':SKIN[C.skin].name;$('pNm').textContent=P.name;$('cNm').textContent=C.name;skinUI()}
-function weaponLabels(){const W=armsOf(P),L=sklOf(P);$('kS1').textContent=L[0].n;$('kS2').textContent=L[1].n;$('kUlt').textContent=W.ultName;document.querySelector('.btn.msl').textContent=W.mShort;$('kMsl').textContent=W.mName}
+function weaponLabels(){const W=armsOf(P),L=sklOf(P);$('kS1').textContent=L[0].n;$('kS2').textContent=L[1].n;$('kS3w').hidden=!L[2];if(L[2])$('kS3').textContent=L[2].n;$('kUlt').textContent=W.ultName;document.querySelector('.btn.msl').textContent=W.mShort;$('kMsl').textContent=W.mName}
 function skinUI(){weaponLabels();
   const pc=SKIN[P.skin].css,cc=SKIN[C.skin].css;
   $('pNm').style.color=pc;$('cNm').style.color=cc;H.pF.style.background=pc;H.cF.style.background=cc;
@@ -1583,7 +1590,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
 const SKIN_INFO={leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 판넬 버스트(핀 판넬 6기 일제 사격 + 판넬 미사일 6기) · 롱 빔 라이플 20발 · 핀 판넬 4기+필중 판넬 미사일 3기 동시 사출 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 미사일 4발+필중 판넬 미사일 2기 동시 발사 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 윙 비트 6기(날아가서 상대 주위를 돌며 사격) · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
-function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초)`;$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
+function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초)`+(L[2]?` · 스킬3 ${L[2].n}(${L[2].d}, ${L[2].cd}초)`:'');$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
 setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));
@@ -1724,7 +1731,7 @@ function remoteUpdate(dt){
   }}
   if(C.castT>0){C.castT-=dt;C.muzzleT=.05;chargeFx(C);if(C.castT<=0)(armsOf(C).ult==='mega'?fireMegaBeam(C,P):fireBeam(C,P))}
   if(C.armT>0)C.armT-=dt;if(C.spdT>0)C.spdT-=dt;
-  if(Array.isArray(s.sk))for(let k=0;k<2;k++){const v=s.sk[k]|0;
+  if(Array.isArray(s.sk))for(let k=0;k<Math.min(3,s.sk.length,sklOf(C).length);k++){const v=s.sk[k]|0;
     if(lastSkN[k]===null||v<lastSkN[k])lastSkN[k]=v;
     else if(v>lastSkN[k]){lastSkN[k]=v;if(phase==='fight')useSkill(C,P,sklOf(C)[k],true)}}
   const sn=s.sn|0,mn=s.mn|0;
