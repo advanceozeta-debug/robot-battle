@@ -737,7 +737,7 @@ function useSkill(r,o,S,remote){
       const core=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:0x2a3a2a,transparent:true,opacity:.9,depthWrite:false}));core.position.copy(from);core.lookAt(end);core.scale.set(.03,.03,from.distanceTo(end));scene.add(core);
       beams.push({m,core,t:.35,T:.35,w:.07});sfx('dash',me);burst(end,14,r.spark,6,.35);
       if(ok){if(!remote||o===P)hurt(o,r,S.dmg,oc,false);
-        if((!online||o===P)&&!o.shield&&!(o.armT>0)){const dx=r.pos.x-o.pos.x,dz=r.pos.z-o.pos.z,l=Math.hypot(dx,dz)||1,go=Math.max(0,l-3),T_=.35;o.pullT=T_;o.pullX=dx/l*go/T_;o.pullZ=dz/l*go/T_;o.vel.y=Math.max(o.vel.y,3);o.melee=null;o.burstLeft=0}}
+        if((!online||o===P)&&!o.shield&&!(o.armT>0)&&!superArmor(o)){const dx=r.pos.x-o.pos.x,dz=r.pos.z-o.pos.z,l=Math.hypot(dx,dz)||1,go=Math.max(0,l-3),T_=.35;o.pullT=T_;o.pullX=dx/l*go/T_;o.pullZ=dz/l*go/T_;o.vel.y=Math.max(o.vel.y,3);o.melee=null;o.burstLeft=0}}
       break}
     case 'step':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o,true);break;
   }
@@ -986,7 +986,7 @@ const DOWN_DMG=50,DOWN_T=2,DOWN_DECAY=12,GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
-  r.anim+=dt;r.fireCd-=dt;r.muzzleT-=dt;r.flashT-=dt;r.flameT-=dt;if(r.invT>0)r.invT-=dt;if(r.down>0)r.down-=dt;if(r.downG>0&&simTime-(r.downHit||0)>2)r.downG=Math.max(0,r.downG-DOWN_DECAY*dt);
+  r.anim+=dt;r.fireCd-=dt;r.muzzleT-=dt;r.flashT-=dt;r.flameT-=dt;if(r.invT>0)r.invT-=dt;if(r.down>0)r.down-=dt;if(r.ultSA>0)r.ultSA-=dt;if(r.downG>0&&simTime-(r.downHit||0)>2)r.downG=Math.max(0,r.downG-DOWN_DECAY*dt);
   if(r.ghost>r.hp)r.ghost=Math.max(r.hp,r.ghost-80*dt);
   if(r.overheat>0){r.overheat-=dt;r.heat=Math.max(0,r.heat-85*dt)}else r.heat=Math.max(0,r.heat-32*dt);
   if(r.ko){r.koT+=dt;if(Math.random()<dt*14)puff(centerOf(r,_c),1)}
@@ -1105,10 +1105,14 @@ function hurt(d,a,dmg,point,big,melee){
   }else{
     const real=dmg*armsOf(d).armor*DMG_MULT;d.hp-=real;d.flashT=.08;a.ult=Math.min(100,a.ult+real*ULT_DEAL);d.ult=Math.min(100,d.ult+real*ULT_TAKE);
     a.energy=Math.min(100,a.energy+(big?0:3));
-    if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=Math.max(d.stun,.45);shakeAmt=d===P?.5:.25}
+    const sa=superArmor(d);
+    if(sa){if(big)shakeAmt=Math.max(shakeAmt,d===P?.2:.1)}
+    else if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=Math.max(d.stun,.45);shakeAmt=d===P?.5:.25}
     else{d.vel.x+=dir.x*.8;d.vel.z+=dir.z*.8;if(d===P)shakeAmt=Math.max(shakeAmt,.08)}
+    if(sa)burst(centerOf(d,new V()),6,[1,.85,.4],5,.3);
     d.downG=(d.downG||0)+real;d.downHit=simTime;
-    if(d.hp>0&&d.downG>=DOWN_DMG)knockDown(d,a,dir);
+    if(d.hp>0&&d.downG>=DOWN_DMG&&!sa)knockDown(d,a,dir);
+    if(sa)d.downG=Math.min(d.downG,DOWN_DMG*.8);
     burst(point,big?24:7,a.spark,big?10:6);sfx('hit',d===P||a===P?1:.5);
     if(d===P)vigT=.35;if(a===P)hitT=.12;
   }
@@ -1216,7 +1220,9 @@ function aimLineFx(r){
 }
 function clearAimLine(r){if(r.aimLine){scene.remove(r.aimLine);r.aimLine.material.dispose();r.aimLine=null}}
 function chargeFx(r){aimLineFx(r);const c=r.m.muzzle.getWorldPosition(new V());for(let i=0;i<2;i++){const v=new V(rnd(-1,1),rnd(-1,1),rnd(-1,1)).normalize().multiplyScalar(1.2);emit(sparks,c.x+v.x,c.y+v.y,c.z+v.z,-v.x*3,-v.y*3,-v.z*3,.35,r.spark)}}
+const superArmor=r=>r.castT>0||!!r.mega||r.frenzy>0||!!(r.melee&&r.melee.frz)||r.ultSA>0;
 function startUlt(r,o){
+  r.ultSA=.6;
   sfx('missile',r===P||o===P?1:.6);
   const U=armsOf(r).ult;
   if(U==='beam'||U==='mega'||U==='lmega'){r.castT=U!=='beam'?MEGA_CHARGE:BEAM_CHARGE;r.burstLeft=0;lockBeam(r,o)}
