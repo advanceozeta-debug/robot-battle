@@ -689,7 +689,7 @@ function pickTarget(force){const fs=foes(P);if(!fs.length){PT=C;return}
 const ARMS={
   bolt:{meleeDmg:14,frenzyDmg:13,meleeRange:35,lungeSp:30,ultName:'광폭 연격',ult:'frenzy',gunName:'빔 라이플',mag:60,rate:.11,burst:12,stunHits:12,stunWin:2,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:1.6,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{meleeDmg:20,meleeRange:30,lungeSp:26,ultName:'융단 포격',ult:'barrage',gunName:'개틀링',stunHits:12,stunWin:1.5,mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:75,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
-  leuca:{legendary:true,meleeDmg:18,meleeRange:34,lungeSp:32,ultName:'풀 판넬 버스트',ult:'fullfun',gunName:'롱 빔 라이플',stunHits:6,stunWin:2.2,mag:20,rate:.3,dmg:5.5,spread:0,bspeed:80,reload:2.8,mName:'핀 판넬+판넬 미사일',mShort:'판넬',mMag:2,mReload:8,mCd:.6,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:4,bitDmg:1.8,funnel:3,fDmg:4,stormDmg:3.5,noMsl:true,speed:9.6,armor:.75},
+  leuca:{legendary:true,meleeDmg:18,meleeRange:34,lungeSp:32,ultName:'풀 버스트 캐논',ult:'lmega',beamCol:0x2ee6d6,megaT:1.5,megaDmg:5,megaAoe:3.5,sideBeams:1,spreadBoom:1,spiral:12,spiralDmg:4,gunName:'롱 빔 라이플',stunHits:6,stunWin:2.2,mag:20,rate:.3,dmg:5.5,spread:0,bspeed:80,reload:2.8,mName:'핀 판넬+판넬 미사일',mShort:'판넬',mMag:2,mReload:8,mCd:.6,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:4,bitDmg:1.8,funnel:3,fDmg:4,stormDmg:3.5,noMsl:true,speed:9.6,armor:.75},
   atlas:{legendary:true,meleeDmg:15,meleeRange:32,lungeSp:30,ultName:'메가 빔 버스트',ult:'mega',gunName:'헤비 빔 라이플',stunHits:8,stunWin:2,mag:24,rate:.22,dmg:4.2,spread:0,bspeed:72,reload:2.6,mName:'미사일+판넬 미사일',mShort:'미사일',mMag:2,mReload:7,mCd:.6,guide:1.2,turn:3.2,mDmg:12,mRad:3.4,mSpeed:26,lob:true,salvo:4,funnel:2,fDmg:4,stormDmg:5,megaDmg:6,megaAoe:3,megaFunDmg:4,speed:8.2,armor:.9},
   seraph:{epic:true,meleeDmg:14,meleeRange:32,lungeSp:30,ultName:'헤일로 스톰',ult:'halo',gunName:'빔 소총',stunHits:10,stunWin:2,mag:30,rate:.16,dmg:3.2,spread:0,bspeed:70,reload:2.4,mName:'윙 비트',mShort:'비트',mMag:2,mReload:8,mCd:.5,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:6,bitDmg:2.4,speed:8.8,armor:1},
   viper:{meleeDmg:22,frenzyDmg:18,meleeRange:30,lungeSp:34,meleeCd:1.5,ultName:'섀도우 블링크',ult:'blink',gunName:'샷건',stunHits:12,stunWin:1.2,mag:6,rate:.8,pellets:7,dmg:2.2,spread:.085,bspeed:70,reload:3,mName:'산탄 로켓',mShort:'로켓',mMag:2,mReload:6.5,mCd:.6,guide:0,mDmg:10,mRad:3.2,mSpeed:38,lob:false,salvo:3,speed:9,armor:.95,snd:'shotgun'},
@@ -1042,7 +1042,7 @@ function step(r,o,inp,dt){
       if(r.frenzy>0&&!r.melee&&!o.ko){r.frenzy--;r.melee={ph:'lunge',t:0,hit:false,frz:true};sfx('dash',r===P||o===P?.8:.4)}
       if(r.melee)meleeStep(r,o,dt);
       if(r.mega){r.vel.x*=.2;r.vel.z*=.2;r.burstLeft=0}
-      if(r.castT>0){r.castT-=dt;r.vel.x*=.2;r.vel.z*=.2;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(armsOf(r).ult==='mega'?fireMegaBeam(r,o):fireBeam(r,o))}
+      if(r.castT>0){r.castT-=dt;r.vel.x*=.2;r.vel.z*=.2;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,o):fireBeam(r,o))}
       r.m.g.rotation.y=r.yaw;r.m.gun.rotation.x=r.aimPitch;r.m.g.position.copy(r.pos);r.m.g.updateMatrixWorld(true);
       if(W.burst){
         if(inp.fire&&(!r.firePrev||r!==P)&&!r.fireLock&&!(r.burstLeft>0)&&r.reloadT<=0&&r.ammo>0&&!r.shield)r.burstLeft=Math.min(W.burst,r.ammo);
@@ -1152,9 +1152,12 @@ function updProj(dt){
     m.pos.addScaledVector(m.vel,dt);m.travel+=m.vel.length()*dt;
     m.g.position.copy(m.pos);m.g.lookAt(_t.copy(m.pos).sub(m.vel));
     m.trail-=dt;if(m.trail<=0){m.trail=.025;emit(smoke,m.pos.x,m.pos.y,m.pos.z,rnd(-.3,.3),rnd(-.3,.3),rnd(-.3,.3),.7,[.4,.42,.46]);emit(sparks,m.pos.x,m.pos.y,m.pos.z,0,0,0,.15,[1,.6,.2])}
+    if(m.stuckT!==undefined){m.stuckT-=dt;if(m.stuckT>0){if(Math.random()<.5)emit(sparks,m.pos.x,m.pos.y+.2,m.pos.z,rnd(-1,1),rnd(1,3),rnd(-1,1),.25,m.o.spark);continue}}
     const tc=centerOf(t,_c);
     let hit=(!m.sure&&inBox(m.pos))||(m.pos.y<0)||(!m.sure&&!m.noRange&&m.travel>=MSL_RANGE)||m.age>6||(m.sure&&t.ko&&m.age>.3)||Math.abs(m.pos.x)>51||Math.abs(m.pos.z)>51;
     for(const f of foes(m.o))if(!f.ko&&!(f.invT>0)&&m.pos.distanceTo(centerOf(f,_m))<(f.shield?1.7:m.big?1.5:1.1)*(f.sz||1))hit=true;
+    if(hit&&m.stick&&m.stuckT===undefined){m.stuckT=.35;m.vel.set(0,0,0);if(m.pos.y<.15)m.pos.y=.15;m.g.position.copy(m.pos);continue}
+    if(m.stuckT!==undefined&&m.stuckT<=0)hit=true;
     if(hit){
       blast(m.pos,m.big?4.2:2.6);burst(m.pos,m.big?70:40,m.o.spark,m.big?15:11,.7);puff(m.pos,m.big?16:8);sfx('boom',m.o===P||t===P?1:.6);
       if(P.pos.distanceTo(m.pos)<(m.big?20:14))shakeAmt=Math.max(shakeAmt,m.big?.4:.25);
@@ -1207,7 +1210,7 @@ function chargeFx(r){aimLineFx(r);const c=r.m.muzzle.getWorldPosition(new V());f
 function startUlt(r,o){
   sfx('missile',r===P||o===P?1:.6);
   const U=armsOf(r).ult;
-  if(U==='beam'||U==='mega'){r.castT=U==='mega'?MEGA_CHARGE:BEAM_CHARGE;r.burstLeft=0;lockBeam(r,o)}
+  if(U==='beam'||U==='mega'||U==='lmega'){r.castT=U!=='beam'?MEGA_CHARGE:BEAM_CHARGE;r.burstLeft=0;lockBeam(r,o)}
   else if(U==='barrage'){const t=o.pos.clone().addScaledVector(o.vel,.5);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);r.ultP=[r2(t.x),r2(t.z)];startBarrage(r,t)}
   else if(U==='halo'){launchDrones(r,o,8,'halo')}
   else if(U==='fullfun'){launchDrones(r,o,6,'halo');launchDrones(r,o,6,'fstorm')}
@@ -1223,12 +1226,14 @@ function aoeAt(p,r,o,rad,dmg,boxDmg){
   for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&fc.distanceTo(p)<rad+((f.sz||1)-1))hurt(f,r,dmg,fc,true)}
   for(const bb of BREAK.slice())if(!bb.dead){const dx=Math.max(bb.x0-p.x,0,p.x-bb.x1),dz=Math.max(bb.z0-p.z,0,p.z-bb.z1),dy=Math.max(0,p.y-bb.h);if(Math.hypot(dx,dy,dz)<rad)hitBox(bb,boxDmg)}
 }
+const isMega=r=>{const u=armsOf(r).ult;return u==='mega'||u==='lmega'};
+function beamMesh(col,op){const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:col,transparent:true,opacity:op,blending:T.AdditiveBlending,depthWrite:false}));scene.add(m);return m}
 function fireMegaBeam(r,o){
+  const W=armsOf(r),col=W.beamCol||r.col;
   const dir=(r.beamDir||centerOf(o,new V()).sub(r.m.muzzle.getWorldPosition(new V()))).clone().normalize();r.beamDir=null;clearAimLine(r);
-  const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:r.col,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
-  const core=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.95,blending:T.AdditiveBlending,depthWrite:false}));
-  scene.add(m);scene.add(core);
-  r.mega={t:MEGA_T,dir,m,core,tick:0,end:null};
+  const m=beamMesh(col,.9),core=beamMesh(0xffffff,.95);
+  const side=W.sideBeams?[-1,1].map(sd=>({sd,m:beamMesh(col,.85),core:beamMesh(0xffffff,.9)})):null;
+  r.mega={t:W.megaT||MEGA_T,T:W.megaT||MEGA_T,dir,m,core,side,tick:0,end:null,age:0,spN:0,spT:0};
   sfx('boom',r===P||o===P?1:.6);
 }
 function megaGeom(r,o){
@@ -1238,29 +1243,43 @@ function megaGeom(r,o){
   if(hitT)len=Math.min(len,from.distanceTo(oc));
   return{from,end:from.clone().addScaledVector(g.dir,len),len,hitT,oc};
 }
+function sideFrom(r,sd){const z=r.sz||1,p=r.pos.clone();p.y+=4.05*z;p.x+=Math.cos(r.yaw)*sd*.36*z+Math.sin(r.yaw)*.5*z;p.z+=-Math.sin(r.yaw)*sd*.36*z+Math.cos(r.yaw)*.5*z;return p}
 function updMega(r,o,dt){
   const g=r.mega;if(!g)return;
-  g.t-=dt;
-  const q=megaGeom(r,o),W=armsOf(r),fl=1+Math.sin(simTime*60)*.08;
+  g.t-=dt;g.age+=dt;
+  const q=megaGeom(r,o),W=armsOf(r),fl=1+Math.sin(simTime*60)*.08,col=W.beamCol?[.2,.95,.85]:r.spark;
   g.m.position.copy(q.from);g.m.lookAt(q.end);g.m.scale.set(1.15*fl,1.15*fl,q.len);
   g.core.position.copy(q.from);g.core.lookAt(q.end);g.core.scale.set(.42*fl,.42*fl,q.len);
+  const segs=[[q.from,q.end,1]];
+  if(g.side)for(const sb of g.side){const f=sideFrom(r,sb.sd),l=f.distanceTo(q.end);sb.m.position.copy(f);sb.m.lookAt(q.end);sb.m.scale.set(.55*fl,.55*fl,l);sb.core.position.copy(f);sb.core.lookAt(q.end);sb.core.scale.set(.2*fl,.2*fl,l);segs.push([f,q.end,.5])}
   g.end=q.end;r.muzzleT=.05;
-  if(Math.random()<.8)burst(q.end,6,r.spark,8,.35);
+  if(Math.random()<.8)burst(q.end,6,col,8,.35);
   if(r===P||o===P)shakeAmt=Math.max(shakeAmt,.12);
   g.tick-=dt;
   if(g.tick<=0&&phase==='fight'){
     g.tick=MEGA_TICK;
-    for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&segDist(fc,q.from,q.end)<2*(f.sz||1))hurt(f,r,W.megaDmg||6,fc,true)}
+    for(const f of foes(r)){const fc=centerOf(f,new V());if(f.ko)continue;let k=0;for(const [a,b,w] of segs)if(segDist(fc,a,b)<2*(f.sz||1))k=Math.max(k,w);if(k)hurt(f,r,(W.megaDmg||6)*k,fc,true)}
     aoeAt(q.end,r,o,4.5,W.megaAoe||3,50);
-    for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segDist(c,q.from,q.end)<Math.max(bb.w,bb.d)/2+1.2)hitBox(bb,40)}
+    if(W.spreadBoom){const rr=2+g.age*6;for(let n=0;n<2;n++){const a=Math.random()*Math.PI*2,d=rnd(rr*.5,rr),pt=new V(clamp(q.end.x+Math.cos(a)*d,-49,49),Math.max(.3,q.end.y*.3),clamp(q.end.z+Math.sin(a)*d,-49,49));aoeAt(pt,r,o,3.6,W.megaAoe||3,40)}}
+    for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segs.some(([a,b])=>segDist(c,a,b)<Math.max(bb.w,bb.d)/2+1.2))hitBox(bb,40)}
   }
+  if(W.spiral){g.spT-=dt;
+    while(g.spT<=0&&g.spN<W.spiral){g.spT+=g.T*.9/W.spiral;const n=g.spN++,a=n*.95+r.yaw,d=3+n*.75;
+      const pt=new V(clamp(q.end.x+Math.cos(a)*d,-49,49),0,clamp(q.end.z+Math.sin(a)*d,-49,49));
+      const fm=makeFunnelMesh(r);fm.children[0].rotation.y=0;fm.scale.setScalar(.55);scene.add(fm);
+      const port=r.m.mslPort.getWorldPosition(new V()),p=port.clone().add(new V(rnd(-.4,.4),.3,rnd(-.4,.4)));fm.position.copy(p);
+      const v=pt.clone().sub(p).normalize().multiplyScalar(rnd(30,36));
+      missiles.push({g:fm,o:r,pos:p,vel:v,age:.3,trail:0,travel:0,guide:0,maxSp:36,dmg:W.spiralDmg||4,rad:3.8,lob:false,big:true,noRange:true,funnelG:true,stick:true});
+      if(n%3===0)sfx('missile',r===P||o===P?.8:.5)}}
   if(g.t<=0)endMega(r,o,true);
 }
 function endMega(r,o,launch){
   const g=r.mega;if(!g)return;r.mega=null;
   beams.push({m:g.m,core:g.core,t:.3,T:.3,w:1.15});
-  if(!launch||!g.end)return;
-  const W=armsOf(r),port=r.m.mslPort.getWorldPosition(new V());
+  if(g.side)for(const sb of g.side)beams.push({m:sb.m,core:sb.core,t:.3,T:.3,w:.55});
+  const W=armsOf(r);
+  if(!launch||!g.end||W.spiral)return;
+  const port=r.m.mslPort.getWorldPosition(new V());
   for(let k=0;k<MEGA_FUN;k++){
     const a=Math.random()*Math.PI*2,d=rnd(3,12),pt=new V(clamp(g.end.x+Math.cos(a)*d,-49,49),0,clamp(g.end.z+Math.sin(a)*d,-49,49));
     const fm=makeFunnelMesh(r);fm.children[0].rotation.y=0;fm.scale.setScalar(.55);scene.add(fm);
@@ -1275,7 +1294,7 @@ function fireBeam(r,o,dmg=40,w=.45,off=0){
   if(off){from.x+=Math.cos(r.yaw)*off;from.z-=Math.sin(r.yaw)*off;from.y+=1.1*(r.sz||1)}
   const dir=(r.beamDir||oc.clone().sub(from)).clone().normalize();r.beamDir=null;clearAimLine(r);
   const len=Math.min(rayScene(from,dir),95),end=from.clone().addScaledVector(dir,len);
-  const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:r.col,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
+  const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:armsOf(r).beamCol||r.col,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
   m.position.copy(from);m.lookAt(end);m.scale.set(w,w,len);scene.add(m);
   const core=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
   core.position.copy(from);core.lookAt(end);core.scale.set(w*.36,w*.36,len);scene.add(core);
@@ -1354,7 +1373,7 @@ function ai(dt){
     const los=clearLine(muzzle,centerOf(P,_c));
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
     if(dist<12&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
-    if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
+    if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'||armsOf(C).ult==='lmega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
     sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.8)return;const t=S.t;
       const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='hook'?los&&dist<28&&dist>8:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='barrage'?dist<60:t==='mbeam'?los&&dist<70:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='bits'?dist<55:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
       if(ok)cin['s'+(k+1)]=true});
@@ -1666,7 +1685,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 판넬 버스트(핀 판넬 6기 일제 사격 + 판넬 미사일 6기) · 롱 빔 라이플 20발 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 버스트 캐논(청록색 대형 빔 + 등 뒤 쌍포 빔 동시 조사, 닿는 곳마다 광역 폭발이 퍼지고, 판넬 미사일 12기가 주변 땅에 나선형으로 박혀 폭발) · 롱 빔 라이플 20발 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초)`+(L[2]?` · 스킬3 ${L[2].n}(${L[2].d}, ${L[2].cd}초)`:'');$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
@@ -1838,7 +1857,7 @@ function remoteOne(r,s,dt){
   if(nt.ult==null||xn<nt.ult)nt.ult=xn;
   else if(xn>nt.ult){nt.ult=xn;if(phase==='fight'){
     const CU=armsOf(r).ult;
-    if(CU==='beam'||CU==='mega'){r.castT=CU==='mega'?MEGA_CHARGE:BEAM_CHARGE;lockBeam(r,tg)}
+    if(CU==='beam'||CU==='mega'||CU==='lmega'){r.castT=CU!=='beam'?MEGA_CHARGE:BEAM_CHARGE;lockBeam(r,tg)}
     else if(CU==='barrage'&&Array.isArray(s.xp)){startBarrage(r,new V(+s.xp[0]||0,0,+s.xp[1]||0));sfx('missile',.7)}
     else if(CU==='halo'){launchDrones(r,tg,8,'halo')}
     else if(CU==='fullfun'){launchDrones(r,tg,6,'halo');launchDrones(r,tg,6,'fstorm')}
@@ -1846,7 +1865,7 @@ function remoteOne(r,s,dt){
     else if(CU==='frenzy'){r.frzT=3;burst(centerOf(r,new V()),30,r.spark,8,.5);sfx('dash',.7)}
     else if(CU==='blink'){burst(centerOf(r,new V()),40,r.spark,9,.6);sfx('dash',.7)}
   }}
-  if(r.castT>0){r.castT-=dt;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(armsOf(r).ult==='mega'?fireMegaBeam(r,tg):fireBeam(r,tg))}
+  if(r.castT>0){r.castT-=dt;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,tg):fireBeam(r,tg))}
   if(Array.isArray(s.sk))for(let q=0;q<Math.min(3,s.sk.length,sklOf(r).length);q++){const v=s.sk[q]|0;
     if(nt.sk[q]==null||v<nt.sk[q])nt.sk[q]=v;
     else if(v>nt.sk[q]){nt.sk[q]=v;if(phase==='fight')useSkill(r,tg,sklOf(r)[q],true)}}
