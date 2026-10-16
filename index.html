@@ -840,6 +840,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 
 /* ---------- robot simulation ---------- */
 let simTime=0;
+const SPD=.9;
 const BATTLE_T=150,MEGA_CHARGE=.6,MEGA_T=1,MEGA_TICK=.25,MEGA_FUN=6,GUARD_T=1,GUARD_CD=4,BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.3;
 const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
@@ -876,22 +877,22 @@ function step(r,o,inp,dt){
     r.shieldPrev=!!inp.shield;
     if(r.stun>0){r.stun-=dt;if(r.grounded){const k=Math.pow(.02,dt);r.vel.x*=k;r.vel.z*=k}}
     else{
-      const sp=r.shield?3.4:W.speed;
+      const sp=(r.shield?3.4:W.speed)*SPD;
       if(r.grounded){r.vel.x=inp.mx*sp;r.vel.z=inp.mz*sp}
       else{const a=Math.min(1,dt*5);r.vel.x+=(inp.mx*sp-r.vel.x)*a;r.vel.z+=(inp.mz*sp-r.vel.z)*a}
       if(inp.jumpHeld&&!r.shield&&r.fuel>0){
         if(!r.boosting)sfx('jump',r===P?1:.5);
         r.boosting=true;r.flameT=.06;r.fuel=Math.max(0,r.fuel-38*dt);
-        if(r.vel.y<7)r.vel.y=Math.min(r.vel.y+44*dt,7);
+        if(r.vel.y<7*SPD)r.vel.y=Math.min(r.vel.y+44*SPD*dt,7*SPD);
       }else r.boosting=false;
       r.qsCd-=dt;
       if(inp.qs&&r.qsCd<=0&&r.fuel>=10&&!r.shield){r.qsT=.22;r.qsCd=.38;r.qsX=inp.qsX;r.qsZ=inp.qsZ;r.fuel=Math.max(0,r.fuel-14);sfx('dash',r===P?1:.5)}
       if(r.qsT>0){
-        r.qsT-=dt;r.dashing=true;r.vel.x=r.qsX*24;r.vel.z=r.qsZ*24;r.flameT=.06;if(!r.grounded&&r.vel.y<-1)r.vel.y=-1;
+        r.qsT-=dt;r.dashing=true;r.vel.x=r.qsX*24*SPD;r.vel.z=r.qsZ*24*SPD;r.flameT=.06;if(!r.grounded&&r.vel.y<-1)r.vel.y=-1;
         for(let i=0;i<3;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-r.qsX*5+rnd(-1,1),rnd(0,1),-r.qsZ*5+rnd(-1,1),.3,[1,.6,.2]);
       }else if(inp.dash&&r.fuel>0&&!r.shield){
         if(!r.dashing)sfx('dash',r===P?1:.5);
-        r.dashing=true;r.vel.x=inp.dashX*17;r.vel.z=inp.dashZ*17;r.fuel=Math.max(0,r.fuel-42*dt);r.flameT=.06;
+        r.dashing=true;r.vel.x=inp.dashX*17*SPD;r.vel.z=inp.dashZ*17*SPD;r.fuel=Math.max(0,r.fuel-42*dt);r.flameT=.06;
         if(!r.grounded&&r.vel.y<-1)r.vel.y=-1;
         for(let i=0;i<2;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-inp.dashX*4+rnd(-1,1),rnd(0,1),-inp.dashZ*4+rnd(-1,1),.3,[1,.6,.2]);
       }else r.dashing=false;
@@ -1021,7 +1022,7 @@ function meleeStep(r,o,dt){
   const dx=o.pos.x-r.pos.x,dz=o.pos.z-r.pos.z,dy=o.pos.y-r.pos.y,d=Math.hypot(dx,dz)||1;
   if(m.ph==='lunge'){
     if(m.dx===undefined){m.dx=dx/d;m.dz=dz/d;m.go=0}
-    const sp=W.lungeSp,step=sp*dt;
+    const sp=W.lungeSp*SPD,step=sp*dt;
     if(m.go<MELEE_DIST&&d>2.5&&m.t<1){r.vel.x=m.dx*sp;r.vel.z=m.dz*sp;if(r.vel.y<0)r.vel.y=0;m.go+=step;r.flameT=.06;r.dashing=true;
       for(let i=0;i<4;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-m.dx*5,rnd(0,1),-m.dz*5,.25,r.spark)}
     else{m.ph='swing';m.t=0;r.meleeN++;sfx('slash',r===P||o===P?1:.5)}
