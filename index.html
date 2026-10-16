@@ -237,7 +237,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
         <dt>사격 · 미사일</dt><dd>좌클릭 또는 [ · 우클릭 또는 Enter (R: 재장전)</dd>
         <dt>근접 · 필살기</dt><dd>C · F</dd>
-        <dt>스킬 1 · 2 · 3</dt><dd>Z · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 볼트·바이퍼는 예전 필살기가 스킬3)</dd>
+        <dt>스킬 1 · 2 · 3</dt><dd>Z · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 스킬3은 원래 쓰던 필살기를 작게 만든 것)</dd>
         <dt>부스트 · 방패</dt><dd>Space (누르는 동안 위로) · Shift (1초 동안 모든 공격 막기, 4초 쿨타임)</dd>
       </dl>
       <dl class="ctl" id="ctlTouch" hidden>
@@ -657,13 +657,13 @@ const ARMS={
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKL={
-  bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'},{n:'섀도우 블링크',t:'blink',cd:18,old:1,d:'예전 필살기: 상대 뒤로 순간이동 + 3초 무한 연사'}],
-  crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'}],
-  raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'}],
+  bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'},{n:'섀도우 블링크',t:'blink',cd:18,old:1,d:'예전 필살기 그대로: 상대 뒤로 순간이동 + 3초 무한 연사'}],
+  crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'},{n:'소형 융단 포격',t:'barrage',cd:16,cnt:4,old:1,d:'필살기 축소판: 상대 위치에 포탄 4발 낙하'}],
+  raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'},{n:'소형 빔 캐논',t:'beam',cd:18,dmg:28,w:.45,old:1,d:'필살기 축소판: 굵은 빔 28'}],
   viper:[{n:'섀도우 스텝',t:'step',cd:9,d:'상대 등 뒤로 순간이동'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'},{n:'광폭 연격',t:'frenzy',cd:16,cnt:2,old:1,d:'예전 필살기: 돌진 베기 2연속'}],
-  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'}],
-  seraph:[{n:'리페어 비트',t:'heal',cd:16,hp:25,d:'체력 25 회복'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'}],
-  leuca:[{n:'트윈 백캐논',t:'twin',cd:11,dmg:12,w:.32,d:'등 뒤 쌍포 빔 12×2'},{n:'판넬 배리어',t:'armor',cd:14,dur:3,d:'3초간 받는 피해 절반'}]
+  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 폭발'}],
+  seraph:[{n:'리페어 비트',t:'heal',cd:16,hp:25,d:'체력 25 회복'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'},{n:'소형 헤일로 스톰',t:'halo',cd:18,cnt:6,old:1,d:'필살기 축소판: 헤일로 비트 6기'}],
+  leuca:[{n:'트윈 백캐논',t:'twin',cd:11,dmg:12,w:.32,d:'등 뒤 쌍포 빔 12×2'},{n:'판넬 배리어',t:'armor',cd:14,dur:3,d:'3초간 받는 피해 절반'},{n:'소형 판넬 버스트',t:'fstorm',cd:18,cnt:4,old:1,d:'필살기 축소판: 판넬 미사일 4기 돌격'}]
 };
 const sklOf=r=>SKL[r.skin]||SKL.bolt;
 function useSkill(r,o,S,remote){
@@ -682,6 +682,9 @@ function useSkill(r,o,S,remote){
     case 'armor':r.armT=S.dur;burst(c,40,[.6,.9,1],8,.6);sfx('block',me);break;
     case 'heal':if(!remote){r.hp=Math.min(MAX_HP,r.hp+S.hp);r.ghost=Math.max(r.ghost,r.hp)}burst(c,40,[.4,1,.6],8,.7);sfx('block',me);break;
     case 'evade':if(!remote){const dx=r.pos.x-o.pos.x,dz=r.pos.z-o.pos.z,l=Math.hypot(dx,dz)||1;r.qsT=.45;r.qsX=dx/l;r.qsZ=dz/l;r.vel.y=Math.max(r.vel.y,4)}burst(c,20,r.spark,6,.4);sfx('dash',me);break;
+    case 'barrage':{const t=o.pos.clone().addScaledVector(o.vel,.4);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);startBarrage(r,t,S.cnt);sfx('missile',me);break}
+    case 'mbeam':{const e=fireBeam(r,o,S.dmg,S.w);if(e)aoeAt(e,r,o,4,6,50);break}
+    case 'fstorm':launchDrones(r,o,S.cnt,'fstorm');break;
     case 'blink':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o);break;
     case 'frenzy':if(remote){r.frzT=2.5;burst(c,30,r.spark,8,.5);sfx('dash',me)}else{r.frenzy=S.cnt;r.melee=null;r.burstLeft=0}break;
     case 'step':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o,true);break;
@@ -1219,9 +1222,10 @@ function fireBeam(r,o,dmg=40,w=.45,off=0){
   burst(end,30,r.spark,10,.6);blast(end,1.8);sfx('boom',r===P||o===P?1:.6);shakeAmt=Math.max(shakeAmt,r===P||o===P?.35:.1);
   if(!o.ko&&from.distanceTo(oc)<=len+1.4&&segDist(oc,from,end)<1.5*(o.sz||1))hurt(o,r,dmg,oc,true);
   for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segDist(c,from,end)<Math.max(bb.w,bb.d)/2+.6)hitBox(bb,dmg*2)}
+  return end;
 }
-function startBarrage(r,t){
-  for(let i=0;i<7;i++){
+function startBarrage(r,t,n=7){
+  for(let i=0;i<n;i++){
     const a=Math.random()*Math.PI*2,d=i===0?0:rnd(1.5,5);
     const x=clamp(t.x+Math.cos(a)*d,-49,49),z=clamp(t.z+Math.sin(a)*d,-49,49);
     const ring=new T.Mesh(ringGeo,new T.MeshBasicMaterial({color:0xff5a3a,transparent:true,opacity:.7,depthWrite:false,side:T.DoubleSide}));
@@ -1293,7 +1297,7 @@ function ai(dt){
     if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
     if(C.mAmmo>0&&C.mReloadT<=0&&C.mCd<=0&&dist<MSL_RANGE-2&&Math.random()<d.msl*.5)cin.missile=true;
     sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.5)return;const t=S.t;
-      const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
+      const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='barrage'?dist<60:t==='mbeam'?los&&dist<70:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
       if(ok)cin['s'+(k+1)]=true});
     if(Math.random()<.12)ideal=C.skin==='viper'?rnd(5,12):rnd(12,30);
     if(Math.random()<.15)strafe*=-1;
