@@ -543,8 +543,8 @@ function makeBot(col,eye,key){
     // long rifle held low
     box(.18,.2,.5,mS,0,-.04,-.3,gun);box(.13,.15,2.0,mB,0,-.03,-1.05,gun);glow(.04,.04,1.6,mA,0,.1,-1,gun);
     box(.1,.22,.3,mS,0,-.2,-.5,gun);box(.09,.09,.3,mD,0,-.03,-2.1,gun);
-    // twin back cannons crossing in an X
-    [-1,1].forEach(sd=>{const c=new T.Group();c.position.set(sd*.28,2.55,.55);c.rotation.set(-.25,0,sd*.62);g.add(c);
+    // twin back cannons standing upright side by side
+    [-1,1].forEach(sd=>{const c=new T.Group();c.position.set(sd*.36,2.75,.6);c.rotation.set(-.12,0,0);g.add(c);
       const tb=new T.Mesh(new T.CylinderGeometry(.14,.14,2.6,12),mD);tb.castShadow=true;c.add(tb);
       const rg=new T.Mesh(new T.CylinderGeometry(.17,.17,.18,12),mS);rg.position.y=1.25;c.add(rg);
       const mz=new T.Mesh(new T.CylinderGeometry(.1,.1,.05,10),mA);mz.position.y=1.35;c.add(mz)});
