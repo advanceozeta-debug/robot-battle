@@ -656,10 +656,10 @@ const ARMS={
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKL={
   bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'},{n:'섀도우 블링크',t:'blink',cd:18,old:1,d:'예전 필살기 그대로: 상대 뒤로 순간이동 + 3초 무한 연사'}],
-  crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'},{n:'소형 융단 포격',t:'barrage',cd:16,cnt:4,old:1,d:'필살기 축소판: 상대 위치에 포탄 4발 낙하'}],
+  crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,k:.5,dm:.8,d:'3초간 자동 난사(연사 2배), 탄약 소모 없음'},{n:'소형 융단 포격',t:'barrage',cd:16,cnt:4,old:1,d:'필살기 축소판: 상대 위치에 포탄 4발 낙하'}],
   raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'},{n:'소형 빔 캐논',t:'beam',cd:18,dmg:28,w:.45,old:1,d:'필살기 축소판: 굵은 빔 28'}],
   viper:[{n:'섀도우 스텝',t:'step',cd:9,d:'상대 등 뒤로 순간이동'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'},{n:'광폭 연격',t:'frenzy',cd:16,cnt:2,old:1,d:'예전 필살기: 돌진 베기 2연속'}],
-  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,d:'3초간 연사 2배, 탄약 소모 없음'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 폭발'}],
+  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,k:.35,dm:.45,d:'3초간 빔 개틀링 자동 난사(약 30발)'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 폭발'}],
   seraph:[{n:'리페어 비트',t:'heal',cd:16,hp:25,d:'체력 25 회복'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'},{n:'소형 헤일로 스톰',t:'halo',cd:18,cnt:6,old:1,d:'필살기 축소판: 헤일로 비트 6기'}],
   leuca:[{n:'트윈 백캐논',t:'twin',cd:11,dmg:12,w:.32,d:'등 뒤 쌍포 빔 12×2'},{n:'판넬 배리어',t:'armor',cd:14,dur:3,d:'3초간 받는 피해 절반'},{n:'소형 판넬 버스트',t:'fstorm',cd:18,cnt:4,old:1,d:'필살기 축소판: 판넬 미사일 4기 돌격'}]
 };
@@ -675,7 +675,7 @@ function useSkill(r,o,S,remote){
       r.muzzleT=.08;sfx('shotgun',me);break}
     case 'fmsl':launchDrones(r,o,S.cnt,'fmsl');break;
     case 'halo':launchDrones(r,o,S.cnt,'halo');break;
-    case 'over':if(!remote){r.rapidT=S.dur;r.reloadT=0;r.ammo=armsOf(r).mag}burst(c,30,r.spark,8,.5);sfx('heat',me);break;
+    case 'over':r.rapidT=S.dur;r.rapidK=S.k||.5;r.rapidD=S.dm||1;if(!remote){r.reloadT=0;r.ammo=armsOf(r).mag;r.burstLeft=0}burst(c,30,r.spark,8,.5);sfx('heat',me);break;
     case 'speed':r.spdT=S.dur;if(!remote)r.fuel=100;burst(c,30,r.spark,8,.5);sfx('dash',me);break;
     case 'armor':r.armT=S.dur;burst(c,40,[.6,.9,1],8,.6);sfx('block',me);break;
     case 'heal':if(!remote){r.hp=Math.min(MAX_HP,r.hp+S.hp);r.ghost=Math.max(r.ghost,r.hp)}burst(c,40,[.4,1,.6],8,.7);sfx('block',me);break;
@@ -994,15 +994,15 @@ function step(r,o,inp,dt){
         if(r.shield||r.reloadT>0)r.burstLeft=0;
       }
       r.firePrev=!!inp.fire;
-      const wantShot=!r.melee&&(W.burst?r.burstLeft>0:(inp.fire&&!r.fireLock));
+      const wantShot=!r.melee&&(r.rapidT>0||(W.burst?r.burstLeft>0:(inp.fire&&!r.fireLock)));
       const over=r.overT>0;
       if(wantShot&&!r.shield&&r.castT<=0&&r.fireCd<=0&&(over||(r.reloadT<=0&&r.ammo>0))&&inp.target){
-        r.fireCd=over?(W.pellets?W.rate*.6:Math.min(.22,W.rate)):W.rate*(r.rapidT>0?.5:1);r.muzzleT=.05;if(!over&&!(r.rapidT>0))r.ammo--;r.shotN++;if(W.burst)r.burstLeft--;
+        r.fireCd=over?(W.pellets?W.rate*.6:Math.min(.22,W.rate)):W.rate*(r.rapidT>0?r.rapidK:1);r.muzzleT=.05;if(!over&&!(r.rapidT>0))r.ammo--;r.shotN++;if(W.burst&&!(r.rapidT>0))r.burstLeft--;
         if(r.ammo<=0){r.reloadT=W.reload;if(r===P)sfx('heat')}
         const from=r.m.muzzle.getWorldPosition(new V());
         const dir=_d.copy(inp.target).sub(from).normalize();
         const base=dir.clone();
-        for(let k=0;k<(W.pellets||1);k++){const d2=base.clone(),s=inp.spread+W.spread;d2.x+=rnd(-s,s);d2.y+=rnd(-s,s)*.6;d2.z+=rnd(-s,s);d2.normalize();spawnBullet(r,from,d2)}
+        for(let k=0;k<(W.pellets||1);k++){const d2=base.clone(),s=inp.spread+W.spread;d2.x+=rnd(-s,s);d2.y+=rnd(-s,s)*.6;d2.z+=rnd(-s,s);d2.normalize();spawnBullet(r,from,d2,r.rapidT>0?W.dmg*r.rapidD:undefined)}
         sfx(W.snd||'shot',r===P?1:.45);
       }
       if(inp.missile&&!r.shield&&r.mAmmo>0&&r.mReloadT<=0&&r.mCd<=0){
@@ -1688,7 +1688,7 @@ const _tgt=new V();
 function remoteFire(){
   const from=C.m.muzzle.getWorldPosition(new V());
   const CW=armsOf(C),sw=.02+CW.spread,base=centerOf(P,new V()).sub(from).normalize();
-  for(let k=0;k<(CW.pellets||1);k++){const dir=base.clone();dir.x+=rnd(-sw,sw);dir.y+=rnd(-sw,sw)*.6;dir.z+=rnd(-sw,sw);dir.normalize();spawnBullet(C,from,dir)}C.muzzleT=.05;sfx(armsOf(C).snd||'shot',.45);
+  for(let k=0;k<(CW.pellets||1);k++){const dir=base.clone();dir.x+=rnd(-sw,sw);dir.y+=rnd(-sw,sw)*.6;dir.z+=rnd(-sw,sw);dir.normalize();spawnBullet(C,from,dir,C.rapidT>0?CW.dmg*C.rapidD:undefined)}C.muzzleT=.05;sfx(armsOf(C).snd||'shot',.45);
 }
 function remoteMissile(){launchMissile(C,centerOf(P,new V()));if(!armsOf(C).drones)sfx(armsOf(C).lob?'missile':'boom',.6)}
 function remoteUpdate(dt){
@@ -1731,14 +1731,14 @@ function remoteUpdate(dt){
     else if(CU==='blink'){burst(centerOf(C,new V()),40,C.spark,9,.6);sfx('dash',.7)}
   }}
   if(C.castT>0){C.castT-=dt;C.muzzleT=.05;chargeFx(C);if(C.castT<=0)(armsOf(C).ult==='mega'?fireMegaBeam(C,P):fireBeam(C,P))}
-  if(C.armT>0)C.armT-=dt;if(C.spdT>0)C.spdT-=dt;
+  if(C.armT>0)C.armT-=dt;if(C.spdT>0)C.spdT-=dt;if(C.rapidT>0)C.rapidT-=dt;
   if(Array.isArray(s.sk))for(let k=0;k<Math.min(3,s.sk.length,sklOf(C).length);k++){const v=s.sk[k]|0;
     if(lastSkN[k]===null||v<lastSkN[k])lastSkN[k]=v;
     else if(v>lastSkN[k]){lastSkN[k]=v;if(phase==='fight')useSkill(C,P,sklOf(C)[k],true)}}
   const sn=s.sn|0,mn=s.mn|0;
   if(lastShotN===null||sn<lastShotN||mn<lastMslN){lastShotN=sn;lastMslN=mn}
   else{
-    let n=Math.min(4,sn-lastShotN);lastShotN=sn;
+    let n=Math.min(6,sn-lastShotN);lastShotN=sn;
     let m=Math.min(2,mn-lastMslN);lastMslN=mn;
     if(phase==='fight'){for(;n>0;n--)remoteFire();m=0}
   }
