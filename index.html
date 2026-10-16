@@ -689,7 +689,7 @@ function pickTarget(force){const fs=foes(P);if(!fs.length){PT=C;return}
 const ARMS={
   bolt:{meleeDmg:14,frenzyDmg:13,meleeRange:35,lungeSp:30,ultName:'광폭 연격',ult:'frenzy',gunName:'빔 라이플',mag:60,rate:.11,burst:12,stunHits:12,stunWin:2,dmg:3,spread:0,bspeed:66,reload:2.2,mName:'미사일',mMag:3,mReload:6,mCd:.5,guide:1.6,turn:3.8,mDmg:18,mRad:3.6,mSpeed:26,lob:true,speed:8.6,armor:1,mShort:'미사일'},
   crusher:{meleeDmg:20,meleeRange:30,lungeSp:26,ultName:'융단 포격',ult:'barrage',gunName:'개틀링',stunHits:12,stunWin:1.5,mag:120,rate:.06,dmg:1.7,spread:.035,bspeed:54,reload:3,mName:'바주카',mMag:2,mReload:7,mCd:.9,guide:0,mDmg:30,mRad:5.2,mSpeed:75,lob:false,speed:7.3,armor:.85,mShort:'바주카'},
-  leuca:{legendary:true,meleeDmg:18,meleeRange:34,lungeSp:32,ultName:'풀 버스트 캐논',ult:'lmega',beamCol:0x2ee6d6,megaT:1.5,megaDmg:5,megaAoe:3.5,sideBeams:1,spreadBoom:1,spiral:12,spiralDmg:4,gunName:'롱 빔 라이플',stunHits:6,stunWin:2.2,mag:20,rate:.3,dmg:5.5,spread:0,bspeed:80,reload:2.8,mName:'핀 판넬+판넬 미사일',mShort:'판넬',mMag:2,mReload:8,mCd:.6,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:4,bitDmg:1.8,funnel:3,fDmg:4,stormDmg:3.5,noMsl:true,speed:9.6,armor:.75},
+  leuca:{legendary:true,meleeDmg:18,meleeRange:34,lungeSp:32,ultName:'풀 버스트 캐논',ult:'lmega',beamCol:0x2ee6d6,megaT:1.5,waveR:15,waveDmg:7,megaDmg:5,megaAoe:3.5,sideBeams:1,spreadBoom:1,spiral:12,spiralDmg:4,gunName:'롱 빔 라이플',stunHits:6,stunWin:2.2,mag:20,rate:.3,dmg:5.5,spread:0,bspeed:80,reload:2.8,mName:'핀 판넬+판넬 미사일',mShort:'판넬',mMag:2,mReload:8,mCd:.6,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:4,bitDmg:1.8,funnel:3,fDmg:4,stormDmg:3.5,noMsl:true,speed:9.6,armor:.75},
   atlas:{legendary:true,meleeDmg:15,meleeRange:32,lungeSp:30,ultName:'메가 빔 버스트',ult:'mega',gunName:'헤비 빔 라이플',stunHits:8,stunWin:2,mag:24,rate:.22,dmg:4.2,spread:0,bspeed:72,reload:2.6,mName:'미사일+판넬 미사일',mShort:'미사일',mMag:2,mReload:7,mCd:.6,guide:1.2,turn:3.2,mDmg:12,mRad:3.4,mSpeed:26,lob:true,salvo:4,funnel:2,fDmg:4,stormDmg:5,megaDmg:6,megaAoe:3,megaFunDmg:4,speed:8.2,armor:.9},
   seraph:{epic:true,meleeDmg:14,meleeRange:32,lungeSp:30,ultName:'헤일로 스톰',ult:'halo',gunName:'빔 소총',stunHits:10,stunWin:2,mag:30,rate:.16,dmg:3.2,spread:0,bspeed:70,reload:2.4,mName:'윙 비트',mShort:'비트',mMag:2,mReload:8,mCd:.5,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:6,bitDmg:2.4,speed:8.8,armor:1},
   viper:{meleeDmg:22,frenzyDmg:18,meleeRange:30,lungeSp:34,meleeCd:1.5,ultName:'섀도우 블링크',ult:'blink',gunName:'샷건',stunHits:12,stunWin:1.2,mag:6,rate:.8,pellets:7,dmg:2.2,spread:.085,bspeed:70,reload:3,mName:'산탄 로켓',mShort:'로켓',mMag:2,mReload:6.5,mCd:.6,guide:0,mDmg:10,mRad:3.2,mSpeed:38,lob:false,salvo:3,speed:9,armor:.95,snd:'shotgun'},
@@ -701,7 +701,7 @@ const SKL={
   crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,k:.5,dm:.8,d:'3초간 자동 난사(연사 2배), 탄약 소모 없음'},{n:'소형 융단 포격',t:'barrage',cd:16,cnt:4,old:1,d:'필살기 축소판: 상대 위치에 포탄 4발 낙하'}],
   raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'},{n:'소형 빔 캐논',t:'beam',cd:18,dmg:28,w:.45,old:1,d:'필살기 축소판: 굵은 빔 28'}],
   viper:[{n:'체인 앵커',t:'hook',cd:9,dmg:6,range:30,d:'사슬 앵커를 쏴서 30m 안의 상대를 내 앞으로 끌어당김(6)'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'},{n:'광폭 연격',t:'frenzy',cd:16,cnt:2,old:1,d:'예전 필살기: 돌진 베기 2연속'}],
-  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,k:.35,dm:.45,d:'3초간 빔 개틀링 자동 난사(약 30발)'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 폭발'}],
+  atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,k:.35,dm:.45,d:'3초간 빔 개틀링 자동 난사(약 30발)'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 지점에서 점점 커지는 후폭풍'}],
   seraph:[{n:'저지먼트 레이',t:'pillar',cd:11,dmg:20,rad:4.5,d:'0.8초 뒤 상대가 있던 자리에 하늘에서 빛기둥이 내리꽂혀 광역 피해 20'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'},{n:'소형 헤일로 스톰',t:'halo',cd:18,cnt:6,old:1,d:'필살기 축소판: 헤일로 비트 6기'}],
   leuca:[{n:'트윈 백캐논',t:'twin',cd:11,dmg:12,w:.32,d:'등 뒤 쌍포 빔 12×2'},{n:'판넬 배리어',t:'armor',cd:14,dur:3,d:'3초간 총·미사일·빔·폭발 등 원거리 공격을 전부 막음(근접은 못 막음)'},{n:'소형 판넬 버스트',t:'fstorm',cd:18,cnt:4,old:1,d:'필살기 축소판: 판넬 미사일 4기 돌격'}]
 };
@@ -727,7 +727,7 @@ function useSkill(r,o,S,remote){
     case 'heal':if(!remote){r.hp=Math.min(MAX_HP,r.hp+S.hp);r.ghost=Math.max(r.ghost,r.hp)}burst(c,40,[.4,1,.6],8,.7);sfx('block',me);break;
     case 'evade':if(!remote){const dx=r.pos.x-o.pos.x,dz=r.pos.z-o.pos.z,l=Math.hypot(dx,dz)||1;r.qsT=.45;r.qsX=dx/l;r.qsZ=dz/l;r.vel.y=Math.max(r.vel.y,4)}burst(c,20,r.spark,6,.4);sfx('dash',me);break;
     case 'barrage':{const t=o.pos.clone().addScaledVector(o.vel,.4);t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);startBarrage(r,t,S.cnt);sfx('missile',me);break}
-    case 'mbeam':{const e=fireBeam(r,o,S.dmg,S.w);if(e)aoeAt(e,r,o,4,6,50);break}
+    case 'mbeam':{const e=fireBeam(r,o,S.dmg,S.w);if(e){aoeAt(e,r,o,2.5,3,40);shockwave(e,r,9,5,.7)}break}
     case 'fstorm':launchDrones(r,o,S.cnt,'fstorm');break;
     case 'blink':if(remote){burst(c,40,r.spark,9,.6);sfx('dash',me)}else blink(r,o);break;
     case 'frenzy':if(remote){r.frzT=2.5;burst(c,30,r.spark,8,.5);sfx('dash',me)}else{r.frenzy=S.cnt;r.melee=null;r.burstLeft=0}break;
@@ -1197,7 +1197,13 @@ function meleeHit(r,o){
 }
 
 /* ---------- special skills ---------- */
-const beams=[],shells=[],pillars=[];
+const beams=[],shells=[],pillars=[],waves=[];
+const waveGeo=new T.SphereGeometry(1,28,14,0,Math.PI*2,0,Math.PI/2);
+function shockwave(p,r,maxR,dmg,dur,col){
+  const m=new T.Mesh(waveGeo,new T.MeshBasicMaterial({color:col||r.col,transparent:true,opacity:.55,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide}));
+  const c=p.clone();c.y=Math.max(0,c.y-1);m.position.copy(c);m.scale.setScalar(1);scene.add(m);
+  waves.push({p:p.clone(),o:r,maxR,dmg,dur,t:0,m,hit:new Set(),bhit:new Set()});sfx('boom',r===P?1:.7);
+}
 const beamGeo=new T.CylinderGeometry(1,1,1,12,1,true);beamGeo.rotateX(Math.PI/2);beamGeo.translate(0,0,.5);
 const shellGeo=new T.CylinderGeometry(.18,.18,1.1,8);
 const ringGeo=new T.RingGeometry(3.1,3.5,32);ringGeo.rotateX(-Math.PI/2);
@@ -1226,7 +1232,7 @@ function lockBeam(r,o){const from=r.m.muzzle.getWorldPosition(new V());r.beamDir
 function aoeAt(p,r,o,rad,dmg,boxDmg){
   blast(p,rad*.75);burst(p,50,r.spark,13,.8);burst(p,30,[1,.9,.6],10,.6);puff(p,12);sfx('boom',r===P||o===P?1:.6);
   if(P.pos.distanceTo(p)<rad*3)shakeAmt=Math.max(shakeAmt,.45);
-  for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&fc.distanceTo(p)<rad+((f.sz||1)-1))hurt(f,r,dmg,fc,true)}
+  for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&fc.distanceTo(p)<rad+((f.sz||1)-1)&&clearLine(p,fc))hurt(f,r,dmg,fc,true)}
   for(const bb of BREAK.slice())if(!bb.dead){const dx=Math.max(bb.x0-p.x,0,p.x-bb.x1),dz=Math.max(bb.z0-p.z,0,p.z-bb.z1),dy=Math.max(0,p.y-bb.h);if(Math.hypot(dx,dy,dz)<rad)hitBox(bb,boxDmg)}
 }
 const isMega=r=>{const u=armsOf(r).ult;return u==='mega'||u==='lmega'};
@@ -1246,7 +1252,7 @@ function megaGeom(r,o){
   if(hitT)len=Math.min(len,from.distanceTo(oc));
   return{from,end:from.clone().addScaledVector(g.dir,len),len,hitT,oc};
 }
-function sideFrom(r,sd){const z=r.sz||1,p=r.pos.clone();p.y+=4.05*z;p.x+=Math.cos(r.yaw)*sd*.36*z+Math.sin(r.yaw)*.5*z;p.z+=-Math.sin(r.yaw)*sd*.36*z+Math.cos(r.yaw)*.5*z;return p}
+function sideFrom(r,sd){const z=r.sz||1,p=r.pos.clone();p.y+=2.9*z;p.x+=Math.cos(r.yaw)*sd*.36*z+Math.sin(r.yaw)*.5*z;p.z+=-Math.sin(r.yaw)*sd*.36*z+Math.cos(r.yaw)*.5*z;return p}
 function updMega(r,o,dt){
   const g=r.mega;if(!g)return;
   g.t-=dt;g.age+=dt;
@@ -1262,7 +1268,7 @@ function updMega(r,o,dt){
   if(g.tick<=0&&phase==='fight'){
     g.tick=MEGA_TICK;
     for(const f of foes(r)){const fc=centerOf(f,new V());if(f.ko)continue;let k=0;for(const [a,b,w] of segs)if(segDist(fc,a,b)<2*(f.sz||1))k=Math.max(k,w);if(k)hurt(f,r,(W.megaDmg||6)*k,fc,true)}
-    aoeAt(q.end,r,o,4.5,W.megaAoe||3,50);
+    aoeAt(q.end,r,o,3+g.age*3,W.megaAoe||3,50);
     if(W.spreadBoom){const rr=2+g.age*6;for(let n=0;n<2;n++){const a=Math.random()*Math.PI*2,d=rnd(rr*.5,rr),pt=new V(clamp(q.end.x+Math.cos(a)*d,-49,49),Math.max(.3,q.end.y*.3),clamp(q.end.z+Math.sin(a)*d,-49,49));aoeAt(pt,r,o,3.6,W.megaAoe||3,40)}}
     for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segs.some(([a,b])=>segDist(c,a,b)<Math.max(bb.w,bb.d)/2+1.2))hitBox(bb,40)}
   }
@@ -1281,6 +1287,7 @@ function endMega(r,o,launch){
   beams.push({m:g.m,core:g.core,t:.3,T:.3,w:1.15});
   if(g.side)for(const sb of g.side)beams.push({m:sb.m,core:sb.core,t:.3,T:.3,w:.55});
   const W=armsOf(r);
+  if(launch&&g.end)shockwave(g.end,r,W.waveR||12,W.waveDmg||6,.8,W.beamCol);
   if(!launch||!g.end||W.spiral)return;
   const port=r.m.mslPort.getWorldPosition(new V());
   for(let k=0;k<MEGA_FUN;k++){
@@ -1303,7 +1310,7 @@ function fireBeam(r,o,dmg=40,w=.45,off=0){
   core.position.copy(from);core.lookAt(end);core.scale.set(w*.36,w*.36,len);scene.add(core);
   beams.push({m,core,t:.45,w});
   burst(end,30,r.spark,10,.6);blast(end,1.8);sfx('boom',r===P||o===P?1:.6);shakeAmt=Math.max(shakeAmt,r===P||o===P?.35:.1);
-  for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&from.distanceTo(fc)<=len+1.4&&segDist(fc,from,end)<1.5*(f.sz||1))hurt(f,r,dmg,fc,true)}
+  for(const f of foes(r)){const fc=centerOf(f,new V());if(!f.ko&&from.distanceTo(fc)<=len+.6*(f.sz||1)&&segDist(fc,from,end)<1.5*(f.sz||1))hurt(f,r,dmg,fc,true)}
   for(const bb of BREAK.slice())if(!bb.dead){const c=new V(bb.cx,bb.h/2,bb.cz);if(segDist(c,from,end)<Math.max(bb.w,bb.d)/2+.6)hitBox(bb,dmg*2)}
   return end;
 }
@@ -1328,6 +1335,14 @@ function blink(r,o,noOver){
   burst(centerOf(r,new V()),40,r.spark,9,.6);sfx('dash',r===P||o===P?1:.6);
 }
 function updUlt(dt){
+  for(let i=waves.length-1;i>=0;i--){const w=waves[i];w.t+=dt;const k=Math.min(1,w.t/w.dur),rad=1+(w.maxR-1)*(1-Math.pow(1-k,2.2));
+    w.m.scale.set(rad,rad*.55,rad);w.m.material.opacity=.55*(1-k);
+    for(let n=0;n<4;n++){const a=Math.random()*Math.PI*2;emit(sparks,w.p.x+Math.cos(a)*rad,Math.max(.2,w.p.y-1)+rnd(0,1),w.p.z+Math.sin(a)*rad,Math.cos(a)*4,rnd(1,3),Math.sin(a)*4,.35,w.o.spark)}
+    if(Math.random()<.5)puff(new V(w.p.x+rnd(-rad,rad)*.7,.5,w.p.z+rnd(-rad,rad)*.7),1);
+    if(P.pos.distanceTo(w.p)<rad+2&&!w.shook){w.shook=true;shakeAmt=Math.max(shakeAmt,.35)}
+    if(phase==='fight')for(const f of foes(w.o)){if(w.hit.has(f)||f.ko)continue;const fc=centerOf(f,new V());if(fc.distanceTo(w.p)<rad+((f.sz||1)-1)&&clearLine(_m.copy(w.p).setY(Math.max(w.p.y,.6)),fc)){w.hit.add(f);hurt(f,w.o,w.dmg,fc,true)}}
+    for(const bb of BREAK)if(!bb.dead&&!w.bhit.has(bb)){const dx=Math.max(bb.x0-w.p.x,0,w.p.x-bb.x1),dz=Math.max(bb.z0-w.p.z,0,w.p.z-bb.z1);if(Math.hypot(dx,dz)<rad){w.bhit.add(bb);hitBox(bb,40)}}
+    if(k>=1){scene.remove(w.m);w.m.material.dispose();waves.splice(i,1)}}
   for(let i=pillars.length-1;i>=0;i--){const pl=pillars[i];pl.delay-=dt;
     if(pl.delay>0){pl.ring.material.opacity=.35+.4*Math.abs(Math.sin(simTime*14));if(Math.random()<.5)emit(sparks,pl.t.x+rnd(-1,1),rnd(6,14),pl.t.z+rnd(-1,1),0,-8,0,.4,[1,.95,.6]);continue}
     if(!pl.m){const m=new T.Mesh(beamGeo,new T.MeshBasicMaterial({color:0xfff2b0,transparent:true,opacity:.9,blending:T.AdditiveBlending,depthWrite:false}));
@@ -1352,7 +1367,7 @@ function updUlt(dt){
     }
   }
 }
-function clearUlt(){for(const r of [P,...POOL]){if(r.mega)endMega(r,tgtOf(r),false);clearAimLine(r);r.castT=0}clearDrones();beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0;pillars.forEach(p=>scene.remove(p.ring));pillars.length=0}
+function clearUlt(){for(const r of [P,...POOL]){if(r.mega)endMega(r,tgtOf(r),false);clearAimLine(r);r.castT=0}clearDrones();beams.forEach(b=>{scene.remove(b.m);scene.remove(b.core)});beams.length=0;shells.forEach(s=>{scene.remove(s.ring);scene.remove(s.g)});shells.length=0;pillars.forEach(p=>scene.remove(p.ring));pillars.length=0;waves.forEach(w=>scene.remove(w.m));waves.length=0}
 
 /* ---------- CPU ---------- */
 const DIFF={easy:{react:.45,dodge:.2,aggr:.45,msl:.2,spread:.075},normal:{react:.28,dodge:.45,aggr:.65,msl:.4,spread:.045},hard:{react:.16,dodge:.7,aggr:.85,msl:.6,spread:.022}};
