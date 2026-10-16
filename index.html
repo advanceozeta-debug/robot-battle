@@ -1107,7 +1107,7 @@ function step(r,o,inp,dt){
     if(r.ramT<=0)r.ramDir=null}
   const py=r.pos.y;
   if(r.jet&&!r.ko&&r.ramT>0){}
-  else if(r.jet&&!r.ko){const ty=inp.jumpHeld?9*SPD:(r.pos.y>.4?-.8:0);r.vel.y+=(ty-r.vel.y)*Math.min(1,dt*4);r.fuel=Math.min(100,r.fuel+25*dt);r.flameT=Math.max(r.flameT,.02)}
+  else if(r.jet&&!r.ko){const up=inp.jumpHeld&&r.fuel>0&&r.stun<=0;if(up){r.fuel=Math.max(0,r.fuel-38*dt);r.boosting=true;r.flameT=.06}const ty=up?9*SPD:(r.pos.y>.4?-.8:0);r.vel.y+=(ty-r.vel.y)*Math.min(1,dt*4);r.flameT=Math.max(r.flameT,.02)}
   else r.vel.y-=GRAV*dt;
   r.pos.addScaledVector(r.vel,dt);
   r.grounded=false;
