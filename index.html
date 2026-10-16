@@ -228,7 +228,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
   <div class="overlay" id="menu">
     <div class="card">
       <h1 class="title"><span class="c1">기계</span> <span class="c2">총격전</span></h1>
-      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 탄창을 다 쓰면 재장전해요. 로봇마다 스킬 3개가 있고, 쿨타임이 끝날 때마다 쓸 수 있어요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 스킬로 부술 수 있어요. 한 번에 35 이상 맞거나 총을 연속으로 맞으면(라이플·개틀링 12발, 레일건 3발) 1초 동안 스턴되고 그동안은 공격을 받지 않아요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
+      <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 탄창을 다 쓰면 재장전해요. 로봇마다 스킬 3개가 있고, 쿨타임이 끝날 때마다 쓸 수 있어요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 스킬로 부술 수 있어요. 짧은 시간에 피해를 50 이상 받으면 쓰러져요. 쓰러졌다가 일어나는 2초 동안은 대상 지정이 안 돼서 서로 공격할 수 없어요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
       <dl class="ctl" id="ctlPc">
         <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
         <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
@@ -696,7 +696,7 @@ function setSkin(r,key){
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;r.sz=SKIN[key].sz||1;
   r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
 }
-function place(r,x,z,yaw){Object.assign(r,{sCd:[0,0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{down:0,downG:0,downHit:0,sCd:[0,0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4*(r.sz||1),r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -926,11 +926,11 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 let simTime=0;
 const SPD=.9;
 const BATTLE_T=150,MEGA_CHARGE=.6,MEGA_T=1,MEGA_TICK=.25,MEGA_FUN=6,GUARD_T=1,GUARD_CD=4,BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.3;
-const GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
+const DOWN_DMG=50,DOWN_T=2,DOWN_DECAY=12,GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
 function step(r,o,inp,dt){
-  r.anim+=dt;r.fireCd-=dt;r.muzzleT-=dt;r.flashT-=dt;r.flameT-=dt;if(r.invT>0)r.invT-=dt;
+  r.anim+=dt;r.fireCd-=dt;r.muzzleT-=dt;r.flashT-=dt;r.flameT-=dt;if(r.invT>0)r.invT-=dt;if(r.down>0)r.down-=dt;if(r.downG>0&&simTime-(r.downHit||0)>2)r.downG=Math.max(0,r.downG-DOWN_DECAY*dt);
   if(r.ghost>r.hp)r.ghost=Math.max(r.hp,r.ghost-80*dt);
   if(r.overheat>0){r.overheat-=dt;r.heat=Math.max(0,r.heat-85*dt)}else r.heat=Math.max(0,r.heat-32*dt);
   if(r.ko){r.koT+=dt;if(Math.random()<dt*14)puff(centerOf(r,_c),1)}
@@ -942,9 +942,10 @@ function step(r,o,inp,dt){
     r.mCd-=dt;
     if(phase==='fight')r.ult=Math.min(100,r.ult+ULT_PASSIVE*dt);
     if(r.overT>0)r.overT-=dt;
-    if(inp.ult&&r.ult>=100&&!r.shield&&r.stun<=0&&r.castT<=0&&phase==='fight'){r.ult=0;r.ultN++;startUlt(r,o)}
+    const noTgt=o.invT>0||o.ko;
+    if(inp.ult&&!noTgt&&r.ult>=100&&!r.shield&&r.stun<=0&&r.castT<=0&&phase==='fight'){r.ult=0;r.ultN++;startUlt(r,o)}
     r.sCd[0]-=dt;r.sCd[1]-=dt;r.sCd[2]-=dt;if(r.spdT>0)r.spdT-=dt;if(r.armT>0)r.armT-=dt;if(r.rapidT>0)r.rapidT-=dt;
-    for(let k=0;k<sklOf(r).length;k++)if(inp['s'+(k+1)]&&r.sCd[k]<=0&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];r.sCd[k]=S.cd;r.sN[k]++;useSkill(r,o,S,false)}
+    for(let k=0;k<sklOf(r).length;k++)if(inp['s'+(k+1)]&&!noTgt&&r.sCd[k]<=0&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];r.sCd[k]=S.cd;r.sN[k]++;useSkill(r,o,S,false)}
     if(inp.reload&&r.reloadT<=0&&r.ammo<W.mag){r.reloadT=W.reload;if(r===P)sfx('heat')}
     if(!inp.shield)r.shieldLock=false;
     if(!inp.fire)r.fireLock=false;
@@ -983,7 +984,7 @@ function step(r,o,inp,dt){
         for(let i=0;i<2;i++)emit(sparks,r.pos.x+rnd(-.3,.3),r.pos.y+rnd(.8,1.6),r.pos.z+rnd(-.3,.3),-inp.dashX*4+rnd(-1,1),rnd(0,1),-inp.dashZ*4+rnd(-1,1),.3,[1,.6,.2]);
       }else r.dashing=false;
       r.meleeCd-=dt;
-      if(inp.melee&&!r.melee&&r.meleeCd<=0&&!r.shield&&r.castT<=0){r.melee={ph:'lunge',t:0,hit:false};r.meleeCd=W.meleeCd||1.1;r.burstLeft=0;sfx('dash',r===P||o===P?.8:.4)}
+      if(inp.melee&&!(o.invT>0)&&!r.melee&&r.meleeCd<=0&&!r.shield&&r.castT<=0){r.melee={ph:'lunge',t:0,hit:false};r.meleeCd=W.meleeCd||1.1;r.burstLeft=0;sfx('dash',r===P||o===P?.8:.4)}
       if(r.frenzy>0&&!r.melee&&!o.ko){r.frenzy--;r.melee={ph:'lunge',t:0,hit:false,frz:true};sfx('dash',r===P||o===P?.8:.4)}
       if(r.melee)meleeStep(r,o,dt);
       if(r.mega){r.vel.x*=.2;r.vel.z*=.2;r.burstLeft=0}
@@ -994,7 +995,7 @@ function step(r,o,inp,dt){
         if(r.shield||r.reloadT>0)r.burstLeft=0;
       }
       r.firePrev=!!inp.fire;
-      const wantShot=!r.melee&&(r.rapidT>0||(W.burst?r.burstLeft>0:(inp.fire&&!r.fireLock)));
+      const wantShot=!r.melee&&!(o.invT>0)&&(r.rapidT>0||(W.burst?r.burstLeft>0:(inp.fire&&!r.fireLock)));
       const over=r.overT>0;
       if(wantShot&&!r.shield&&r.castT<=0&&r.fireCd<=0&&(over||(r.reloadT<=0&&r.ammo>0))&&inp.target){
         r.fireCd=over?(W.pellets?W.rate*.6:Math.min(.22,W.rate)):W.rate*(r.rapidT>0?r.rapidK:1);r.muzzleT=.05;if(!over&&!(r.rapidT>0))r.ammo--;r.shotN++;if(W.burst&&!(r.rapidT>0))r.burstLeft--;
@@ -1045,11 +1046,11 @@ function hurt(d,a,dmg,point,big){
     burst(point,big?16:5,[.6,.9,1],big?8:5);sfx('block',d===P||a===P?1:.5);
   }else{
     const real=dmg*armsOf(d).armor*DMG_MULT*(d.armT>0?.5:1);d.hp-=real;d.flashT=.08;a.ult=Math.min(100,a.ult+real*ULT_DEAL);d.ult=Math.min(100,d.ult+real*ULT_TAKE);
-    {const AW=armsOf(a);let st=real>=STUN_DMG;
-     if(!big){d.gunHits=(simTime-(d.lastGunHit||-99)<AW.stunWin)?(d.gunHits||0)+1:1;d.lastGunHit=simTime;if(d.gunHits>=AW.stunHits)st=true}
-     if(d.hp>0&&st){d.gunHits=0;d.stun=Math.max(d.stun,STUN_T);d.invT=STUN_T;d.shield=false;burst(centerOf(d,new V()),30,[.6,.9,1],8,.6);sfx('heat',d===P||a===P?1:.5);if(d===P)shakeAmt=Math.max(shakeAmt,.3)}}a.energy=Math.min(100,a.energy+(big?0:3));
-    if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=.45;shakeAmt=d===P?.5:.25}
+    a.energy=Math.min(100,a.energy+(big?0:3));
+    if(big){d.vel.x=dir.x*11;d.vel.z=dir.z*11;d.vel.y=7;d.stun=Math.max(d.stun,.45);shakeAmt=d===P?.5:.25}
     else{d.vel.x+=dir.x*.8;d.vel.z+=dir.z*.8;if(d===P)shakeAmt=Math.max(shakeAmt,.08)}
+    d.downG=(d.downG||0)+real;d.downHit=simTime;
+    if(d.hp>0&&d.downG>=DOWN_DMG)knockDown(d,a,dir);
     burst(point,big?24:7,a.spark,big?10:6);sfx('hit',d===P||a===P?1:.5);
     if(d===P)vigT=.35;if(a===P)hitT=.12;
   }
@@ -1060,6 +1061,11 @@ function hurt(d,a,dmg,point,big){
     if(!online)endRound(a,'격파!');
   }
 }
+function knockDown(d,a,dir){
+  d.downG=0;d.down=DOWN_T;d.stun=Math.max(d.stun,DOWN_T);d.invT=DOWN_T;d.shield=false;d.shieldT=0;d.melee=null;d.frenzy=0;d.burstLeft=0;d.castT=0;d.beamDir=null;clearAimLine(d);if(d.mega)endMega(d,a,false);
+  d.vel.x=dir.x*9;d.vel.z=dir.z*9;d.vel.y=Math.max(d.vel.y,6);
+  burst(centerOf(d,new V()),36,[.6,.9,1],9,.6);sfx('heat',d===P||a===P?1:.5);if(d===P)shakeAmt=Math.max(shakeAmt,.4);
+}
 function updProj(dt){
   for(const b of bullets){
     if(!b.alive)continue;
@@ -1068,7 +1074,7 @@ function updProj(dt){
     for(let s=0;s<steps&&!done;s++){
       b.pos.addScaledVector(b.vel,dt/steps);
       if(inBox(b.pos)){burst(b.pos,4,[.8,.85,.9],4,.3);hitBox(boxAt(b.pos),3);done=true;break}
-      if(!t.ko){const dx=b.pos.x-t.pos.x,dz=b.pos.z-t.pos.z,tz=t.sz||1,rad=(t.shield?1.6:.78)*tz;
+      if(!t.ko&&!(t.invT>0)){const dx=b.pos.x-t.pos.x,dz=b.pos.z-t.pos.z,tz=t.sz||1,rad=(t.shield?1.6:.78)*tz;
         if(dx*dx+dz*dz<rad*rad&&b.pos.y>t.pos.y-(t.shield?.2:0)&&b.pos.y<t.pos.y+(t.shield?3:HGT)*tz){hurt(t,b.o,b.dmg||3,b.pos,false);done=true}}
     }
     b.life-=dt;
@@ -1079,6 +1085,7 @@ function updProj(dt){
     const m=missiles[i],t=m.o===P?C:P;m.age+=dt;
     let sp=m.vel.length();
     if(m.salvo&&!m.split&&m.age>.2){m.split=true;m.vel.x+=m.rx*m.side*5;m.vel.z+=m.rz*m.side*5;m.vel.y+=m.vo*3}
+    if(m.sure&&t.invT>0){m.sure=false;m.guide=0}
     if(m.sure&&m.age>.15&&!t.ko){const w=centerOf(t,_c).sub(m.pos).normalize();m.vel.copy(w.multiplyScalar(Math.min(m.maxSp,m.vel.length()+40*dt)))}
     else if(m.age>.2&&m.age<m.guide&&!t.ko){
       const aim=centerOf(t,_c);
@@ -1091,7 +1098,7 @@ function updProj(dt){
     m.trail-=dt;if(m.trail<=0){m.trail=.025;emit(smoke,m.pos.x,m.pos.y,m.pos.z,rnd(-.3,.3),rnd(-.3,.3),rnd(-.3,.3),.7,[.4,.42,.46]);emit(sparks,m.pos.x,m.pos.y,m.pos.z,0,0,0,.15,[1,.6,.2])}
     const tc=centerOf(t,_c);
     let hit=(!m.sure&&inBox(m.pos))||(m.pos.y<0)||(!m.sure&&!m.noRange&&m.travel>=MSL_RANGE)||m.age>6||(m.sure&&t.ko&&m.age>.3)||Math.abs(m.pos.x)>51||Math.abs(m.pos.z)>51;
-    if(!t.ko&&m.pos.distanceTo(tc)<(t.shield?1.7:m.big?1.5:1.1))hit=true;
+    if(!t.ko&&!(t.invT>0)&&m.pos.distanceTo(tc)<(t.shield?1.7:m.big?1.5:1.1))hit=true;
     if(hit){
       blast(m.pos,m.big?4.2:2.6);burst(m.pos,m.big?70:40,m.o.spark,m.big?15:11,.7);puff(m.pos,m.big?16:8);sfx('boom',m.o===P||t===P?1:.6);
       if(P.pos.distanceTo(m.pos)<(m.big?20:14))shakeAmt=Math.max(shakeAmt,m.big?.4:.25);
@@ -1381,7 +1388,7 @@ function syncModel(r,dt){
   const yOff=Math.abs(Math.sin(r.vPh))*.05*r.vAmp+Math.sin(r.anim*2.2)*.012*(1-r.vAmp)-r.vLand*.16;
   g.position.set(r.pos.x,r.pos.y+yOff,r.pos.z);
   if(r.ko){const k=Math.min(1,r.koT*2.4);g.rotation.set(k*1.4,r.vYaw,0);g.position.y=r.pos.y+k*.3}
-  else g.rotation.set(r.vLX,r.vYaw,r.vLZ);
+  else{const dn=(r.down>.55||r.downF)?1.35:0;r.vDn=(r.vDn||0)+(dn-(r.vDn||0))*Math.min(1,dt*(dn?10:4));g.rotation.set(r.vLX+r.vDn,r.vYaw,r.vLZ);if(r.vDn>.05)g.position.y=r.pos.y+r.vDn*.25}
   r.vGun+=((r.ko?-.6:r.aimPitch)-r.vGun)*kf;
   r.m.gun.rotation.x=r.vGun;
   if(r.m.la){const m=r.melee;let la=-.35;r.m.blade.visible=!!m;
@@ -1434,16 +1441,16 @@ function hud(){
   H.pips.innerHTML=[0,1].map(i=>`<i class="${i<P.wins?'pw':''}"></i>`).join('')+'<span class="gap"></span>'+[0,1].map(i=>`<i class="${i<C.wins?'cw':''}"></i>`).join('');
   dashBtnEl.classList.toggle('on',dashHeld);
   H.cross.classList.toggle('lock',aimLock&&aimRange<=MSL_RANGE);H.cross.classList.toggle('far',aimLock&&aimRange>MSL_RANGE);H.cross.classList.toggle('hit',hitT>0);
-  const PW=armsOf(P),rl=P.reloadT>0;H.heat.firstElementChild.style.width=(rl?(1-P.reloadT/PW.reload):P.ammo/PW.mag)*100+'%';H.heat.classList.toggle('hot',!rl&&P.ammo<=PW.mag/4);H.heat.classList.toggle('over',rl);H.oh.hidden=false;H.oh.textContent=P.invT>0?'스턴 · 무적':rl?`${PW.gunName} 재장전`:`${PW.gunName} ${P.ammo}/${PW.mag}`;H.oh.style.color=P.invT>0?'#9fe8ff':rl?'var(--red)':'var(--steel)';
+  const PW=armsOf(P),rl=P.reloadT>0;H.heat.firstElementChild.style.width=(rl?(1-P.reloadT/PW.reload):P.ammo/PW.mag)*100+'%';H.heat.classList.toggle('hot',!rl&&P.ammo<=PW.mag/4);H.heat.classList.toggle('over',rl);H.oh.hidden=false;H.oh.textContent=P.invT>0?'다운 · 대상 지정 불가':rl?`${PW.gunName} 재장전`:`${PW.gunName} ${P.ammo}/${PW.mag}`;H.oh.style.color=P.invT>0?'#9fe8ff':rl?'var(--red)':'var(--steel)';
   H.vig.style.opacity=Math.max(0,vigT/.35);
   // enemy tag / arrow
   const ec=centerOf(C,new V());ec.y+=1.8;
   const cs=ec.clone().applyMatrix4(camera.matrixWorldInverse);
   const ndc=ec.clone().project(camera);
   if(cs.z<0&&Math.abs(ndc.x)<.95&&Math.abs(ndc.y)<.92){
-    H.tag.hidden=false;H.arrow.hidden=true;H.cross.hidden=C.ko;
+    H.tag.hidden=false;H.arrow.hidden=true;H.cross.hidden=C.ko||C.invT>0;
     H.tag.style.transform=`translate(${(ndc.x+1)/2*VW}px,${(1-ndc.y)/2*VH}px) translate(-50%,-100%)`;
-    H.tag.textContent=C.ko?'격파됨':`${C.name} ${Math.ceil(C.hp)} · ${Math.round(aimRange)}m${C.invT>0?' · 스턴':''}`;
+    H.tag.textContent=C.ko?'격파됨':`${C.name} ${Math.ceil(C.hp)} · ${Math.round(aimRange)}m${C.invT>0?' · 다운(대상 지정 불가)':''}`;
     const cc=centerOf(C,new V()).project(camera);
     H.cross.style.transform=`translate(${(cc.x+1)/2*VW-20}px,${(1-cc.y)/2*VH-20}px)`;
   }else{
@@ -1704,7 +1711,7 @@ function remoteUpdate(dt){
   C.yaw=+s.y||0;C.aimPitch=clamp(+s.a||0,-1.2,1.2);
   if(typeof s.k==='string'&&SKIN[s.k]&&s.k!==C.skin){setSkin(C,s.k);skinUI()}
   if(typeof s.ma==='number'){C.mAmmo=s.ma|0;C.mReloadT=0}
-  const f=s.f|0;C.grounded=!!(f&1);C.boosting=!!(f&2);if(f&2)C.flameT=.06;C.dashing=!!(f&4);C.shield=!!(f&8);if(f&32)C.invT=Math.max(C.invT||0,.12);
+  const f=s.f|0;C.grounded=!!(f&1);C.boosting=!!(f&2);if(f&2)C.flameT=.06;C.dashing=!!(f&4);C.shield=!!(f&8);if(f&32)C.invT=Math.max(C.invT||0,.12);C.downF=!!(f&64);
   if(s.rr===round&&(phase==='fight'||phase==='end')){
     const hp=clamp(+s.hp,0,MAX_HP);
     if(hp<C.hp-.01){hitT=.12;P.energy=Math.min(100,P.energy+(C.hp-hp));P.ult=Math.min(100,P.ult+(C.hp-hp)*ULT_DEAL)}
@@ -1749,7 +1756,7 @@ function netTick(dt){
   if(!online&&!isHost&&oppPeer){const s=oppPresence();if(s&&s.m&&s.m.phase!=='over'){goOnline()}}
   if(online)remoteUpdate(dt);
   sendT-=dt;if(sendT>0)return;sendT=.05;
-  const f=(P.grounded?1:0)|(P.boosting?2:0)|(P.dashing?4:0)|(P.shield?8:0)|(P.ko?16:0)|(P.invT>0?32:0);
+  const f=(P.grounded?1:0)|(P.boosting?2:0)|(P.dashing?4:0)|(P.shield?8:0)|(P.ko?16:0)|(P.invT>0?32:0)|(P.down>.55?64:0);
   const st={j:myJoin,rr:round,p:[r2(P.pos.x),r2(P.pos.y),r2(P.pos.z)],y:r2(P.yaw),a:r2(P.aimPitch),hp:Math.round(Math.max(0,P.hp)*10)/10,f,sn:P.shotN,mn:P.mslN,xn:P.ultN,sk:P.sN,sc:Math.round(Math.max(0,P.shieldCd)*10)/10,ml:P.meleeN,xp:P.ultP||null,u:Math.round(P.ult),k:P.skin,ma:P.mReloadT>0?-1:P.mAmmo,br:BREAK.map((b,i)=>b.dead?i:-1).filter(i=>i>=0)};
   if(online&&isHost)st.m={match:curMatch,round,phase,timer:Math.ceil(timer),wh:P.wins,wg:C.wins,ban:H.banner.textContent.slice(0,12),win:lastWin};
   rm.presence(st).catch(()=>{});
