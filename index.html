@@ -746,6 +746,8 @@ const SKL={
 SKL.zephyrJet=[{n:'기수 빔 캐논',t:'beam',cd:8,dmg:13,w:.35,d:'비행형 전용: 기수에서 굵은 빔 13'},SKL.zephyr[1],{n:'마이크로 미사일',t:'micro',cd:9,cnt:6,dmg:3.2,d:'비행형 전용: 유도 소형 미사일 6발(1발 3.2)'}];
 SKL.goliathJet=[{n:'철갑탄',t:'beam',cd:9,dmg:20,w:.18,d:'탱크 전용: 고속 철갑탄 20'},SKL.goliath[1],{n:'박격포 일제사격',t:'barrage',cd:14,cnt:4,d:'탱크 전용: 상대 위치에 포탄 4발 낙하'}];
 const sklOf=r=>(r.jet&&SKL[r.skin+'Jet'])||SKL[r.skin]||SKL.bolt;
+{const CH={'하이퍼 샷':2,'부스트 리버설':1,'섀도우 블링크':1,'그라운드 슬램':2,'과부하 사격':1,'소형 융단 포격':2,'피어싱 레일':2,'퀵 리트리트':2,'소형 빔 캐논':2,'체인 앵커':2,'독침 난사':2,'광폭 연격':1,'판넬 일제사':3,'빔 개틀링':1,'소형 메가 빔':2,'저지먼트 레이':2,'엔젤 헤일로':2,'소형 헤일로 스톰':1,'트윈 백캐논':2,'판넬 배리어':1,'소형 판넬 버스트':3,'롱 빔 스나이프':2,'변형':1,'암 그레네이드':2,'기수 빔 캐논':2,'마이크로 미사일':2,'숄더 캐논':2,'숄더 태클':2,'철갑탄':2,'박격포 일제사격':1};
+ for(const k in SKL)SKL[k].forEach(S=>{if(CH[S.n])S.ch=CH[S.n]})}
 const chOf=S=>S.ch||(S.t==='fmsl'||S.t==='fstorm'?3:S.t==='beam'||S.t==='twin'||S.t==='mbeam'?2:1);
 const altList=r=>(r.jet?SKL[r.skin]:SKL[r.skin+'Jet'])||null;
 function chArr(r){if(!r.sCh)r.sCh=sklOf(r).map(chOf);return r.sCh}
