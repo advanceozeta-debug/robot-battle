@@ -746,6 +746,14 @@ const SKL={
 SKL.zephyrJet=[{n:'기수 빔 캐논',t:'beam',cd:8,dmg:13,w:.35,d:'비행형 전용: 기수에서 굵은 빔 13'},SKL.zephyr[1],{n:'마이크로 미사일',t:'micro',cd:9,cnt:6,dmg:3.2,d:'비행형 전용: 유도 소형 미사일 6발(1발 3.2)'}];
 SKL.goliathJet=[{n:'철갑탄',t:'beam',cd:9,dmg:20,w:.18,d:'탱크 전용: 고속 철갑탄 20'},SKL.goliath[1],{n:'박격포 일제사격',t:'barrage',cd:14,cnt:4,d:'탱크 전용: 상대 위치에 포탄 4발 낙하'}];
 const sklOf=r=>(r.jet&&SKL[r.skin+'Jet'])||SKL[r.skin]||SKL.bolt;
+const chOf=S=>S.ch||(S.t==='fmsl'||S.t==='fstorm'?3:S.t==='beam'||S.t==='twin'||S.t==='mbeam'?2:1);
+const altList=r=>(r.jet?SKL[r.skin]:SKL[r.skin+'Jet'])||null;
+function chArr(r){if(!r.sCh)r.sCh=sklOf(r).map(chOf);return r.sCh}
+function swapSk(r){const L=sklOf(r),c=r.sCd,h=chArr(r);r.sCd=r.sCdAlt||[0,0,0];r.sCdAlt=c;r.sCd[1]=c[1];r.sCh=r.sChAlt||L.map(chOf);r.sChAlt=h;r.sCh[1]=h[1]}
+function tickArr(cd,ch,L,dt){if(!L)return;for(let k=0;k<L.length;k++){const mx=chOf(L[k]);if(ch[k]<mx){cd[k]-=dt;if(cd[k]<=0){ch[k]++;cd[k]=ch[k]<mx?L[k].cd:0}}else cd[k]=0}}
+function tickSk(r,dt){const h=chArr(r);tickArr(r.sCd,h,sklOf(r),dt);const AL=altList(r);if(AL&&r.sCdAlt){if(!r.sChAlt)r.sChAlt=AL.map(chOf);tickArr(r.sCdAlt,r.sChAlt,AL,dt)}r.sGap=r.sGap||[0,0,0];for(let k=0;k<3;k++)r.sGap[k]-=dt}
+const skReady=(r,k)=>chArr(r)[k]>0&&!((r.sGap||[0,0,0])[k]>0);
+function skUse(r,k,S){const h=chArr(r);h[k]--;if(!(r.sCd[k]>0))r.sCd[k]=S.cd;(r.sGap||(r.sGap=[0,0,0]))[k]=.45}
 function useSkill(r,o,S,remote){
   const me=r===P||o===P?1:.6,c=centerOf(r,new V());
   switch(S.t){
@@ -757,7 +765,7 @@ function useSkill(r,o,S,remote){
       r.muzzleT=.08;sfx('shotgun',me);break}
     case 'fmsl':launchDrones(r,o,S.cnt,'fmsl');break;
     case 'bits':launchDrones(r,o,S.cnt,'bits');break;
-    case 'xform':if(!remote){const om=armsOf(r).mag,ra=r.ammo/om;r.jet=!r.jet;r.ammo=Math.max(1,Math.round(ra*armsOf(r).mag));r.reloadT=0;r.burstLeft=0;if(r.jet){r.melee=null;r.shield=false}const t=r.sCd;r.sCd=r.sCdAlt||[0,0,0];r.sCdAlt=t;r.sCd[1]=t[1];if(r===P)weaponLabels()}burst(c,40,r.spark,9,.5);burst(c,20,[1,1,1],6,.3);sfx('dash',me);break;
+    case 'xform':if(!remote){const om=armsOf(r).mag,ra=r.ammo/om;r.jet=!r.jet;r.ammo=Math.max(1,Math.round(ra*armsOf(r).mag));r.reloadT=0;r.burstLeft=0;if(r.jet){r.melee=null;r.shield=false}swapSk(r);if(r===P)weaponLabels()}burst(c,40,r.spark,9,.5);burst(c,20,[1,1,1],6,.3);sfx('dash',me);break;
     case 'micro':{const from=r.m.mslPort.getWorldPosition(new V()),fw=centerOf(o,new V()).sub(from).normalize(),rt=new V(-fw.z,0,fw.x).normalize();
       for(let i=0;i<S.cnt;i++){const gg=new T.Group();gg.add(new T.Mesh(mslGeo,new T.MeshStandardMaterial({color:0xd4e2f0,metalness:.5,roughness:.4})));gg.add(new T.Mesh(tipGeo,new T.MeshBasicMaterial({color:r.col})));gg.scale.setScalar(.5);scene.add(gg);gg.position.copy(from);
         const k=i/(S.cnt-1)-.5,v=fw.clone().addScaledVector(rt,k*1.4).add(new V(0,.3+(i%2)*.3,0)).normalize().multiplyScalar(18);
@@ -799,9 +807,9 @@ let mySkin='bolt';try{const v=localStorage.getItem('kc3d-skin');if(SKINS.include
 function setSkin(r,key){
   if(!SKIN[key]||r.skin===key)return;
   scene.remove(r.m.g);r.m=makeBot(0,0,key);r.skin=key;r.col=SKIN[key].col;r.spark=SKIN[key].spark;r.sz=SKIN[key].sz||1;
-  r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;
+  r.m.g.position.copy(r.pos);r.m.g.rotation.set(0,r.yaw,0);r.ammo=armsOf(r).mag;r.mAmmo=armsOf(r).mMag;r.reloadT=r.mReloadT=0;r.sCh=null;r.sChAlt=null;r.sCd=[0,0,0];r.sCdAlt=[0,0,0];r.jet=false;
 }
-function place(r,x,z,yaw){Object.assign(r,{salvoN:0,jet:false,sCdAlt:[0,0,0],ramT:0,ramDir:null,pullT:0,down:0,downG:0,downHit:0,sCd:[0,0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
+function place(r,x,z,yaw){Object.assign(r,{sCh:null,sChAlt:null,sGap:[0,0,0],salvoN:0,jet:false,sCdAlt:[0,0,0],ramT:0,ramDir:null,pullT:0,down:0,downG:0,downHit:0,sCd:[0,0,0],spdT:0,armT:0,rapidT:0,shieldT:0,shieldCd:0,shieldPrev:false,frenzy:0,melee:null,meleeCd:0,ult:0,castT:0,overT:0,burstLeft:0,firePrev:false,hp:MAX_HP,ghost:MAX_HP,invT:0,dmgLog:[],vInit:false,ammo:armsOf(r).mag,reloadT:0,mAmmo:armsOf(r).mMag,mReloadT:0,mCd:0,shieldLock:false,fireLock:false,mobPrev:false,yaw,aimPitch:0,energy:20,shieldHp:100,shield:false,heat:0,overheat:0,fireCd:.4,muzzleT:0,flashT:0,stun:0,jumps:0,flameT:0,grounded:true,ko:false,koT:0,fuel:100,boostDelay:0,boosting:false,dashing:false,qsT:0,qsCd:0,qsX:0,qsZ:0});r.pos.set(x,0,z);r.vel.set(0,0,0);r.m.g.rotation.set(0,yaw,0)}
 const centerOf=(r,out=new V())=>out.set(r.pos.x,r.pos.y+1.4*(r.sz||1),r.pos.z);
 
 /* ---------- projectiles ---------- */
@@ -923,7 +931,7 @@ function launchMissile(r,target){
   }
 }
 function startSalvo(r,o,remote){
-  if(!remote&&!r.jet){const om=armsOf(r).mag,ra=r.ammo/om;r.jet=true;r.ammo=Math.max(1,Math.round(ra*armsOf(r).mag));const t=r.sCd;r.sCd=r.sCdAlt||[0,0,0];r.sCdAlt=t;r.sCd[1]=t[1];if(r===P)weaponLabels()}
+  if(!remote&&!r.jet){const om=armsOf(r).mag,ra=r.ammo/om;r.jet=true;r.ammo=Math.max(1,Math.round(ra*armsOf(r).mag));swapSk(r);if(r===P)weaponLabels()}
   r.salvoN=ARMS[r.skin].salvoN||8;r.salvoCd=.25;r.salvoTg=o;
   const t=o.pos.clone();t.x=clamp(t.x,-48,48);t.z=clamp(t.z,-48,48);startBarrage(r,t,5);
   burst(centerOf(r,new V()),40,r.spark,9,.5);
@@ -1069,8 +1077,8 @@ function step(r,o,inp,dt){
     if(r.overT>0)r.overT-=dt;
     const noTgt=o.invT>0||o.ko;
     if(inp.ult&&!noTgt&&r.ult>=100&&!r.shield&&r.stun<=0&&r.castT<=0&&phase==='fight'){r.ult=0;r.ultN++;startUlt(r,o)}
-    r.sCd[0]-=dt;r.sCd[1]-=dt;r.sCd[2]-=dt;if(r.sCdAlt){r.sCdAlt[0]-=dt;r.sCdAlt[2]-=dt}if(r.spdT>0)r.spdT-=dt;if(r.armT>0)r.armT-=dt;if(r.rapidT>0)r.rapidT-=dt;
-    for(let k=0;k<sklOf(r).length;k++)if(inp['s'+(k+1)]&&!noTgt&&r.sCd[k]<=0&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];r.sCd[k]=S.cd;r.sN[k]++;useSkill(r,o,S,false)}
+    tickSk(r,dt);if(r.spdT>0)r.spdT-=dt;if(r.armT>0)r.armT-=dt;if(r.rapidT>0)r.rapidT-=dt;
+    for(let k=0;k<sklOf(r).length;k++)if(inp['s'+(k+1)]&&!noTgt&&skReady(r,k)&&!r.shield&&r.stun<=0&&r.castT<=0&&!r.mega&&phase==='fight'){const S=sklOf(r)[k];skUse(r,k,S);r.sN[k]++;useSkill(r,o,S,false)}
     if(inp.reload&&r.reloadT<=0&&r.ammo<W.mag){r.reloadT=W.reload;if(r===P)sfx('heat')}
     if(!inp.shield)r.shieldLock=false;
     if(!inp.fire)r.fireLock=false;
@@ -1308,7 +1316,7 @@ function startUlt(r,o){
   else if(U==='fullfun'){launchDrones(r,o,6,'halo');launchDrones(r,o,6,'fstorm')}
   else if(U==='fstorm'){launchDrones(r,o,10,'fstorm')}
   else if(U==='salvo'){startSalvo(r,o)}
-  else if(U==='ram'){r.ramT=1.1;r.ramHit=new Set();if(!r.jet){r.jet=true;const t=r.sCd;r.sCd=r.sCdAlt||[0,0,0];r.sCdAlt=t;r.sCd[1]=t[1];if(r===P)weaponLabels()}r.melee=null;r.shield=false;burst(centerOf(r,new V()),50,r.spark,10,.6)}
+  else if(U==='ram'){r.ramT=1.1;r.ramHit=new Set();if(!r.jet){r.jet=true;swapSk(r);if(r===P)weaponLabels()}r.melee=null;r.shield=false;burst(centerOf(r,new V()),50,r.spark,10,.6)}
   else if(U==='frenzy'){r.frenzy=3;r.melee=null;r.burstLeft=0}
   else blink(r,o);
 }
@@ -1485,7 +1493,7 @@ function ai(dt){
     if(los&&C.reloadT<=0&&Math.random()<d.aggr)cin.fire=true;
     if(dist<12&&C.meleeCd<=0&&Math.random()<d.aggr*.35)cin.melee=true;
     if(C.ult>=100&&Math.random()<.4&&(armsOf(C).ult==='salvo'?dist<60:armsOf(C).ult==='ram'?dist<45:armsOf(C).ult==='fullfun'?dist<55:armsOf(C).ult==='fstorm'?dist<60:armsOf(C).ult==='mega'||armsOf(C).ult==='lmega'?los&&dist<70:armsOf(C).ult==='halo'?dist<55:armsOf(C).ult==='frenzy'?dist<10:armsOf(C).ult==='blink'?dist<45:armsOf(C).ult==='beam'?los&&dist<60:dist<60))cin.ult=true;
-    sklOf(C).forEach((S,k)=>{if(C.sCd[k]>0||Math.random()>d.aggr*.8)return;const t=S.t;
+    sklOf(C).forEach((S,k)=>{if(!skReady(C,k)||Math.random()>d.aggr*.8)return;const t=S.t;
       const ok=t==='beam'||t==='twin'?los&&dist<70:t==='slam'?dist<6.5:t==='volley'?los&&dist<16:t==='hook'?los&&dist<28&&dist>8:t==='step'||t==='blink'?dist<40&&dist>6:t==='frenzy'?dist<10:t==='barrage'?dist<60:t==='mbeam'?los&&dist<70:t==='evade'?dist<9||C.hp<MAX_HP*.4:t==='heal'?C.hp<MAX_HP*.75:t==='bits'?dist<55:t==='xform'?(C.skin==='goliath'?(C.jet?dist<10:dist>16):(C.jet?dist<14:dist>30)):t==='gren'?dist<45:t==='micro'?dist<50:t==='pillar'?dist<60:t==='armor'?dist<25:t==='over'?los&&dist<50:t==='speed'?dist>25:dist<55;
       if(ok)cin['s'+(k+1)]=true});
     if(Math.random()<.12)ideal=C.skin==='viper'?rnd(5,12):rnd(12,30);
@@ -1603,9 +1611,11 @@ function ultMini(el,r,me){
 const ultBtn=document.getElementById('ultBtn'),skBtn=[$('sk1Btn'),$('sk2Btn'),$('sk3Btn')],sklEl=$('skl');let sklTxt='';
 function skillHud(){const L=sklOf(P);let t='';$('tgtBtn').hidden=foes(P).length<2;
   skBtn[2].hidden=L.length<3;
-  for(let k=0;k<L.length;k++){const cd=Math.max(0,P.sCd[k]),rd=cd<=0,lab=L[k].n.replace(' ','\n');const bt=rd?lab:lab.split('\n')[0]+'\n'+cd.toFixed(1);
+  const H_=chArr(P);
+  for(let k=0;k<L.length;k++){const mx=chOf(L[k]),n=H_[k],cd=Math.max(0,P.sCd[k]),rd=n>0,lab=L[k].n.replace(' ','\n'),cs=mx>1?` ×${n}`:'';
+    const bt=rd?(mx>1?lab.split('\n')[0]+'\n×'+n:lab):lab.split('\n')[0]+'\n'+cd.toFixed(1);
     if(skBtn[k].textContent!==bt)skBtn[k].textContent=bt;skBtn[k].classList.toggle('ready',rd);
-    t+=(k?' · ':'')+(isTouch()?'':['Z ','X ','V '][k])+(rd?`<b>${L[k].n}</b>`:`${L[k].n} ${cd.toFixed(1)}`)}
+    t+=(k?' · ':'')+(isTouch()?'':['Z ','X ','V '][k])+(rd?`<b>${L[k].n}${cs}</b>${n<mx&&cd>0?' '+cd.toFixed(1):''}`:`${L[k].n} ${cd.toFixed(1)}`)}
   if(t!==sklTxt){sklTxt=t;sklEl.innerHTML=t}}
 function guardMini(el,r){
   const cd=Math.max(0,r.shieldCd||0),v=r.shield?100:(1-cd/GUARD_CD)*100;
@@ -1799,7 +1809,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
 const SKIN_INFO={goliath:'골리앗 [EPIC] · 탱크로 변형하는 가변기(스킬2) · 탱크형은 장갑 60%로 아주 단단하고 전차 주포(1발 11, 범위 폭발)를 쏘지만 부스트·근접·방패를 못 쓰고 스킬1·3이 탱크 전용으로 바뀜 · 필살기 전탄 발사(탱크로 변형해 주포 8연발 + 박격포 일제사격) · 헤비 라이플 40발',zephyr:'제피르 [EPIC] · 비행형으로 변형하는 가변기(스킬2) · 비행형은 2배 속도로 날고 떠 있을 수 있지만 근접·방패를 못 쓰고, 스킬1·3이 비행형 전용(기수 빔 캐논 13 · 마이크로 미사일 6발)으로 바뀜 · 필살기 웨이브 스트라이크(비행형으로 변형해 상대를 꿰뚫는 돌격 30) · 빔 라이플 30발',leuca:'TX-108ff 레우카디우스 [LEGENDARY] · 필살기 풀 버스트 캐논(청록색 대형 빔 + 등 뒤 쌍포 빔 동시 조사, 닿는 곳마다 광역 폭발이 퍼지고, 판넬 미사일 12기가 주변 땅에 나선형으로 박혀 폭발) · 롱 빔 라이플 20발 · 몸집 1.4배, 두꺼운 장갑, 가장 빠른 기동',atlas:'아틀라스 [LEGENDARY] · 필살기 메가 빔 버스트(1초간 거대 빔 조사, 맞는 곳마다 광역 폭발 + 판넬 미사일 6기 산개 폭격) · 헤비 빔 라이플 24발 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 균형형',viper:'바이퍼 · 필살기 섀도우 블링크(상대 등 뒤로 순간이동 + 3초 동안 샷건 무한탄·빠른 연사) · 샷건 6발(7산탄) · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 광폭 연격(빔 사벨 돌진 베기 3연속, 1타 13) · 빔 라이플 60발(한 번 누르면 12연사) · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 두꺼운 장갑, 느린 기동'};
-function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초)`+(L[2]?` · 스킬3 ${L[2].n}(${L[2].d}, ${L[2].cd}초)`:'');$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
+function skinInfo(){const L=SKL[mySkin]||SKL.bolt,t=SKIN_INFO[mySkin]+` · 스킬1 ${L[0].n}(${L[0].d}, ${L[0].cd}초${chOf(L[0])>1?', '+chOf(L[0])+'회 충전':''}) · 스킬2 ${L[1].n}(${L[1].d}, ${L[1].cd}초${chOf(L[1])>1?', '+chOf(L[1])+'회 충전':''})`+(L[2]?` · 스킬3 ${L[2].n}(${L[2].d}, ${L[2].cd}초${chOf(L[2])>1?', '+chOf(L[2])+'회 충전':''})`:'');$('skinInfo').textContent=t;document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=t)}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
 setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));
