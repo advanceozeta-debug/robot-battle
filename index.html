@@ -654,7 +654,15 @@ function spawnFunnelMsl(d){
 function launchDrones(r,o,n,mode){
   const halo=mode==='halo',fun=mode==='fmsl'||mode==='fstorm',storm=mode==='fstorm',from=r.m.mslPort.getWorldPosition(new V());
   if(fun){
-    const W=armsOf(r);
+    const W=armsOf(r),tc=centerOf(o,new V()),fw=tc.clone().sub(from).normalize(),rt=new V(-fw.z,0,fw.x).normalize();
+    for(let i=0;i<n;i++){
+      const k=n>1?i/(n-1)-.5:0,side=k*(storm?3.2:2.2),up=storm?(i%2?1.1:.35):.55+(i%2)*.35;
+      const dir=fw.clone().addScaledVector(rt,side).add(new V(0,up,0)).normalize();
+      const g=makeFunnelMesh(r);g.children[0].rotation.y=0;g.scale.setScalar(.9);
+      const p=from.clone().add(new V(rnd(-.3,.3),rnd(0,.3),rnd(-.3,.3)));g.position.copy(p);scene.add(g);
+      missiles.push({g,o:r,turn:storm?4:4.5,pos:p,vel:dir.multiplyScalar(storm?20:18),age:0,trail:0,travel:0,guide:storm?1.4:1.1,maxSp:34,dmg:storm?W.stormDmg:W.fDmg,rad:2.6,lob:false,big:false,funnelG:true});
+    }
+    sfx('missile',r===P||o===P?1:.6);return;
     for(let i=0;i<n;i++){
       const mesh=makeFunnelMesh(r);mesh.scale.setScalar(.9);
       const p=from.clone().add(new V(rnd(-.5,.5),rnd(0,.5),rnd(-.5,.5)));mesh.position.copy(p);scene.add(mesh);
@@ -1424,7 +1432,7 @@ document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',(
   setSkin(P,mySkin);setSkin(C,otherSkin(mySkin));weaponLabels();
 }));
 document.querySelectorAll('[data-skin]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.skin===mySkin));
-const SKIN_INFO={atlas:'아틀라스 · 필살기 판넬 미사일 폭풍(판넬 미사일 10기가 둘러싸고 차례로 돌격) · 헤비 빔 라이플 24발 · 미사일 2발+판넬 미사일 4기 동시 발사 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 윙 비트 6기(날아가서 상대 주위를 돌며 사격) · 균형형',viper:'바이퍼 · 필살기 광폭 연격(돌진 베기 3연속, 1타 18) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 섀도우 블링크 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
+const SKIN_INFO={atlas:'아틀라스 · 필살기 판넬 미사일 폭풍(판넬 미사일 10기 한꺼번에 사출) · 헤비 빔 라이플 24발 · 미사일 2발+판넬 미사일 4기 동시 발사 · 묵직한 중장갑',seraph:'세라프 [EPIC] · 필살기 헤일로 스톰(비트 8기가 둘러싸고 일제 사격) · 빔 소총 30발 · 윙 비트 6기(날아가서 상대 주위를 돌며 사격) · 균형형',viper:'바이퍼 · 필살기 광폭 연격(돌진 베기 3연속, 1타 18) · 샷건 6발(7산탄) · 산탄 로켓 3연발×2 · 대검 근접 최강(다시 쓰기 1.5초)',raven:'레이븐 · 필살기 빔 캐논 · 레일건 8발(한 발 9.9, 초고속 탄) · 확산 미사일 4연발×2(1발 6.75) · 가장 빠르지만 장갑이 얇음',bolt:'볼트 · 필살기 섀도우 블링크 · 빔 라이플 60발(한 번 누르면 12연사) · 미사일 3발 · 빠른 기동',crusher:'크래셔 · 필살기 융단 포격 · 개틀링 120발 · 바주카 2발(유도 없음, 큰 폭발) · 두꺼운 장갑, 느린 기동'};
 function skinInfo(){$('skinInfo').textContent=SKIN_INFO[mySkin];document.querySelectorAll('.skinInfo').forEach(p=>p.textContent=SKIN_INFO[mySkin])}
 skinInfo();
 document.querySelectorAll('[data-skin]').forEach(b=>b.addEventListener('click',skinInfo));
