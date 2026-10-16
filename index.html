@@ -693,13 +693,13 @@ const ARMS={
   atlas:{legendary:true,meleeDmg:15,meleeRange:32,lungeSp:30,ultName:'메가 빔 버스트',ult:'mega',gunName:'헤비 빔 라이플',stunHits:8,stunWin:2,mag:24,rate:.22,dmg:4.2,spread:0,bspeed:72,reload:2.6,mName:'미사일+판넬 미사일',mShort:'미사일',mMag:2,mReload:7,mCd:.6,guide:1.2,turn:3.2,mDmg:12,mRad:3.4,mSpeed:26,lob:true,salvo:4,funnel:2,fDmg:4,stormDmg:5,megaDmg:6,megaAoe:3,megaFunDmg:4,speed:8.2,armor:.9},
   seraph:{epic:true,meleeDmg:14,meleeRange:32,lungeSp:30,ultName:'헤일로 스톰',ult:'halo',gunName:'빔 소총',stunHits:10,stunWin:2,mag:30,rate:.16,dmg:3.2,spread:0,bspeed:70,reload:2.4,mName:'윙 비트',mShort:'비트',mMag:2,mReload:8,mCd:.5,guide:0,mDmg:0,mRad:0,mSpeed:0,lob:false,drones:6,bitDmg:2.4,speed:8.8,armor:1},
   viper:{meleeDmg:22,frenzyDmg:18,meleeRange:30,lungeSp:34,meleeCd:1.5,ultName:'섀도우 블링크',ult:'blink',gunName:'샷건',stunHits:12,stunWin:1.2,mag:6,rate:.8,pellets:7,dmg:2.2,spread:.085,bspeed:70,reload:3,mName:'산탄 로켓',mShort:'로켓',mMag:2,mReload:6.5,mCd:.6,guide:0,mDmg:10,mRad:3.2,mSpeed:38,lob:false,salvo:3,speed:9,armor:.95,snd:'shotgun'},
-  raven:{meleeDmg:12,meleeRange:38,lungeSp:32,ultName:'빔 캐논',ult:'beam',gunName:'레일건',stunHits:3,stunWin:4,mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
+  raven:{meleeDmg:12,meleeRange:38,lungeSp:32,ultName:'빔 캐논',ult:'beam',ultDmg:34,gunName:'레일건',stunHits:3,stunWin:4,mag:8,rate:.7,dmg:9.9/1.2,spread:0,bspeed:140,reload:3.9,mName:'확산 미사일',mShort:'확산탄',mMag:2,mReload:7,mCd:.8,guide:1.1,mDmg:6.75/1.2,mRad:2.8,mSpeed:30,lob:true,lfwd:15,lup:2,turn:3.2,speed:9.4,armor:1.1,salvo:4,snd:'rail'}
 };
 const armsOf=r=>ARMS[r.skin]||ARMS.bolt;
 const SKL={
   bolt:[{n:'하이퍼 샷',t:'beam',cd:9,dmg:18,w:.3,d:'즉시 빔 한 방 18'},{n:'부스트 리버설',t:'speed',cd:12,dur:4,d:'4초간 이동 속도 1.4배 + 부스터 가득'},{n:'섀도우 블링크',t:'blink',cd:18,old:1,d:'예전 필살기 그대로: 상대 뒤로 순간이동 + 3초 무한 연사'}],
   crusher:[{n:'그라운드 슬램',t:'slam',cd:10,dmg:18,rad:7,d:'주변 7m 충격파 18'},{n:'과부하 사격',t:'over',cd:14,dur:3,k:.5,dm:.8,d:'3초간 자동 난사(연사 2배), 탄약 소모 없음'},{n:'소형 융단 포격',t:'barrage',cd:16,cnt:4,old:1,d:'필살기 축소판: 상대 위치에 포탄 4발 낙하'}],
-  raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:22,w:.25,d:'즉시 관통 레일 22'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'},{n:'소형 빔 캐논',t:'beam',cd:18,dmg:28,w:.45,old:1,d:'필살기 축소판: 굵은 빔 28'}],
+  raven:[{n:'피어싱 레일',t:'beam',cd:10,dmg:18,w:.25,d:'즉시 레일 빔 18'},{n:'퀵 리트리트',t:'evade',cd:9,d:'상대 반대쪽으로 크게 후퇴'},{n:'소형 빔 캐논',t:'beam',cd:18,dmg:23,w:.45,old:1,d:'필살기 축소판: 굵은 빔 23'}],
   viper:[{n:'체인 앵커',t:'hook',cd:9,dmg:6,range:30,d:'사슬 앵커를 쏴서 30m 안의 상대를 내 앞으로 끌어당김(6)'},{n:'독침 난사',t:'volley',cd:10,n2:14,dmg:1.8,sp:.14,d:'산탄 14발 난사'},{n:'광폭 연격',t:'frenzy',cd:16,cnt:2,old:1,d:'예전 필살기: 돌진 베기 2연속'}],
   atlas:[{n:'판넬 일제사',t:'fmsl',cd:11,cnt:4,d:'필중 판넬 미사일 4기'},{n:'빔 개틀링',t:'over',cd:14,dur:3,k:.35,dm:.45,d:'3초간 빔 개틀링 자동 난사(약 30발)'},{n:'소형 메가 빔',t:'mbeam',cd:18,dmg:16,w:.8,old:1,d:'필살기 축소판: 메가 빔 16 + 착탄 지점에서 점점 커지는 후폭풍'}],
   seraph:[{n:'저지먼트 레이',t:'pillar',cd:11,dmg:20,rad:4.5,d:'0.8초 뒤 상대가 있던 자리에 하늘에서 빛기둥이 내리꽂혀 광역 피해 20'},{n:'엔젤 헤일로',t:'halo',cd:12,cnt:4,d:'헤일로 비트 4기 공격'},{n:'소형 헤일로 스톰',t:'halo',cd:18,cnt:6,old:1,d:'필살기 축소판: 헤일로 비트 6기'}],
@@ -981,7 +981,7 @@ tc.addEventListener('contextmenu',e=>e.preventDefault());
 /* ---------- robot simulation ---------- */
 let simTime=0;
 const SPD=.9;
-const BATTLE_T=150,MEGA_CHARGE=.6,MEGA_T=1,MEGA_TICK=.25,MEGA_FUN=6,GUARD_T=1,GUARD_CD=4,BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.3;
+const BATTLE_T=150,MEGA_CHARGE=.6,MEGA_T=1,MEGA_TICK=.25,MEGA_FUN=6,GUARD_T=1,GUARD_CD=4,BEAM_CHARGE=.55,MELEE_DIST=10,ULT_PASSIVE=1,ULT_DEAL=.45,ULT_TAKE=.72;
 const DOWN_DMG=50,DOWN_T=2,DOWN_DECAY=12,GRAV=25,R=.7,HGT=2.6,DMG_MULT=1.2,STUN_WIN=5,STUN_DMG=35,STUN_T=1,MAX_HP=200;
 const _f=new V(),_r=new V(),_t=new V(),_d=new V(),_c=new V(),_m=new V();
 function fwdOf(yaw,out){return out.set(-Math.sin(yaw),0,-Math.cos(yaw))}
@@ -1045,7 +1045,7 @@ function step(r,o,inp,dt){
       if(r.frenzy>0&&!r.melee&&!o.ko){r.frenzy--;r.melee={ph:'lunge',t:0,hit:false,frz:true};sfx('dash',r===P||o===P?.8:.4)}
       if(r.melee)meleeStep(r,o,dt);
       if(r.mega){r.vel.x*=.2;r.vel.z*=.2;r.burstLeft=0}
-      if(r.castT>0){r.castT-=dt;r.vel.x*=.2;r.vel.z*=.2;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,o):fireBeam(r,o))}
+      if(r.castT>0){r.castT-=dt;r.vel.x*=.2;r.vel.z*=.2;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,o):fireBeam(r,o,armsOf(r).ultDmg||40))}
       r.m.g.rotation.y=r.yaw;r.m.gun.rotation.x=r.aimPitch;r.m.g.position.copy(r.pos);r.m.g.updateMatrixWorld(true);
       if(W.burst){
         if(inp.fire&&(!r.firePrev||r!==P)&&!r.fireLock&&!(r.burstLeft>0)&&r.reloadT<=0&&r.ammo>0&&!r.shield)r.burstLeft=Math.min(W.burst,r.ammo);
@@ -1897,7 +1897,7 @@ function remoteOne(r,s,dt){
     else if(CU==='frenzy'){r.frzT=3;burst(centerOf(r,new V()),30,r.spark,8,.5);sfx('dash',.7)}
     else if(CU==='blink'){burst(centerOf(r,new V()),40,r.spark,9,.6);sfx('dash',.7)}
   }}
-  if(r.castT>0){r.castT-=dt;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,tg):fireBeam(r,tg))}
+  if(r.castT>0){r.castT-=dt;r.muzzleT=.05;chargeFx(r);if(r.castT<=0)(isMega(r)?fireMegaBeam(r,tg):fireBeam(r,tg,armsOf(r).ultDmg||40))}
   if(Array.isArray(s.sk))for(let q=0;q<Math.min(3,s.sk.length,sklOf(r).length);q++){const v=s.sk[q]|0;
     if(nt.sk[q]==null||v<nt.sk[q])nt.sk[q]=v;
     else if(v>nt.sk[q]){nt.sk[q]=v;if(phase==='fight')useSkill(r,tg,sklOf(r)[q],true)}}
