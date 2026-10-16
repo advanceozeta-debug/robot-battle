@@ -750,7 +750,7 @@ const chOf=S=>S.ch||(S.t==='fmsl'||S.t==='fstorm'?3:S.t==='beam'||S.t==='twin'||
 const altList=r=>(r.jet?SKL[r.skin]:SKL[r.skin+'Jet'])||null;
 function chArr(r){if(!r.sCh)r.sCh=sklOf(r).map(chOf);return r.sCh}
 function swapSk(r){const L=sklOf(r),c=r.sCd,h=chArr(r);r.sCd=r.sCdAlt||[0,0,0];r.sCdAlt=c;r.sCd[1]=c[1];r.sCh=r.sChAlt||L.map(chOf);r.sChAlt=h;r.sCh[1]=h[1]}
-function tickArr(cd,ch,L,dt){if(!L)return;for(let k=0;k<L.length;k++){const mx=chOf(L[k]);if(ch[k]<mx){cd[k]-=dt;if(cd[k]<=0){ch[k]++;cd[k]=ch[k]<mx?L[k].cd:0}}else cd[k]=0}}
+function tickArr(cd,ch,L,dt){if(!L)return;for(let k=0;k<L.length;k++){const mx=chOf(L[k]);if(ch[k]<mx){cd[k]-=dt;if(cd[k]<=0){ch[k]=mx;cd[k]=0}}else cd[k]=0}}
 function tickSk(r,dt){const h=chArr(r);tickArr(r.sCd,h,sklOf(r),dt);const AL=altList(r);if(AL&&r.sCdAlt){if(!r.sChAlt)r.sChAlt=AL.map(chOf);tickArr(r.sCdAlt,r.sChAlt,AL,dt)}r.sGap=r.sGap||[0,0,0];for(let k=0;k<3;k++)r.sGap[k]-=dt}
 const skReady=(r,k)=>chArr(r)[k]>0&&!((r.sGap||[0,0,0])[k]>0);
 function skUse(r,k,S){const h=chArr(r);h[k]--;if(!(r.sCd[k]>0))r.sCd[k]=S.cd;(r.sGap||(r.sGap=[0,0,0]))[k]=.45}
