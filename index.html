@@ -172,6 +172,18 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
 .pcol{display:flex;flex-direction:column;gap:4px;padding:8px 10px;border-radius:6px;background:rgba(20,33,48,.9);box-shadow:inset 0 0 0 1px var(--line);font-size:13px;color:var(--steel)}
 .pcol b{font-family:var(--display);font-weight:400;font-size:15px}.pcol.a b{color:var(--cyan)}.pcol.b b{color:var(--orange)}.pcol .empty{color:var(--dim)}
 .go:disabled{opacity:.45;cursor:default}
+.bindgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;width:min(520px,90vw);font-size:13px;color:var(--steel)}
+.bindgrid label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.bindgrid button{font:inherit;font-family:var(--display);min-width:76px;padding:4px 8px;border-radius:4px;border:1px solid var(--line);background:rgba(20,33,48,.9);color:var(--steel);cursor:pointer}
+.bindgrid button.wait{background:var(--hazard);color:#1a1400}
+.tc.edit{display:block!important}
+.tc.edit .btn[hidden]{display:grid!important}
+.tc.edit .btn,.tc.edit .lpad{outline:2px dashed var(--hazard);outline-offset:2px;cursor:move}
+.tc.edit .lpad{pointer-events:auto}
+.tc .btn:not(.qs){transform:scale(var(--bs,1))}
+.tc .lpad{transform:scale(var(--bs,1));transform-origin:left bottom}
+.tcbar{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:20;display:flex;gap:12px;align-items:center;padding:8px 14px;border-radius:8px;background:rgba(6,12,20,.92);box-shadow:inset 0 0 0 1px var(--line);color:var(--steel);font-size:14px;white-space:nowrap}
+.tcbar input{vertical-align:middle;width:120px}
 .code{font-family:var(--display);font-size:clamp(44px,12vw,72px);letter-spacing:.18em;margin:0;line-height:1;color:var(--hazard)}
 .status{color:var(--steel)}
 .note{font-size:12px}
@@ -220,19 +232,18 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     <div class="skl" id="skl"></div>
     <div class="banner" id="banner"></div>
     <div class="vig" id="vig"></div>
-    <div class="keys">
-      <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>이동</span>
-      <span>시점 자동 락온</span>
-      <span><kbd>Space</kbd>부스트 (누르는 동안 위로)</span>
+    <div class="keys" id="keysHelp">
+      <span><kbd id="kh-move">W A S D</kbd>이동</span>
+      <span><kbd id="kh-boost">Space</kbd>부스트 (누르는 동안 위로)</span>
       <span>이동 키 두 번 누르고 꾹 · 대시</span>
-      <span>좌클릭 · <kbd>[</kbd>사격</span>
-            <span><kbd>Shift</kbd>방패</span>
-      <span><kbd>R</kbd>재장전</span>
-      <span><kbd>F</kbd><span id="kUlt">필살기</span></span>
-      <span><kbd>C</kbd>근접 공격</span>
-      <span>우클릭 · <kbd>Z</kbd><span id="kS1">스킬 1</span></span>
-      <span><kbd>X</kbd><span id="kS2">스킬 2</span></span>
-      <span id="kS3w" hidden><kbd>V</kbd><span id="kS3">스킬 3</span></span>
+      <span>좌클릭 · <kbd id="kh-fire">[</kbd>사격</span>
+      <span><kbd id="kh-shield">Shift</kbd>방패</span>
+      <span><kbd id="kh-reload">R</kbd>재장전</span>
+      <span><kbd id="kh-ult">F</kbd><span id="kUlt">필살기</span></span>
+      <span><kbd id="kh-melee">C</kbd>근접 공격</span>
+      <span>우클릭 · <kbd id="kh-s1">Z</kbd><span id="kS1">스킬 1</span></span>
+      <span><kbd id="kh-s2">X</kbd><span id="kS2">스킬 2</span></span>
+      <span id="kS3w" hidden><kbd id="kh-s3">V</kbd><span id="kS3">스킬 3</span></span>
     </div>
   </div>
   <div class="tc" id="tc" hidden>
@@ -258,16 +269,7 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
     <div class="card">
       <h1 class="title"><span class="c1">기계</span> <span class="c2">총격전</span></h1>
       <p class="sub">로봇 뒤에서 따라가는 3인칭 시점이에요. 조준은 항상 상대에게 고정되고 시점도 자동으로 따라가요. 총은 탄창을 다 쓰면 재장전해요. 로봇마다 스킬 3개가 있고, 쿨타임이 끝날 때마다 쓸 수 있어요. 방패나 사격 중에 대시·부스트를 누르면 바로 끊고 움직여요. 엄폐물 뒤에 숨어 총알을 피하세요. 주황 줄무늬 엄폐물은 총과 스킬로 부술 수 있어요. 짧은 시간에 피해를 50 이상 받으면 쓰러져요. 쓰러졌다가 일어나는 2초 동안은 대상 지정이 안 돼서 서로 공격할 수 없어요. 공격하거나 맞으면 필살기 게이지가 차고, 다 차면 F(폰은 필살 버튼)로 써요. 세 판 중 두 판을 이기면 승리.</p>
-      <dl class="ctl" id="ctlPc">
-        <dt>이동</dt><dd>W A S D (방향키 ↑↓도 앞뒤 이동)</dd>
-        <dt>대시</dt><dd>이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)</dd>
-        <dt>시점</dt><dd>자동 락온 (마우스·Q E·방향키 ←→로 살짝 조정)</dd>
-        <dt>사격</dt><dd>좌클릭 또는 [ (R: 재장전)</dd>
-        <dt>근접 · 필살기</dt><dd>C · F</dd>
-        <dt>타겟 바꾸기</dt><dd>Tab 또는 T (팀전에서 적이 여럿일 때)</dd>
-        <dt>스킬 1 · 2 · 3</dt><dd>Z(또는 우클릭) · X · V (로봇마다 다른 스킬, 쿨타임마다 사용. 스킬3은 원래 쓰던 필살기를 작게 만든 것)</dd>
-        <dt>부스트 · 방패</dt><dd>Space (누르는 동안 위로) · Shift (1초 동안 모든 공격 막기, 4초 쿨타임)</dd>
-      </dl>
+<dl class="ctl" id="ctlPc"></dl>
       <dl class="ctl" id="ctlTouch" hidden>
         <dt>이동</dt><dd>왼쪽 조이스틱 (왼쪽 화면 어디를 눌러도 돼요)</dd>
         <dt>짧은 대시</dt><dd>조이스틱 둘레 ▲▼◀▶ 버튼을 톡</dd>
@@ -295,10 +297,26 @@ button:focus-visible{outline:2px solid var(--hazard);outline-offset:3px}
         <button id="d-hard" data-d="hard" aria-pressed="false">어려움</button>
       </div>
       <div class="row"><button class="go" id="start">컴퓨터와 대전</button><button class="go alt" id="onlineBtn">온라인 대전</button></div>
-      <div class="row"><button class="ghostbtn fsb" id="fs1">전체화면으로 하기</button><button class="ghostbtn" id="mute">소리 켜짐</button></div>
+      <div class="row"><button class="ghostbtn" id="setupBtn">조작 설정</button><button class="ghostbtn fsb" id="fs1">전체화면으로 하기</button><button class="ghostbtn" id="mute">소리 켜짐</button></div>
       <p class="sub fsmsg" hidden></p>
       <p class="err" id="err" hidden>3D 그래픽을 불러오지 못했어요. 페이지를 새로고침해 주세요.</p>
     </div>
+  </div>
+  <div class="overlay" id="setup" hidden>
+    <div class="card">
+      <h2 class="title sm">조작 설정</h2>
+      <p class="sub">키보드: 바꿀 동작의 키 버튼을 누른 뒤 원하는 키를 누르세요. 이미 쓰는 키면 두 동작의 키가 서로 바뀌어요. (마우스 좌클릭 사격·우클릭 스킬1은 그대로)</p>
+      <div class="bindgrid" id="bindGrid"></div>
+      <div class="row"><button class="ghostbtn" id="bindReset">키보드 기본값으로</button></div>
+      <p class="sub">터치 버튼: 버튼을 끌어서 원하는 자리에 놓고, 크기도 바꿀 수 있어요.</p>
+      <div class="row"><button class="go small" id="tcEditBtn">터치 버튼 위치·크기 바꾸기</button><button class="ghostbtn" id="tcReset">터치 버튼 기본값으로</button></div>
+      <button class="ghostbtn" id="setupBack">돌아가기</button>
+    </div>
+  </div>
+  <div class="tcbar" id="tcBar" hidden>
+    <span>버튼을 끌어서 옮기세요</span>
+    <label>크기 <input type="range" id="tcSize" min="0.7" max="1.5" step="0.05" value="1"></label>
+    <button class="go small" id="tcDone">완료</button>
   </div>
   <div class="overlay" id="online" hidden>
     <div class="card">
@@ -994,6 +1012,12 @@ function resetBreakables(){
 
 /* ---------- input ---------- */
 const keys={};
+const BIND_DEF={up:'KeyW',down:'KeyS',left:'KeyA',right:'KeyD',boost:'Space',fire:'BracketLeft',shield:'ShiftLeft',reload:'KeyR',ult:'KeyF',melee:'KeyC',s1:'KeyZ',s2:'KeyX',s3:'KeyV',target:'KeyT',camL:'KeyQ',camR:'KeyE'};
+const BIND_LAB={up:'앞으로',down:'뒤로',left:'왼쪽',right:'오른쪽',boost:'부스트 (위로)',fire:'사격',shield:'방패',reload:'재장전',ult:'필살기',melee:'근접 공격',s1:'스킬 1',s2:'스킬 2',s3:'스킬 3',target:'타겟 바꾸기',camL:'시점 왼쪽',camR:'시점 오른쪽'};
+let BIND=Object.assign({},BIND_DEF);try{const v=JSON.parse(localStorage.getItem('kc3d-bind')||'null');if(v&&typeof v==='object')for(const k in BIND_DEF)if(typeof v[k]==='string')BIND[k]=v[k]}catch(_){}
+const kName=c=>!c?'-':c.startsWith('Key')?c.slice(3):c.startsWith('Digit')?c.slice(5):c.startsWith('Numpad')?'Num'+c.slice(6):({Space:'Space',ShiftLeft:'Shift',ShiftRight:'R-Shift',ControlLeft:'Ctrl',ControlRight:'R-Ctrl',AltLeft:'Alt',AltRight:'R-Alt',BracketLeft:'[',BracketRight:']',Semicolon:';',Quote:"'",Comma:',',Period:'.',Slash:'/',Backslash:'\\',Minus:'-',Equal:'=',Backquote:'`',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→',Enter:'Enter',Tab:'Tab',CapsLock:'Caps',Backspace:'Back'})[c]||c;
+const kb=a=>!!keys[BIND[a]];
+let DIRK={};function buildDirk(){DIRK={ArrowUp:'f',ArrowDown:'b'};DIRK[BIND.up]='f';DIRK[BIND.down]='b';DIRK[BIND.left]='l';DIRK[BIND.right]='r'}buildDirk();
 const press={jump:false,missile:false,qs:null,reload:false,ult:false,melee:false};
 let fireHeld=false,shieldHeld=false,jumpHeld=false,boostHeld=false;
 let camYaw=0,camPitch=-.08,locked=false;
@@ -1002,12 +1026,13 @@ let lookId=null,lookX=0,lookY=0;
 const fireBtn={id:null,x:0,y:0};
 function look(dx,dy,s){camYaw-=dx*s;camPitch=clamp(camPitch-dy*s,-.5,.62)}
 addEventListener('keydown',e=>{
-  const c=e.code;const menuEnter=(c==='Enter'||c==='NumpadEnter')&&(phase==='menu'||phase==='over');if(!menuEnter&&['Enter','NumpadEnter','BracketLeft','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight'].includes(c))e.preventDefault();
+  const c=e.code;if(e.target&&e.target.tagName==='INPUT')return;const inGame=phase!=='menu'&&phase!=='over';
+  if(inGame&&(Object.values(BIND).includes(c)||['Enter','NumpadEnter','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Tab'].includes(c)))e.preventDefault();
   if(keys[c]&&e.repeat)return;keys[c]=true;
-  if(c==='Space')press.jump=true;if(c==='KeyR')press.reload=true;if(c==='KeyF')press.ult=true;if(c==='KeyC')press.melee=true;if(c==='KeyZ')press.s1=true;if(c==='KeyX')press.s2=true;if(c==='KeyV')press.s3=true;if(c==='Tab'||c==='KeyT'){e.preventDefault();if(phase==='fight'||phase==='intro')pickTarget(true)}if(c==='Enter'||c==='NumpadEnter')press.s1=true;
+  if(c===BIND.boost)press.jump=true;if(c===BIND.reload)press.reload=true;if(c===BIND.ult)press.ult=true;if(c===BIND.melee)press.melee=true;if(c===BIND.s1)press.s1=true;if(c===BIND.s2)press.s2=true;if(c===BIND.s3)press.s3=true;
+  if(c===BIND.target||c==='Tab'){if(phase==='fight'||phase==='intro')pickTarget(true)}if(inGame&&(c==='Enter'||c==='NumpadEnter'))press.s1=true;
 });
 addEventListener('keyup',e=>{keys[e.code]=false;if(e.code===dashKey)dashKey=null});
-const DIRK={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',KeyD:'r'};
 const lastTap={};let dashKey=null,dashHeld=false,dashSeen=false,dashWait=0;
 addEventListener('keydown',e=>{const d=DIRK[e.code];if(!d||e.repeat)return;const now=performance.now();if(now-(lastTap[d]||0)<300)dashKey=e.code;lastTap[d]=now});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;dashKey=null;dashHeld=false;boostHeld=false;fireHeld=false;shieldHeld=false;jumpHeld=false;mouseFire=false});
@@ -1027,6 +1052,7 @@ document.addEventListener('pointerlockchange',()=>{locked=document.pointerLockEl
 const dashBtnEl=document.querySelector('.btn.dash'),tc=$('tc'),joyEl=$('joy'),knob=$('knob');
 function joyRest(){knob.style.transform='';joyEl.classList.add('idle')}
 tc.addEventListener('pointerdown',e=>{
+  if(tcEditing){editDown(e);return}
   const btn=e.target.closest('.btn');
   if(btn){
     e.preventDefault();try{btn.setPointerCapture(e.pointerId)}catch(_){}
@@ -1045,11 +1071,13 @@ tc.addEventListener('pointerdown',e=>{
   try{tc.setPointerCapture(e.pointerId)}catch(_){}
 });
 tc.addEventListener('pointermove',e=>{
+  if(tcEditing){editMove(e);return}
   if(e.pointerId===joy.id){let dx=e.clientX-joy.x0,dy=e.clientY-joy.y0;const l=Math.hypot(dx,dy),m=joyEl.offsetWidth*.42||48;if(l>m){dx*=m/l;dy*=m/l}joy.x=dx/m;joy.y=dy/m;knob.style.transform=`translate(${dx}px,${dy}px)`}
   else if(e.pointerId===lookId){look(e.clientX-lookX,e.clientY-lookY,.0065);lookX=e.clientX;lookY=e.clientY}
   else if(e.pointerId===fireBtn.id){look(e.clientX-fireBtn.x,e.clientY-fireBtn.y,.0065);fireBtn.x=e.clientX;fireBtn.y=e.clientY}
 });
 function tcUp(e){
+  if(tcEditing){editUp(e);return}
   if(e.pointerId===joy.id){joy.id=null;joy.x=joy.y=0;joyRest()}
   if(e.pointerId===lookId)lookId=null;
   tc.querySelectorAll('.btn').forEach(b=>{if(b._pid===e.pointerId){b.classList.remove('on');b._pid=null;const k=b.dataset.k;if(k==='fire'){fireHeld=false;fireBtn.id=null}if(k==='shield')shieldHeld=false;if(k==='jump')jumpHeld=false;if(k==='boost')boostHeld=false}});
@@ -1516,9 +1544,9 @@ const pin={mx:0,mz:0,jump:false,fire:false,missile:false,shield:false,yaw:0,targ
 const lookDir=new V(),pivot=new V();
 let aimLock=false;
 function playerInput(dt){
-  const kr=(keys.KeyE||keys.ArrowRight?1:0)-(keys.KeyQ||keys.ArrowLeft?1:0);
+  const kr=(kb('camR')||keys.ArrowRight?1:0)-(kb('camL')||keys.ArrowLeft?1:0);
   camYaw-=kr*2.3*dt;
-  let f=(keys.KeyW||keys.ArrowUp?1:0)-(keys.KeyS||keys.ArrowDown?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);
+  let f=(kb('up')||keys.ArrowUp?1:0)-(kb('down')||keys.ArrowDown?1:0),s=(kb('right')?1:0)-(kb('left')?1:0);
   if(joy.id!==null){f=-joy.y;s=joy.x}
   fwdOf(camYaw,_f);_r.set(Math.cos(camYaw),0,-Math.sin(camYaw));
   let mx=_f.x*f+_r.x*s,mz=_f.z*f+_r.z*s;const l=Math.hypot(mx,mz);if(l>1){mx/=l;mz/=l}
@@ -1527,9 +1555,9 @@ function playerInput(dt){
   if(press.qs){const q=press.qs,df=q==='f'?1:q==='b'?-1:0,ds=q==='r'?1:q==='l'?-1:0;pin.qsX=_f.x*df+_r.x*ds;pin.qsZ=_f.z*df+_r.z*ds;pin.qs=true}
   if(dashKey&&keys[dashKey]){const d=DIRK[dashKey],df=d==='f'?1:d==='b'?-1:0,ds=d==='r'?1:d==='l'?-1:0;pin.dashX=_f.x*df+_r.x*ds;pin.dashZ=_f.z*df+_r.z*ds;pin.dash=true}
   else if(dashHeld){if(l>.3&&P.fuel>0){pin.dashX=mx/l;pin.dashZ=mz/l;pin.dash=true;dashSeen=true}else if(dashSeen||P.fuel<=0||(dashWait-=dt)<=0)dashHeld=false}
-  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.s3=press.s3;pin.jumpHeld=jumpHeld||boostHeld||!!keys.Space;pin.missile=false;
-  pin.fire=fireHeld||mouseFire||!!keys.BracketLeft;
-  pin.shield=shieldHeld||!!keys.ShiftLeft||!!keys.ShiftRight||!!keys.KeyL;
+  pin.jump=press.jump;pin.reload=press.reload;pin.ult=press.ult;pin.melee=press.melee;pin.s1=press.s1;pin.s2=press.s2;pin.s3=press.s3;pin.jumpHeld=jumpHeld||boostHeld||kb('boost');pin.missile=false;
+  pin.fire=fireHeld||mouseFire||kb('fire');
+  pin.shield=shieldHeld||kb('shield');
 }
 let aimRange=0;
 function angDiff(a,b){let d=a-b;while(d>Math.PI)d-=2*Math.PI;while(d<-Math.PI)d+=2*Math.PI;return d}
@@ -1695,7 +1723,7 @@ function loop(now){
       phaseT+=dt;simTime+=dt;const live=phase==='fight';
       const leads=!online||isHost;
       if(live){playerInput(dt);if(!online)ai(dt)}
-      else{const kr=(keys.KeyE||keys.ArrowRight?1:0)-(keys.KeyQ||keys.ArrowLeft?1:0);camYaw-=kr*2.3*dt}
+      else{const kr=(kb('camR')||keys.ArrowRight?1:0)-(kb('camL')||keys.ArrowLeft?1:0);camYaw-=kr*2.3*dt}
       pickTarget(false);step(P,PT,live?pin:Object.assign({},idle,{yaw:camYaw}),dt);
       if(!online)step(C,P,live?cin:Object.assign({},idle,{yaw:C.yaw}),dt);
       separate();updProj(dt);
@@ -2018,6 +2046,65 @@ function netTick(dt){
   rm.presence(st).catch(()=>{});
 }
 
+/* ---------- control settings ---------- */
+function saveBind(){try{localStorage.setItem('kc3d-bind',JSON.stringify(BIND))}catch(_){}}
+function helpText(){
+  const m=[BIND.up,BIND.left,BIND.down,BIND.right].map(kName).join(' ');
+  const set=(id,t)=>{const el=$(id);if(el)el.textContent=t};
+  set('kh-move',m);['boost','fire','shield','reload','ult','melee','s1','s2','s3'].forEach(a=>set('kh-'+a,kName(BIND[a])));
+  const K=a=>kName(BIND[a]);
+  $('ctlPc').innerHTML='';
+  [['이동',`${K('up')} ${K('left')} ${K('down')} ${K('right')} (방향키 ↑↓도 앞뒤 이동)`],['대시','이동 키를 두 번 누르고 꾹 (그 방향으로 부스트)'],['시점',`자동 락온 (마우스·${K('camL')} ${K('camR')}·방향키 ←→로 살짝 조정)`],['사격',`좌클릭 또는 ${K('fire')} (${K('reload')}: 재장전)`],['근접 · 필살기',`${K('melee')} · ${K('ult')}`],['타겟 바꾸기',`${K('target')} 또는 Tab (팀전에서 적이 여럿일 때)`],['스킬 1 · 2 · 3',`${K('s1')}(또는 우클릭) · ${K('s2')} · ${K('s3')}`],['부스트 · 방패',`${K('boost')} (누르는 동안 위로) · ${K('shield')} (1초 동안 모든 공격 막기, 4초 쿨타임)`],['조작 바꾸기','메뉴의 조작 설정']].forEach(([a,b])=>{const dt=document.createElement('dt');dt.textContent=a;const dd=document.createElement('dd');dd.textContent=b;$('ctlPc').append(dt,dd)});
+}
+let waitBind=null;
+function renderBinds(){
+  const g=$('bindGrid');g.innerHTML='';
+  for(const a in BIND_DEF){const l=document.createElement('label');const sp=document.createElement('span');sp.textContent=BIND_LAB[a];const b=document.createElement('button');b.type='button';b.textContent=waitBind===a?'키를 누르세요…':kName(BIND[a]);if(waitBind===a)b.classList.add('wait');
+    b.addEventListener('click',()=>{waitBind=waitBind===a?null:a;renderBinds()});l.append(sp,b);g.appendChild(l)}
+}
+addEventListener('keydown',e=>{
+  if(!waitBind||$('setup').hidden)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(e.code==='Escape'){waitBind=null;renderBinds();return}
+  const a=waitBind,old=BIND[a],other=Object.keys(BIND).find(k=>k!==a&&BIND[k]===e.code);
+  if(other)BIND[other]=old;BIND[a]=e.code;waitBind=null;saveBind();buildDirk();renderBinds();helpText();
+},true);
+$('setupBtn').addEventListener('click',()=>{menu.hidden=true;$('setup').hidden=false;waitBind=null;renderBinds()});
+$('setupBack').addEventListener('click',()=>{$('setup').hidden=true;menu.hidden=false;waitBind=null});
+$('bindReset').addEventListener('click',()=>{BIND=Object.assign({},BIND_DEF);saveBind();buildDirk();renderBinds();helpText()});
+/* touch layout editing */
+let tcEditing=false,tcLay={},tcScale=1,drag=null;
+try{const v=JSON.parse(localStorage.getItem('kc3d-tc')||'null');if(v&&typeof v==='object'){tcLay=v.lay||{};tcScale=+v.scale||1}}catch(_){}
+const tcKey=el=>el.classList.contains('lpad')?'lpad':el.dataset.k;
+function applyTc(){
+  tc.style.setProperty('--bs',tcScale);
+  tc.querySelectorAll('.btn:not(.qs),.lpad').forEach(el=>{const k=tcKey(el),L=tcLay[k];
+    if(L){if(k==='lpad'){el.style.left=L.x+'px';el.style.bottom=L.y+'px'}else{el.style.right=L.x+'px';el.style.bottom=L.y+'px'}}
+    else{el.style.left='';el.style.right='';el.style.bottom=''}})
+}
+function saveTc(){try{localStorage.setItem('kc3d-tc',JSON.stringify({lay:tcLay,scale:tcScale}))}catch(_){}}
+function editDown(e){
+  const el=e.target.closest('.btn:not(.qs),.lpad')||e.target.closest('.lpad');if(!el)return;e.preventDefault();
+  try{tc.setPointerCapture(e.pointerId)}catch(_){}
+  const r=el.getBoundingClientRect(),sr=stage.getBoundingClientRect(),k=tcKey(el);
+  const cs=getComputedStyle(el),x0=k==='lpad'?parseFloat(cs.left):parseFloat(cs.right),y0=parseFloat(cs.bottom);
+  drag={el,k,id:e.pointerId,sx:e.clientX,sy:e.clientY,x0,y0,sr};
+}
+function editMove(e){
+  if(!drag||e.pointerId!==drag.id)return;
+  const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy,sr=drag.sr;
+  let x=drag.k==='lpad'?drag.x0+dx:drag.x0-dx,y=drag.y0-dy;
+  x=clamp(x,-10,sr.width-40);y=clamp(y,-10,sr.height-40);
+  tcLay[drag.k]={x:Math.round(x),y:Math.round(y)};applyTc();
+}
+function editUp(e){if(drag&&e.pointerId===drag.id){drag=null;saveTc()}}
+$('tcEditBtn').addEventListener('click',()=>{
+  tcEditing=true;$('setup').hidden=true;tc.hidden=false;tc.classList.add('edit');$('tcBar').hidden=false;$('tcSize').value=tcScale;joyRest();
+});
+$('tcDone').addEventListener('click',()=>{tcEditing=false;drag=null;tc.classList.remove('edit');tc.hidden=true;$('tcBar').hidden=true;$('setup').hidden=false;saveTc()});
+$('tcSize').addEventListener('input',e=>{tcScale=clamp(+e.target.value||1,.7,1.5);applyTc();saveTc()});
+$('tcReset').addEventListener('click',()=>{tcLay={};tcScale=1;applyTc();saveTc()});
+applyTc();helpText();
 place(P,0,38,0);place(C,0,-38,Math.PI);camYaw=.6;
 requestAnimationFrame(loop);
 })();
