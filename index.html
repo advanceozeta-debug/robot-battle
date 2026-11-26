@@ -780,7 +780,7 @@ function mkR(name,col,eye,key){return{name,col,m:makeBot(col,eye,key),pos:new V(
 const FUN_ACC=.9,FIN_ACC=.8,MSL_RANGE=70,MSL_GUIDE=1.3;
 const SKIN={bolt:{name:'볼트',col:0x39c6ff,css:'var(--cyan)',spark:[.25,.8,1]},crusher:{name:'크래셔',col:0xff7a2f,css:'var(--orange)',spark:[1,.5,.18]},raven:{name:'레이븐',col:0xb36bff,css:'var(--violet)',spark:[.75,.45,1]},viper:{name:'바이퍼',col:0x4ddc6a,css:'var(--green)',spark:[.35,1,.45]},stratos:{name:'스트라토스',col:0x9fd8ff,css:'var(--ice)',spark:[.65,.85,1]},goliath:{name:'골리앗',col:0xa8c04a,css:'var(--olive)',spark:[.8,.95,.35]},zephyr:{name:'제피르',col:0xff5a5a,css:'var(--crim)',spark:[1,.45,.4]},leuca:{name:'레우카디우스',col:0x6f8bff,css:'var(--indigo)',spark:[.5,.6,1],sz:1.4},atlas:{name:'아틀라스',col:0xff5c9a,css:'var(--pink)',spark:[1,.4,.65]},seraph:{name:'세라프',col:0xffd166,css:'var(--gold)',spark:[1,.85,.4]}};
 let MECHA=null;const MECHA_SC=1.25,_hv=new V();
-if(T.GLTFLoader&&T.SkeletonUtils){try{new T.GLTFLoader().load('mecha.glb',gl=>{MECHA=gl;gl.scene.traverse(o=>{if(o.isMesh&&o.material){o.material.metalness=.35;o.material.roughness=Math.max(.35,o.material.roughness||1)}});
+if(T.GLTFLoader&&T.SkeletonUtils){try{new T.GLTFLoader().load('mecha.gltf.json',gl=>{MECHA=gl;gl.scene.traverse(o=>{if(o.isMesh&&o.material){o.material.metalness=.35;o.material.roughness=Math.max(.35,o.material.roughness||1)}});
   for(const r of [P,...POOL])if(r.skin==='stratos'){const a=r.ammo,ch=r.sCh;setSkin(r,'stratos');r.ammo=a;r.sCh=ch}
 },undefined,()=>{})}catch(_){}}
 function updGlb(r,dt){
